@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "A common set of Utilities, designed for over 50 versions of Minecraft!",
+  "authors": [
+    "CDAGaming"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/unilib",
+    "sources": "https://gitlab.com/CDAGaming/UniLib",
+    "issues": "https://gitlab.com/CDAGaming/UniLib/issues"
+  },
+  "license": "MIT",
+  "icon": "logo.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.gitlab.cdagaming.unilib.fabric.UniLibFabric"
+    ]
+  },
+  "custom": {
+    "modmenu:clientsideOnly": true
+  },
+  "depends": {
+    "fabricloader": "${loader_version_range}",
+    "minecraft": "${game_version_range}",
+    "java": ">=8"
+  }
+}
