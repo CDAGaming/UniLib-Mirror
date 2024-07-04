@@ -24,6 +24,7 @@
 
 package com.gitlab.cdagaming.unilib.forge;
 
+import com.gitlab.cdagaming.unilib.UniLib;
 import io.github.cdagaming.unicore.utils.MappingUtils;
 import io.github.cdagaming.unicore.utils.OSUtils;
 import com.gitlab.cdagaming.unilib.core.CoreUtils;
@@ -46,5 +47,7 @@ public class UniLibForge {
         }
         MappingUtils.setFilePath("/mappings-forge.srg");
         CoreUtils.MOD_COUNT_SUPPLIER = () -> Loader.instance().getModList().size();
+
+        UniLib.assertLoaded();
     }
 }

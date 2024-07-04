@@ -24,6 +24,7 @@
 
 package com.gitlab.cdagaming.unilib.fabric;
 
+import com.gitlab.cdagaming.unilib.UniLib;
 import io.github.cdagaming.unicore.utils.MappingUtils;
 import io.github.cdagaming.unicore.utils.OSUtils;
 import com.gitlab.cdagaming.unilib.core.CoreUtils;
@@ -43,5 +44,7 @@ public class UniLibFabric implements ClientModInitializer {
         }
         MappingUtils.setFilePath("/mappings-fabric.srg");
         CoreUtils.MOD_COUNT_SUPPLIER = () -> FabricLoader.getInstance().getAllMods().size();
+
+        UniLib.assertLoaded();
     }
 }
