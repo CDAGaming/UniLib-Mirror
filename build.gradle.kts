@@ -12,6 +12,7 @@ plugins {
     id("com.diffplug.gradle.spotless") version "6.25.0" apply false
     id("io.github.goooler.shadow") version "8.1.7" apply false
     id("com.hypherionmc.modutils.modfusioner") version "1.0.12"
+    `maven-publish`
 }
 
 /**
@@ -54,6 +55,7 @@ subprojects {
     apply(plugin = "xyz.wagyourtail.jvmdowngrader")
     apply(plugin = "com.diffplug.spotless")
     apply(plugin = "io.github.goooler.shadow")
+    apply(plugin = "maven-publish")
 
     val modName by extra(extModName)
     val modId by extra(extModId)
@@ -140,8 +142,8 @@ subprojects {
         maven("https://s01.oss.sonatype.org/content/repositories/releases")
         maven("https://s01.oss.sonatype.org/content/repositories/snapshots")
         // HypherionMC Mavens
-        maven("https://maven.firstdarkdev.xyz/releases")
-        maven("https://maven.firstdarkdev.xyz/snapshots")
+        maven("https://maven.firstdark.dev/releases")
+        maven("https://maven.firstdark.dev/snapshots")
         // Mod Integration Mavens
         if (isModern) {
             maven("https://maven.terraformersmc.com/releases/") {

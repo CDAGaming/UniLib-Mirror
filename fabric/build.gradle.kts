@@ -1,6 +1,7 @@
 import xyz.wagyourtail.unimined.api.mapping.task.ExportMappingsTask
 import xyz.wagyourtail.unimined.api.minecraft.patch.fabric.FabricLikePatcher
 import xyz.wagyourtail.unimined.api.minecraft.task.RemapJarTask
+import java.net.URI
 
 /**
  * Retrieve a Project Property
@@ -181,4 +182,47 @@ tasks.sourcesJar {
     val commonSources = project(":common").tasks.sourcesJar
     dependsOn(commonSources)
     from(commonSources.get().archiveFile.map { zipTree(it) })
+}
+
+publishing {
+    publications {
+
+        create<MavenPublication>("unilib") {
+            groupId = "com.cdagaming.unilib"
+            artifactId = "UniLib-Fabric"
+            version = versionFormat.replace(Regex("\\s"), "").lowercase()
+
+            artifact(tasks.getByName("jar"))
+            artifact(tasks.getByName("remapJar"))
+            artifact(tasks.getByName("sourcesJar"))
+
+            pom {
+                name.set("UniLib")
+                url.set("https://gitlab.com/CDAGaming/UniLib")
+
+                licenses {
+                    license {
+                        name.set("MIT")
+                        url.set("https://gitlab.com/CDAGaming/UniLib/-/blob/main/LICENSE")
+                    }
+                }
+
+                scm {
+                    url.set("https://gitlab.com/CDAGaming/UniLib.git")
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "FirstDarkDev"
+            url = URI("https://maven.firstdark.dev/${if ("deploymentType"().equals("release", true)) "releases" else "snapshots"}")
+
+            credentials {
+                username = System.getenv("MAVEN_USER")
+                password = System.getenv("MAVEN_PASS")
+            }
+        }
+    }
 }
