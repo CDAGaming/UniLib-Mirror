@@ -4,6 +4,8 @@ import xyz.wagyourtail.jvmdg.gradle.task.files.DowngradeFiles
 import xyz.wagyourtail.replace_str.ProcessClasses
 import xyz.wagyourtail.unimined.api.UniminedExtension
 import xyz.wagyourtail.unimined.api.minecraft.task.RemapJarTask
+import java.net.URI
+import java.util.*
 
 plugins {
     java
@@ -363,6 +365,52 @@ subprojects {
 
             tasks.shadeDowngradedApi {
                 archiveClassifier = remapJar.archiveClassifier
+            }
+        }
+
+        publishing {
+            publications {
+                create<MavenPublication>(modId) {
+                    groupId = "${rootProject.group}.$modId"
+                    artifactId = "$modName-${project.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
+                    version = versionFormat.replace(Regex("\\s"), "").lowercase()
+
+                    artifact(tasks.getByName("jar"))
+                    if (tasks.findByName("remapJar") != null) {
+                        artifact(tasks.getByName("remapJar"))
+                    } else {
+                        artifact(tasks.getByName("shadowJar"))
+                    }
+                    artifact(tasks.getByName("sourcesJar"))
+
+                    pom {
+                        name.set(modName)
+                        url.set("https://gitlab.com/CDAGaming/UniLib")
+
+                        licenses {
+                            license {
+                                name.set("MIT")
+                                url.set("https://gitlab.com/CDAGaming/UniLib/-/blob/main/LICENSE")
+                            }
+                        }
+
+                        scm {
+                            url.set("https://gitlab.com/CDAGaming/UniLib.git")
+                        }
+                    }
+                }
+            }
+
+            repositories {
+                maven {
+                    name = "FirstDarkDev"
+                    url = URI("https://maven.firstdark.dev/${if ("deploymentType"().equals("release", true)) "releases" else "snapshots"}")
+
+                    credentials {
+                        username = System.getenv("MAVEN_USER")
+                        password = System.getenv("MAVEN_PASS")
+                    }
+                }
             }
         }
     }

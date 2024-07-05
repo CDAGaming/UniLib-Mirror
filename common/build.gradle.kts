@@ -1,5 +1,4 @@
 import xyz.wagyourtail.unimined.api.minecraft.patch.fabric.FabricLikePatcher
-import java.net.URI
 import java.util.regex.Pattern
 
 plugins {
@@ -236,47 +235,4 @@ publisher {
     loaders = uploadLoaders
     curseEnvironment = "client"
     artifact = targetFile
-}
-
-publishing {
-    publications {
-
-        create<MavenPublication>("unilib") {
-            groupId = "com.cdagaming.unilib"
-            artifactId = "UniLib-Common"
-            version = versionFormat.replace(Regex("\\s"), "").lowercase()
-
-            artifact(tasks.getByName("jar"))
-            artifact(tasks.getByName("shadowJar"))
-            artifact(tasks.getByName("sourcesJar"))
-
-            pom {
-                name.set("UniLib")
-                url.set("https://gitlab.com/CDAGaming/UniLib")
-
-                licenses {
-                    license {
-                        name.set("MIT")
-                        url.set("https://gitlab.com/CDAGaming/UniLib/-/blob/main/LICENSE")
-                    }
-                }
-
-                scm {
-                    url.set("https://gitlab.com/CDAGaming/UniLib.git")
-                }
-            }
-        }
-    }
-
-    repositories {
-        maven {
-            name = "FirstDarkDev"
-            url = URI("https://maven.firstdark.dev/${if ("deploymentType"().equals("release", true)) "releases" else "snapshots"}")
-
-            credentials {
-                username = System.getenv("MAVEN_USER")
-                password = System.getenv("MAVEN_PASS")
-            }
-        }
-    }
 }
