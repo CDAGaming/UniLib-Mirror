@@ -6,6 +6,8 @@ env:
   CF_APIKEY: ${{ secrets.CF_APIKEY }}
   MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
   NIGHTBLOOM_TOKEN: ${{ secrets.NIGHTBLOOM_TOKEN }}
+  MAVEN_USER: ${{ secrets.MAVEN_USER }}
+  MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
 
 jobs:
   build:
@@ -41,6 +43,9 @@ jobs:
 
       - name: Deploy with Gradle
         run: ./gradlew --build-cache --info --stacktrace :common:publishMod
+
+      - name: Deploy to Maven
+        run: ./gradlew --build-cache --info --stacktrace publish
 
       - uses: actions/upload-artifact@v4
         with:
