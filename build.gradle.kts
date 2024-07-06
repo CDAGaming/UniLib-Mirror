@@ -1,4 +1,5 @@
 import com.diffplug.gradle.spotless.SpotlessExtension
+import com.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension
 import xyz.wagyourtail.jvmdg.gradle.task.files.DowngradeFiles
 import xyz.wagyourtail.replace_str.ProcessClasses
 import xyz.wagyourtail.unimined.api.UniminedExtension
@@ -12,7 +13,7 @@ plugins {
     id("xyz.wagyourtail.jvmdowngrader") version "0.7.2"
     id("com.diffplug.gradle.spotless") version "6.25.0" apply false
     id("io.github.goooler.shadow") version "8.1.7" apply false
-    id("com.hypherionmc.modutils.modpublisher") version "2.1.5"
+    id("com.hypherionmc.modutils.modpublisher") version "2.1.5" apply false
     `maven-publish`
 }
 
@@ -67,7 +68,9 @@ subprojects {
     apply(plugin = "xyz.wagyourtail.jvmdowngrader")
     apply(plugin = "com.diffplug.spotless")
     apply(plugin = "io.github.goooler.shadow")
-    apply(plugin = "com.hypherionmc.modutils.modpublisher")
+    if (isLoaderSource) {
+        apply(plugin = "com.hypherionmc.modutils.modpublisher")
+    }
     apply(plugin = "maven-publish")
 
     val modName by extra(extModName)
@@ -452,7 +455,7 @@ subprojects {
             }
         }
 
-        publisher {
+        extensions.getByName<ModPublisherGradleExtension>("publisher").apply {
             apiKeys {
                 curseforge(System.getenv("CF_APIKEY"))
                 modrinth(System.getenv("MODRINTH_TOKEN"))
