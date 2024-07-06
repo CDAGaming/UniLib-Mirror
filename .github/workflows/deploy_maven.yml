@@ -38,9 +38,6 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew --build-cache --info --stacktrace build
 
-      - name: Merge Jars with Gradle
-        run: ./gradlew --build-cache --info --stacktrace fusejars
-
       - name: Deploy to Maven
         run: ./gradlew --build-cache --info --stacktrace publish
 

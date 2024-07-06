@@ -38,11 +38,8 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew --build-cache --info --stacktrace build
 
-      - name: Merge Jars with Gradle
-        run: ./gradlew --build-cache --info --stacktrace fusejars
-
       - name: Deploy with Gradle
-        run: ./gradlew --build-cache --info --stacktrace :common:publishModrinth
+        run: ./gradlew --build-cache --info --stacktrace publishModrinth
 
       - uses: actions/upload-artifact@v4
         with:
