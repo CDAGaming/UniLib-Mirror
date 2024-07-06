@@ -49,7 +49,8 @@ With this in mind, please note the following:
       using certain renderers may fail to display properly.
     * Additionally, on 1.15.x exclusively, z-level issues may occur on Screens using this method
 * **Miscellaneous Issues**
-    * Due to obfuscation issues in earlier versions of Minecraft, incorrect data may appear when using certain parts of the mod.
+    * Due to obfuscation issues in earlier versions of Minecraft, incorrect data may appear when using certain parts of
+      the mod.
 
 Additionally, some settings or API calls may perform differently under certain MC versions.
 

@@ -25,9 +25,9 @@
 package com.gitlab.cdagaming.unilib.forge;
 
 import com.gitlab.cdagaming.unilib.UniLib;
+import com.gitlab.cdagaming.unilib.core.CoreUtils;
 import io.github.cdagaming.unicore.utils.MappingUtils;
 import io.github.cdagaming.unicore.utils.OSUtils;
-import com.gitlab.cdagaming.unilib.core.CoreUtils;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 

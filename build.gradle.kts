@@ -372,7 +372,8 @@ subprojects {
             publications {
                 create<MavenPublication>(modId) {
                     groupId = "${rootProject.group}.$modId"
-                    artifactId = "$modName-${project.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
+                    artifactId =
+                        "$modName-${project.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
                     version = versionFormat.replace(Regex("\\s"), "").lowercase()
 
                     artifact(tasks.getByName("jar"))
@@ -404,7 +405,15 @@ subprojects {
             repositories {
                 maven {
                     name = "FirstDarkDev"
-                    url = URI("https://maven.firstdark.dev/${if ("deploymentType"().equals("release", true)) "releases" else "snapshots"}")
+                    url = URI(
+                        "https://maven.firstdark.dev/${
+                            if ("deploymentType"().equals(
+                                    "release",
+                                    true
+                                )
+                            ) "releases" else "snapshots"
+                        }"
+                    )
 
                     credentials {
                         username = System.getenv("MAVEN_USER")
