@@ -69,6 +69,9 @@ dependencies {
     // LeniReflect
     shade("net.lenni0451:Reflect:${"reflect_version"()!!}")
 
+    // ClassGraph
+    shade("io.github.classgraph:classgraph:${"classgraph_version"()!!}")
+
     // SLF4J Dependencies (If below 1.17)
     if (isLegacy || protocol < 755) {
         shade("org.slf4j:slf4j-api:1.7.36")
