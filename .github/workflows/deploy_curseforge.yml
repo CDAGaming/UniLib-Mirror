@@ -6,6 +6,8 @@ env:
   CF_APIKEY: ${{ secrets.CF_APIKEY }}
   MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
   NIGHTBLOOM_TOKEN: ${{ secrets.NIGHTBLOOM_TOKEN }}
+  MAVEN_USER: ${{ secrets.MAVEN_USER }}
+  MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
 
 jobs:
   build:

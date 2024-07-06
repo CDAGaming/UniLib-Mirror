@@ -4,6 +4,8 @@ import xyz.wagyourtail.jvmdg.gradle.task.files.DowngradeFiles
 import xyz.wagyourtail.replace_str.ProcessClasses
 import xyz.wagyourtail.unimined.api.UniminedExtension
 import xyz.wagyourtail.unimined.api.minecraft.task.RemapJarTask
+import java.net.URI
+import java.util.*
 
 plugins {
     java
@@ -12,6 +14,7 @@ plugins {
     id("com.diffplug.gradle.spotless") version "6.25.0" apply false
     id("io.github.goooler.shadow") version "8.1.7" apply false
     id("com.hypherionmc.modutils.modfusioner") version "1.0.12"
+    `maven-publish`
 }
 
 /**
@@ -54,6 +57,7 @@ subprojects {
     apply(plugin = "xyz.wagyourtail.jvmdowngrader")
     apply(plugin = "com.diffplug.spotless")
     apply(plugin = "io.github.goooler.shadow")
+    apply(plugin = "maven-publish")
 
     val modName by extra(extModName)
     val modId by extra(extModId)
@@ -140,8 +144,8 @@ subprojects {
         maven("https://s01.oss.sonatype.org/content/repositories/releases")
         maven("https://s01.oss.sonatype.org/content/repositories/snapshots")
         // HypherionMC Mavens
-        maven("https://maven.firstdarkdev.xyz/releases")
-        maven("https://maven.firstdarkdev.xyz/snapshots")
+        maven("https://maven.firstdark.dev/releases")
+        maven("https://maven.firstdark.dev/snapshots")
         // Mod Integration Mavens
         if (isModern) {
             maven("https://maven.terraformersmc.com/releases/") {
@@ -361,6 +365,52 @@ subprojects {
 
             tasks.shadeDowngradedApi {
                 archiveClassifier = remapJar.archiveClassifier
+            }
+        }
+
+        publishing {
+            publications {
+                create<MavenPublication>(modId) {
+                    groupId = "${rootProject.group}.$modId"
+                    artifactId = "$modName-${project.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
+                    version = versionFormat.replace(Regex("\\s"), "").lowercase()
+
+                    artifact(tasks.getByName("jar"))
+                    if (tasks.findByName("remapJar") != null) {
+                        artifact(tasks.getByName("remapJar"))
+                    } else {
+                        artifact(tasks.getByName("shadowJar"))
+                    }
+                    artifact(tasks.getByName("sourcesJar"))
+
+                    pom {
+                        name.set(modName)
+                        url.set("https://gitlab.com/CDAGaming/UniLib")
+
+                        licenses {
+                            license {
+                                name.set("MIT")
+                                url.set("https://gitlab.com/CDAGaming/UniLib/-/blob/main/LICENSE")
+                            }
+                        }
+
+                        scm {
+                            url.set("https://gitlab.com/CDAGaming/UniLib.git")
+                        }
+                    }
+                }
+            }
+
+            repositories {
+                maven {
+                    name = "FirstDarkDev"
+                    url = URI("https://maven.firstdark.dev/${if ("deploymentType"().equals("release", true)) "releases" else "snapshots"}")
+
+                    credentials {
+                        username = System.getenv("MAVEN_USER")
+                        password = System.getenv("MAVEN_PASS")
+                    }
+                }
             }
         }
     }
