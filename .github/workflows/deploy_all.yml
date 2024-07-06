@@ -47,7 +47,13 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: artifacts
-          path: build/libs/*.jar
+          path: |
+            **/build/libs/
+            !build/libs/
+            !**/*-dev.jar
+            !**/*-shadow.jar
+            !**/*-transformProduction*.jar
+            !**/testmod*/
 
       - name: stop daemon
         run: ./gradlew --stop
