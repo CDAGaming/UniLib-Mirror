@@ -67,10 +67,8 @@ subprojects {
     apply(plugin = "xyz.wagyourtail.jvmdowngrader")
     apply(plugin = "com.diffplug.spotless")
     apply(plugin = "io.github.goooler.shadow")
+    apply(plugin = "com.hypherionmc.modutils.modpublisher")
     apply(plugin = "maven-publish")
-    if (isLoaderSource) {
-        apply(plugin = "com.hypherionmc.modutils.modpublisher")
-    }
 
     val modName by extra(extModName)
     val modId by extra(extModId)
@@ -395,6 +393,7 @@ subprojects {
                     artifact(tasks.getByName("jar"))
                     if (shouldDowngrade) {
                         artifact(tasks.getByName("downgradeJar"))
+                        artifact(tasks.getByName("shadeDowngradedApi"))
                     } else {
                         if (tasks.findByName("remapJar") != null) {
                             artifact(tasks.getByName("remapJar"))
