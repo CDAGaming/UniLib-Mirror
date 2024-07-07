@@ -462,7 +462,7 @@ subprojects {
                 nightbloom(System.getenv("NIGHTBLOOM_TOKEN"))
             }
 
-            debug = true
+            debug = false
             curseID = "1056812"
             modrinthID = "nT86WUER"
             nightbloomID = modId
