@@ -4,6 +4,35 @@ on:
   push:
     branches-ignore:
       - l10n_master
+  workflow_dispatch:
+    inputs:
+      release_all:
+        description: 'Deploy All'
+        required: true
+        default: 'false'
+      release_curseforge:
+        description: 'Deploy CurseForge'
+        required: true
+        default: 'false'
+      release_modrinth:
+        description: 'Deploy Modrinth'
+        required: true
+        default: 'false'
+      release_nightbloom:
+        description: 'Deploy NightBloom'
+        required: true
+        default: 'false'
+      release_maven:
+        description: 'Deploy Maven'
+        required: true
+        default: 'false'
+
+env:
+  CF_APIKEY: ${{ secrets.CF_APIKEY }}
+  MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+  NIGHTBLOOM_TOKEN: ${{ secrets.NIGHTBLOOM_TOKEN }}
+  MAVEN_USER: ${{ secrets.MAVEN_USER }}
+  MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
 
 jobs:
   build:
@@ -33,6 +62,26 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew --build-cache --info --stacktrace build
+
+      - name: Deploy to CurseForge
+        if: |
+          github.event.inputs.release_all == 'true' && github.event.inputs.release_curseforge == 'true'
+        run: ./gradlew --build-cache --info --stacktrace publishCurseforge
+
+      - name: Deploy to Modrinth
+        if: |
+          github.event.inputs.release_all == 'true' && github.event.inputs.release_modrinth == 'true'
+        run: ./gradlew --build-cache --info --stacktrace publishModrinth
+
+      - name: Deploy to NightBloom
+        if: |
+          github.event.inputs.release_all == 'true' && github.event.inputs.release_nightbloom == 'true'
+        run: ./gradlew --build-cache --info --stacktrace publishNightbloom
+
+      - name: Deploy to Maven
+        if: |
+          github.event.inputs.release_all == 'true' && github.event.inputs.release_maven == 'true'
+        run: ./gradlew --build-cache --info --stacktrace publish
 
       - uses: actions/upload-artifact@v4
         with:
