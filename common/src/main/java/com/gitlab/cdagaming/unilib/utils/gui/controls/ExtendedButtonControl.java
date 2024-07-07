@@ -24,7 +24,6 @@
 
 package com.gitlab.cdagaming.unilib.utils.gui.controls;
 
-import com.gitlab.cdagaming.unilib.ModUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
@@ -243,7 +242,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
                     200 - xOffset, hoverValue,
                     xOffset, getControlHeight(),
                     getZLevel(),
-                    RenderUtils.getButtonTextures(mc, ModUtils.MCProtocolID)
+                    RenderUtils.getButtonTexture(mc)
             );
         }
     }

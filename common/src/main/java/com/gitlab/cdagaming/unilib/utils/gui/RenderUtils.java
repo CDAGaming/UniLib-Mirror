@@ -85,8 +85,18 @@ public class RenderUtils {
      * @param protocol The Protocol to Target for this operation
      * @return the default Screen Textures
      */
-    public static ResourceLocation getScreenTextures(@Nonnull final Minecraft mc, final int protocol) {
+    public static ResourceLocation getScreenTexture(@Nonnull final Minecraft mc, final int protocol) {
         return getTextureData(mc, ScreenConstants.getDefaultGUIBackground(protocol)).getThird();
+    }
+
+    /**
+     * Retrieve the default Screen Textures as Texture Data
+     *
+     * @param mc The Minecraft Instance
+     * @return the default Screen Textures
+     */
+    public static ResourceLocation getScreenTexture(@Nonnull final Minecraft mc) {
+        return getScreenTexture(mc, ModUtils.MCProtocolID);
     }
 
     /**
@@ -96,8 +106,18 @@ public class RenderUtils {
      * @param protocol The Protocol to Target for this operation
      * @return the default Widget Textures
      */
-    public static ResourceLocation getButtonTextures(@Nonnull final Minecraft mc, final int protocol) {
+    public static ResourceLocation getButtonTexture(@Nonnull final Minecraft mc, final int protocol) {
         return getTextureData(mc, ScreenConstants.getDefaultButtonBackground(protocol)).getThird();
+    }
+
+    /**
+     * Retrieve the default Widget Textures as Texture Data
+     *
+     * @param mc The Minecraft Instance
+     * @return the default Widget Textures
+     */
+    public static ResourceLocation getButtonTexture(@Nonnull final Minecraft mc) {
+        return getButtonTexture(mc, ModUtils.MCProtocolID);
     }
 
     /**
