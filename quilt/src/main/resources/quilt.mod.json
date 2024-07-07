@@ -1,0 +1,45 @@
+{
+    "schema_version": 1,
+    "quilt_loader": {
+      "id": "${mod_id}",
+      "group": "com.gitlab.cdagaming",
+      "version": "${version}",
+      "metadata": {
+        "name": "${mod_name}",
+        "description": "A common set of Utilities, designed for over 50 versions of Minecraft!",
+        "contributors": {
+          "CDAGaming": "Owner"
+        },
+        "contact": {
+          "homepage": "https://www.curseforge.com/minecraft/mc-mods/unilib",
+          "sources": "https://gitlab.com/CDAGaming/UniLib",
+          "issues": "https://gitlab.com/CDAGaming/UniLib/issues"
+        },
+        "license": "MIT",
+        "icon": "logo.png"
+      },
+      "intermediate_mappings": "net.fabricmc:intermediary",
+      "entrypoints": {
+        "client_init": "com.gitlab.cdagaming.unilib.quilt.UniLibQuilt"
+      },
+      "depends": [
+        {
+          "id": "quilt_loader",
+          "versions": "${loader_version_range}"
+        },
+        {
+          "id": "minecraft",
+          "versions": {
+            "all": [
+              "${game_version_range_start}",
+              "${game_version_range_end}"
+            ]
+          }
+        },
+        {
+          "id": "java",
+          "versions": ">=17"
+        }
+      ]
+    }
+  }
