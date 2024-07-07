@@ -192,12 +192,21 @@ public class ScrollableListControl extends GuiSlot {
     }
 
     /**
+     * Retrieve the Game Instance attached to this Screen
+     *
+     * @return the current game instance
+     */
+    public Minecraft getGameInstance() {
+        return mc;
+    }
+
+    /**
      * Get the Current Font Renderer for this Control
      *
      * @return The Current Font Renderer for this Control
      */
     public FontRenderer getFontRenderer() {
-        return mc.fontRenderer != null ? mc.fontRenderer : RenderUtils.getDefaultFontRenderer();
+        return getGameInstance().fontRenderer != null ? getGameInstance().fontRenderer : RenderUtils.getDefaultFontRenderer();
     }
 
     /**
@@ -241,7 +250,7 @@ public class ScrollableListControl extends GuiSlot {
      * @param mouseYIn     The Mouse's Current Y Position
      */
     public void renderSlotItem(final String originalName, final int xPos, final int yPos, final int widthIn, final int heightIn, final int mouseXIn, final int mouseYIn) {
-        RenderUtils.renderScrollingString(mc,
+        RenderUtils.renderScrollingString(getGameInstance(),
                 getFontRenderer(),
                 originalName,
                 xPos + (RenderUtils.getStringWidth(getFontRenderer(), originalName) / 2),
