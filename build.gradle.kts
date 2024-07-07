@@ -1,5 +1,5 @@
 import com.diffplug.gradle.spotless.SpotlessExtension
-import com.hypherionmc.modfusioner.plugin.FusionerExtension
+import com.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension
 import xyz.wagyourtail.jvmdg.gradle.task.files.DowngradeFiles
 import xyz.wagyourtail.replace_str.ProcessClasses
 import xyz.wagyourtail.unimined.api.UniminedExtension
@@ -13,7 +13,7 @@ plugins {
     id("xyz.wagyourtail.jvmdowngrader") version "0.7.2"
     id("com.diffplug.gradle.spotless") version "6.25.0" apply false
     id("io.github.goooler.shadow") version "8.1.7" apply false
-    id("com.hypherionmc.modutils.modfusioner") version "1.0.12"
+    id("com.hypherionmc.modutils.modpublisher") version "2.1.5" apply false
     `maven-publish`
 }
 
@@ -36,6 +36,7 @@ val extClassPath = "${rootProject.group}".replace(".", "/") + "/$extModId"
 
 val extVersionFormat = "$extBaseVersionLabel+$extMcVersion"
 val extFileFormat = "$extModName-$extVersionFormat"
+val extDisplayFormat = extVersionFormat.replace(Regex("\\s"), "").lowercase()
 
 val extProtocol = "mc_protocol"()!!.toInt()
 val extIsLegacy = "isLegacy"()!!.toBoolean()
@@ -44,19 +45,32 @@ val extIsNeoForge = "isNeoForge"()!!.toBoolean()
 val extIsModern = !extIsLegacy && extProtocol >= 498
 val extIsMCPJar = extIsJarMod && "mc_mappings_type"() == "mcp"
 
-val extFmlName = if (extIsJarMod) "modloader" else "forge"
+val extFmlName = if (extIsNeoForge) "neoforge" else if (extIsJarMod) "modloader" else "forge"
 
 // Only apply ATs to forge on non-legacy builds, or on Legacy Protocols above 1.5
 // due to the way Forge requires core-mods for lower version usage
 val extAWFile = file("$rootDir/fabric/src/main/resources/$extModId.accesswidener")
 val extCanUseATs = extAWFile.exists() && (!extIsLegacy || extProtocol > 60)
 
+// Setup Game Versions to upload for
+val uploadVersions = mutableListOf("mc_version"()!!)
+for (v in "additional_mc_versions"()!!.split(",")) {
+    if (v.isNotEmpty()) {
+        uploadVersions.add(v)
+    }
+}
+
 subprojects {
+    val isLoaderSource = path != ":common"
+
     apply(plugin = "java")
     apply(plugin = "xyz.wagyourtail.unimined")
     apply(plugin = "xyz.wagyourtail.jvmdowngrader")
     apply(plugin = "com.diffplug.spotless")
     apply(plugin = "io.github.goooler.shadow")
+    if (isLoaderSource) {
+        apply(plugin = "com.hypherionmc.modutils.modpublisher")
+    }
     apply(plugin = "maven-publish")
 
     val modName by extra(extModName)
@@ -66,6 +80,7 @@ subprojects {
     val classPath by extra(extClassPath)
     val versionFormat by extra(extVersionFormat)
     val fileFormat by extra(extFileFormat)
+    val displayFormat by extra(extDisplayFormat)
     val protocol by extra(extProtocol)
     val isLegacy by extra(extIsLegacy)
     val isJarMod by extra(extIsJarMod)
@@ -79,6 +94,9 @@ subprojects {
     val versionLabel by extra(extVersionLabel)
     val mcVersion by extra("mc_version"()!!)
     val mcMappingsType by extra("mc_mappings_type"())
+
+    val fileName = if (name == "forge") fmlName else name
+    val displayLoaderName = name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 
     extensions.getByType<SpotlessExtension>().apply {
         java {
@@ -99,7 +117,7 @@ subprojects {
     val buildVersion = "build_java_version"()?.let { JavaVersion.toVersion(it) }!!
     val buildVersionInt = Integer.parseInt(buildVersion.majorVersion)
 
-    val shouldDowngrade = sourceVersionInt > buildVersionInt && path != ":common"
+    val shouldDowngrade = sourceVersionInt > buildVersionInt && isLoaderSource
 
     val sourceSets = extensions.getByType<SourceSetContainer>()
 
@@ -372,15 +390,19 @@ subprojects {
             publications {
                 create<MavenPublication>(modId) {
                     groupId = "${rootProject.group}.$modId"
-                    artifactId =
-                        "$modName-${project.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
-                    version = versionFormat.replace(Regex("\\s"), "").lowercase()
+                    artifactId = "$modName-$displayLoaderName"
+                    version = displayFormat
 
                     artifact(tasks.getByName("jar"))
-                    if (tasks.findByName("remapJar") != null) {
-                        artifact(tasks.getByName("remapJar"))
+                    if (shouldDowngrade) {
+                        artifact(tasks.getByName("downgradeJar"))
+                        artifact(tasks.getByName("shadeDowngradedApi"))
                     } else {
-                        artifact(tasks.getByName("shadowJar"))
+                        if (tasks.findByName("remapJar") != null) {
+                            artifact(tasks.getByName("remapJar"))
+                        } else {
+                            artifact(tasks.getByName("shadowJar"))
+                        }
                     }
                     artifact(tasks.getByName("sourcesJar"))
 
@@ -423,24 +445,37 @@ subprojects {
             }
         }
     }
-}
 
-fusioner {
-    packageGroup = rootProject.group as String
-    mergedJarName = extFileFormat
-    outputDirectory = "build/libs"
+    if (isLoaderSource) {
+        val targetFile = "build/libs/$fileFormat-$fileName.jar"
+        val uploadLoaders = mutableListOf(fileName)
+        for (v in "additional_${name}_loaders"()!!.split(",")) {
+            if (v.isNotEmpty()) {
+                uploadLoaders.add(v)
+            }
+        }
 
-    // Forge / ModLoader
-    customConfigurations.add(FusionerExtension.CustomConfiguration().apply {
-        projectName = extFmlName
-        inputFile = "build/libs/$extFileFormat-$extFmlName.jar"
-    })
+        extensions.getByName<ModPublisherGradleExtension>("publisher").apply {
+            apiKeys {
+                curseforge(System.getenv("CF_APIKEY"))
+                modrinth(System.getenv("MODRINTH_TOKEN"))
+                nightbloom(System.getenv("NIGHTBLOOM_TOKEN"))
+            }
 
-    fabricConfiguration = FusionerExtension.FabricConfiguration().apply {
-        inputFile = "build/libs/$extFileFormat-fabric.jar"
+            debug = true
+            curseID = "1056812"
+            modrinthID = "nT86WUER"
+            nightbloomID = modId
+            versionType = "deploymentType"()!!.lowercase()
+            changelog = file("$rootDir/Changes.md").readText()
+            projectVersion = "$displayFormat-$fileName" // Modrinth Only
+            displayName = "[$displayLoaderName $mcVersionLabel] $modName v${"versionId"()}${if (versionLabel.isEmpty()) "" else " $versionLabel"}"
+            gameVersions = uploadVersions
+            loaders = uploadLoaders
+            curseEnvironment = "client"
+            artifact = targetFile
+        }
     }
-
-    relocateDuplicate("com.gitlab.cdagaming.$extModId.core")
 }
 
 tasks {
