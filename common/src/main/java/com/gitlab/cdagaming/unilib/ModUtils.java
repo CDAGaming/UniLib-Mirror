@@ -28,6 +28,7 @@ import com.gitlab.cdagaming.unilib.core.CoreUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import io.github.cdagaming.unicore.utils.TranslationUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.src.ThreadSleepForever;
 import net.minecraft.src.UnexpectedThrowable;
 
 import java.util.function.BiConsumer;
@@ -136,7 +137,7 @@ public class ModUtils {
     public static void ThrowException(String message, Throwable e) {
         Minecraft game = getMinecraftInstance();
         if (game != null) {
-            game.displayUnexpectedThrowable(new UnexpectedThrowable(message, e));
+            game.handleEntityTeleport(new UnexpectedThrowable(message, e));
         } else {
             throw new RuntimeException(e);
         }
@@ -151,8 +152,8 @@ public class ModUtils {
                 group.enumerate(threads);
 
                 for (Thread thread : threads) {
-                    if (thread.getName().equals("Minecraft main thread")) {
-                        localInstance = (Minecraft) StringUtils.getField(Thread.class, thread, "target");
+                    if (thread.getName().equals("Timer hack thread")) {
+                        localInstance = (Minecraft) StringUtils.getField(ThreadSleepForever.class, thread, "mc", "field_1588_a", "a");
                         break;
                     }
                 }
