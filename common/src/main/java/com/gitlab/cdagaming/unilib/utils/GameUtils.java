@@ -71,7 +71,7 @@ public class GameUtils {
      * @return the Game Session Instance
      */
     public static Session getSession(final Minecraft client) {
-        return client != null ? client.session : null;
+        return client != null ? client.field_6320_i : null;
     }
 
     /**
@@ -90,7 +90,7 @@ public class GameUtils {
      * @return the Game Session Username
      */
     public static String getUsername(final Minecraft client) {
-        return getSession(client).playerName;
+        return getSession(client).inventory;
     }
 
     /**

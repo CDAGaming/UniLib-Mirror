@@ -31,8 +31,7 @@ import net.minecraft.src.BaseMod;
  * @author CDAGaming
  */
 public class mod_UniLib extends BaseMod {
-    @Override
-    public void ModsLoaded() {
+    public mod_UniLib() {
         // Initialize a New Instance of the Mod, triggering Ticking
         new UniLibML();
     }
