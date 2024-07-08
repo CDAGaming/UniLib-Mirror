@@ -60,6 +60,9 @@ for (v in "additional_mc_versions"()!!.split(",")) {
     }
 }
 
+// Setup Maven Info
+val isMavenRelease = "mavenType"().equals("release", true)
+
 subprojects {
     val isLoaderSource = path != ":common"
 
@@ -386,60 +389,58 @@ subprojects {
             }
         }
 
-        publishing {
-            publications {
-                create<MavenPublication>(modId) {
-                    groupId = "${rootProject.group}.$modId"
-                    artifactId = "$modName-$displayLoaderName"
-                    version = displayFormat
+        if (isLoaderSource) {
+            publishing {
+                publications {
+                    create<MavenPublication>(modId) {
+                        groupId = "${rootProject.group}.$modId"
+                        artifactId = "$modName-$displayLoaderName"
+                        version = displayFormat
 
-                    artifact(tasks.getByName("jar"))
-                    if (shouldDowngrade) {
-                        artifact(tasks.getByName("downgradeJar"))
-                        artifact(tasks.getByName("shadeDowngradedApi"))
-                    } else {
-                        if (tasks.findByName("remapJar") != null) {
-                            artifact(tasks.getByName("remapJar"))
+                        artifact(tasks.getByName("jar"))
+                        if (shouldDowngrade) {
+                            artifact(tasks.getByName("downgradeJar"))
+                            artifact(tasks.getByName("shadeDowngradedApi"))
                         } else {
-                            artifact(tasks.getByName("shadowJar"))
-                        }
-                    }
-                    artifact(tasks.getByName("sourcesJar"))
-
-                    pom {
-                        name.set(modName)
-                        url.set("https://gitlab.com/CDAGaming/UniLib")
-
-                        licenses {
-                            license {
-                                name.set("MIT")
-                                url.set("https://gitlab.com/CDAGaming/UniLib/-/blob/main/LICENSE")
+                            if (tasks.findByName("remapJar") != null) {
+                                artifact(tasks.getByName("remapJar"))
+                            } else {
+                                artifact(tasks.getByName("shadowJar"))
                             }
                         }
+                        artifact(tasks.getByName("sourcesJar"))
 
-                        scm {
-                            url.set("https://gitlab.com/CDAGaming/UniLib.git")
+                        pom {
+                            name.set(modName)
+                            url.set("https://gitlab.com/CDAGaming/UniLib")
+
+                            licenses {
+                                license {
+                                    name.set("MIT")
+                                    url.set("https://gitlab.com/CDAGaming/UniLib/-/blob/main/LICENSE")
+                                }
+                            }
+
+                            scm {
+                                url.set("https://gitlab.com/CDAGaming/UniLib.git")
+                            }
                         }
                     }
                 }
-            }
 
-            repositories {
-                maven {
-                    name = "FirstDarkDev"
-                    url = URI(
-                        "https://maven.firstdark.dev/${
-                            if ("deploymentType"().equals(
-                                    "release",
-                                    true
-                                )
-                            ) "releases" else "snapshots"
-                        }"
-                    )
+                repositories {
+                    maven {
+                        name = "FirstDarkDev"
+                        url = URI(
+                            "https://maven.firstdark.dev/${
+                                if (isMavenRelease) "releases" else "snapshots"
+                            }"
+                        )
 
-                    credentials {
-                        username = System.getenv("MAVEN_USER")
-                        password = System.getenv("MAVEN_PASS")
+                        credentials {
+                            username = System.getenv("MAVEN_USER")
+                            password = System.getenv("MAVEN_PASS")
+                        }
                     }
                 }
             }
