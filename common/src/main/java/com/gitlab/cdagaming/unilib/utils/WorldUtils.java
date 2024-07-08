@@ -104,10 +104,10 @@ public class WorldUtils {
     public static String getWeather(final World world) {
         String name = "clear";
         if (world != null) {
-            final WorldInfo info = world.getWorldInfo();
-            if (info.getThundering()) {
+            final WorldInfo info = world.func_22144_v();
+            if (info.func_27396_m()) {
                 name = "thunder";
-            } else if (info.getRaining()) {
+            } else if (info.func_27397_o()) {
                 name = "rain";
             } else {
                 name = "clear";
