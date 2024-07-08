@@ -157,7 +157,7 @@ public class ItemUtils {
         String result = "";
         if (!isItemEmpty(stack)) {
             result = StringUtils.getOrDefault(
-                    stack.getItem().getStatName()
+                    stack.getItem().func_25009_k()
             );
         }
 
