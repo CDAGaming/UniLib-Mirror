@@ -26,11 +26,6 @@ on:
         required: true
         default: false
         type: boolean
-      deploy_maven:
-        description: 'Deploy Maven'
-        required: true
-        default: true
-        type: boolean
 
 env:
   CF_APIKEY: ${{ secrets.CF_APIKEY }}
@@ -68,6 +63,9 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew --build-cache --info --stacktrace build
 
+      - name: Deploy to Maven
+        run: ./gradlew --build-cache --info --stacktrace publish
+
       - name: Deploy to CurseForge
         if: |
           github.event.inputs.deploy_all || github.event.inputs.deploy_curseforge
@@ -82,11 +80,6 @@ jobs:
         if: |
           github.event.inputs.deploy_all || github.event.inputs.deploy_nightbloom
         run: ./gradlew --build-cache --info --stacktrace publishNightbloom
-
-      - name: Deploy to Maven
-        if: |
-          github.event.inputs.deploy_all || github.event.inputs.deploy_maven
-        run: ./gradlew --build-cache --info --stacktrace publish
 
       - uses: actions/upload-artifact@v4
         with:
