@@ -53,7 +53,7 @@ public class WorldUtils {
     public static World getWorld(final Entity entity) {
         return entity != null ? (World) StringUtils.getField(
                 Entity.class, entity,
-                "worldObj", "field_615_ag", "ag"
+                "worldObj", "af"
         ) : null;
     }
 
