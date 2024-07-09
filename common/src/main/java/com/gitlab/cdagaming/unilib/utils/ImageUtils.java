@@ -31,8 +31,6 @@ import io.github.cdagaming.unicore.impl.Tuple;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import io.github.cdagaming.unicore.utils.UrlUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.util.ResourceLocation;
 
 import javax.imageio.ImageIO;
 import java.io.ByteArrayInputStream;
@@ -65,7 +63,7 @@ public class ImageUtils {
      * <p>
      * Format: textureName;[[textureInputType, textureObj], [textureIndex, imageData], textureData]
      */
-    private static final Map<String, Tuple<Pair<InputType, Object>, Pair<Integer, List<ImageFrame>>, List<ResourceLocation>>> cachedImages = StringUtils.newConcurrentHashMap();
+    private static final Map<String, Tuple<Pair<InputType, Object>, Pair<Integer, List<ImageFrame>>, List<String>>> cachedImages = StringUtils.newConcurrentHashMap();
 
     static {
         CoreUtils.getThreadFactory().newThread(
@@ -142,7 +140,7 @@ public class ImageUtils {
      * @param url         The url to retrieve the texture
      * @return The Resulting Texture Data
      */
-    public static ResourceLocation getTextureFromUrl(final Minecraft instance, final String textureName, final String url) {
+    public static String getTextureFromUrl(final Minecraft instance, final String textureName, final String url) {
         try {
             return getTextureFromUrl(instance, textureName, URI.create(url).toURL());
         } catch (Throwable ex) {
@@ -159,7 +157,7 @@ public class ImageUtils {
      * @param url         The url to retrieve the texture
      * @return The Resulting Texture Data
      */
-    public static ResourceLocation getTextureFromUrl(final Minecraft instance, final String textureName, final URL url) {
+    public static String getTextureFromUrl(final Minecraft instance, final String textureName, final URL url) {
         try {
             return getTextureFromUrl(instance, textureName, new Pair<>(InputType.Url, url));
         } catch (Throwable ex) {
@@ -176,7 +174,7 @@ public class ImageUtils {
      * @param url         The url to retrieve the texture
      * @return The Resulting Texture Data
      */
-    public static ResourceLocation getTextureFromUrl(final Minecraft instance, final String textureName, final File url) {
+    public static String getTextureFromUrl(final Minecraft instance, final String textureName, final File url) {
         try {
             return getTextureFromUrl(instance, textureName, new Pair<>(InputType.FileData, url));
         } catch (Throwable ex) {
@@ -193,7 +191,7 @@ public class ImageUtils {
      * @param url         The url to retrieve the texture
      * @return The Resulting Texture Data
      */
-    public static ResourceLocation getTextureFromUrl(final Minecraft instance, final String textureName, final Object url) {
+    public static String getTextureFromUrl(final Minecraft instance, final String textureName, final Object url) {
         if (url instanceof File file) {
             return getTextureFromUrl(instance, textureName, file);
         } else if (url instanceof URL link) {
@@ -219,7 +217,7 @@ public class ImageUtils {
      * @param stream      Streaming Data containing data to read later
      * @return The Resulting Texture Data
      */
-    public static ResourceLocation getTextureFromUrl(final Minecraft instance, final String textureName, final Pair<InputType, Object> stream) {
+    public static String getTextureFromUrl(final Minecraft instance, final String textureName, final Pair<InputType, Object> stream) {
         if (!cachedImages.containsKey(textureName) || !cachedImages.get(textureName).getFirst().equals(stream)) {
             // Setup Initial data if not present (Or reset if the stream has changed)
             //
@@ -241,9 +239,9 @@ public class ImageUtils {
             final boolean shouldRepeat = textureName.endsWith(".gif") || stream.getSecond().toString().contains("gif");
             final boolean doesContinue = bufferData.getFirst() < bufferData.getSecond().size() - 1;
 
-            final List<ResourceLocation> resources = cachedImages.get(textureName).getThird();
+            final List<String> resources = cachedImages.get(textureName).getThird();
             if (bufferData.getFirst() < resources.size()) {
-                final ResourceLocation texLocation = resources.get(bufferData.getFirst());
+                final String texLocation = resources.get(bufferData.getFirst());
                 if (bufferData.getSecond().get(bufferData.getFirst()).shouldRenderNext()) {
                     if (doesContinue) {
                         bufferData.getSecond().get(bufferData.setFirst(bufferData.getFirst() + 1)).setRenderTime();
@@ -254,8 +252,9 @@ public class ImageUtils {
                 return texLocation;
             }
             try {
-                final DynamicTexture dynTexture = new DynamicTexture(bufferData.getSecond().get(bufferData.getFirst()).getImage());
-                final ResourceLocation cachedTexture = instance.getTextureManager().getDynamicTextureLocation(textureName.toLowerCase() + (shouldRepeat ? "_" + cachedImages.get(textureName).getSecond().getFirst() : ""), dynTexture);
+                final String cachedTexture = Integer.toString(
+                        instance.renderEngine.allocateAndSetupTexture(bufferData.getSecond().get(bufferData.getFirst()).getImage())
+                );
                 if (bufferData.getSecond().get(bufferData.getFirst()).shouldRenderNext()) {
                     if (doesContinue) {
                         bufferData.getSecond().get(bufferData.setFirst(bufferData.getFirst() + 1)).setRenderTime();
@@ -282,8 +281,8 @@ public class ImageUtils {
      * @param location The texture to parse
      * @return Whether the specified Texture lacks critical information
      */
-    public static boolean isTextureNull(final ResourceLocation location) {
-        return location == null || (StringUtils.isNullOrEmpty(location.getResourceDomain()) || StringUtils.isNullOrEmpty(location.getResourcePath()));
+    public static boolean isTextureNull(final String location) {
+        return location == null || StringUtils.isNullOrEmpty(location);
     }
 
     /**
