@@ -3,8 +3,8 @@
 A common set of Utilities, designed for over 50 versions of Minecraft!
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/5e0667f7208b49ecab1a6affbfa6cbf7)](https://app.codacy.com/gl/CDAGaming/CraftPresence/dashboard?utm_source=gl&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
-[![Pipeline Status](https://github.com/CDAGaming/UniLib-Mirror/actions/workflows/build.yml/badge.svg?branch=master)](https://gitlab.com/CDAGaming/UniLib/commits/master)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/5930b7c5fe5c4477ac53500d06705e06)](https://app.codacy.com/gl/CDAGaming/UniLib/dashboard?utm_source=gl&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![Pipeline Status](https://github.com/CDAGaming/UniLib-Mirror/actions/workflows/build.yml/badge.svg?branch=main)](https://gitlab.com/CDAGaming/UniLib/commits/master)
 
 [![CurseForge-Downloads](https://cf.way2muchnoise.eu/full_unilib_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/unilib)
 [![CurseForge-Availability](https://cf.way2muchnoise.eu/versions/unilib.svg)](https://www.curseforge.com/minecraft/mc-mods/unilib)
