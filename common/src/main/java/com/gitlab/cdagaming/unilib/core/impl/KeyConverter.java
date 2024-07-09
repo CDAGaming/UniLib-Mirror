@@ -25,11 +25,11 @@
 package com.gitlab.cdagaming.unilib.core.impl;
 
 import com.gitlab.cdagaming.unilib.core.CoreUtils;
-import io.github.cdagaming.unicore.impl.TriFunction;
 import io.github.cdagaming.unicore.utils.StringUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -307,11 +307,11 @@ public class KeyConverter {
      * Determine the LWJGL KeyCode Name for the inputted KeyCode
      *
      * @param original A KeyCode, in Integer Form
-     * @param fallback The function to fallback on, if failed to get a name
      * @param protocol The protocol to Target for this operation
+     * @param fallback The function to fallback on, if failed to get a name
      * @return Either an LWJGL KeyCode Name or the KeyCode if none can be found
      */
-    public static String getKeyName(final int original, final TriFunction<Integer, Integer, String, String> fallback, final int protocol) {
+    public static String getKeyName(final int original, final int protocol, final BiFunction<Integer, Integer, String> fallback) {
         final boolean isLwjgl2 = protocol <= 340;
         final int unknownKeyCode = isLwjgl2 ? -1 : 0;
         final String unknownKeyName = (isLwjgl2 ? fromGlfw : toGlfw).get(unknownKeyCode).name();
@@ -321,10 +321,12 @@ public class KeyConverter {
             final Map<Integer, KeyBindMapping> mappings = isLwjgl2 ? toGlfw : fromGlfw;
             if (mappings.containsKey(original)) {
                 return mappings.get(original).name();
-            } else if (fallback != null) {
+            } else if (fallback != null && original != unknownKeyCode) {
                 // If no other Mapping Layer contains the KeyCode Name,
-                // Fallback to alternative methods to retrieve the KeyCode Name
-                return fallback.apply(original, unknownKeyCode, unknownKeyName);
+                // fallback to alternative methods to retrieve the KeyCode Name
+                return StringUtils.getOrDefault(fallback.apply(original, protocol), Integer.toString(original));
+            } else {
+                return unknownKeyName;
             }
         }
         // If Not a Valid KeyCode, return the appropriate Unknown Keycode

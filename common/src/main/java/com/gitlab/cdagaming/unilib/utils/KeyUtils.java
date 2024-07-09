@@ -27,7 +27,7 @@ package com.gitlab.cdagaming.unilib.utils;
 import com.gitlab.cdagaming.unilib.ModUtils;
 import com.gitlab.cdagaming.unilib.core.CoreUtils;
 import com.gitlab.cdagaming.unilib.core.impl.KeyConverter;
-import io.github.cdagaming.unicore.impl.TriFunction;
+import io.github.cdagaming.unicore.impl.Pair;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiControls;
@@ -38,10 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 /**
  * Keyboard Utilities to Parse KeyCodes and handle KeyCode Events
@@ -198,20 +195,10 @@ public class KeyUtils {
      * @return Either an LWJGL KeyCode Name or the KeyCode if none can be found
      */
     public String getKeyName(final int original) {
-        return KeyConverter.getKeyName(original, (originalKeyCode, unknownKeyCode, unknownKeyName) -> {
-            // If no other Mapping Layer contains the KeyCode Name,
-            // Fallback to LWJGL Methods to retrieve the KeyCode Name
-            final String altKeyName = Integer.toString(originalKeyCode);
-            String keyName;
-            if (!originalKeyCode.equals(unknownKeyCode)) {
-                keyName = Keyboard.getKeyName(originalKeyCode);
-            } else {
-                keyName = unknownKeyName;
-            }
-
-            // If Key Name is not Empty or Null, use that, otherwise use original
-            return StringUtils.getOrDefault(keyName, altKeyName);
-        }, protocol);
+        return KeyConverter.getKeyName(
+                original, protocol,
+                (originalKeyCode, inputProtocol) -> Keyboard.getKeyName(originalKeyCode)
+        );
     }
 
     /**
@@ -256,7 +243,7 @@ public class KeyUtils {
                                   final Runnable onPress,
                                   final BiConsumer<Integer, Boolean> onBind,
                                   final Predicate<Integer> onOutdated,
-                                  final TriFunction<Throwable, String, KeyBindData, Boolean> callback) {
+                                  final BiFunction<Throwable, Pair<String, KeyBindData>, Boolean> callback) {
         if (areKeysRegistered()) {
             throw new UnsupportedOperationException("KeyBindings already registered!");
         }
@@ -300,7 +287,7 @@ public class KeyUtils {
                                   final Runnable onPress,
                                   final BiConsumer<Integer, Boolean> onBind,
                                   final Predicate<Integer> onOutdated,
-                                  final TriFunction<Throwable, String, KeyBindData, Boolean> callback) {
+                                  final BiFunction<Throwable, Pair<String, KeyBindData>, Boolean> callback) {
         return registerKey(
                 id, name, (description) -> description,
                 category, (categoryName) -> categoryName,
@@ -331,7 +318,7 @@ public class KeyUtils {
                                   final Runnable onPress,
                                   final BiConsumer<Integer, Boolean> onBind,
                                   final Predicate<Integer> onOutdated,
-                                  final TriFunction<Throwable, String, KeyBindData, Boolean> callback) {
+                                  final BiFunction<Throwable, Pair<String, KeyBindData>, Boolean> callback) {
         return registerKey(
                 id, name,
                 category,
@@ -427,7 +414,7 @@ public class KeyUtils {
                             } catch (Throwable ex) {
                                 boolean resetKey;
                                 if (keyData.errorCallback() != null) {
-                                    resetKey = keyData.errorCallback().apply(ex, keyName, keyData);
+                                    resetKey = keyData.errorCallback().apply(ex, new Pair<>(keyName, keyData));
                                 } else {
                                     CoreUtils.LOG.error(ex);
                                     resetKey = true;
@@ -557,7 +544,7 @@ public class KeyUtils {
                               Supplier<String> detailsSupplier,
                               Runnable runEvent, BiConsumer<Integer, Boolean> configEvent,
                               Predicate<Integer> vanillaPredicate,
-                              TriFunction<Throwable, String, KeyBindData, Boolean> errorCallback) {
+                              BiFunction<Throwable, Pair<String, KeyBindData>, Boolean> errorCallback) {
         /**
          * Retrieve the category for this KeyBind
          *

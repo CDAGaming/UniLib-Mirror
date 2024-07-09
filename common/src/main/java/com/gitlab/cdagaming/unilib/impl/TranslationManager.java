@@ -52,7 +52,8 @@ public record TranslationManager(Minecraft client,
         this.client = client;
         this.instance = instance;
 
-        instance().setResourceSupplier((modId, assetsPath, langPath) -> {
+        instance().setResourceSupplier((data, langPath) -> {
+            final String modId = data.getModId();
             final List<InputStream> results = StringUtils.newArrayList();
             try {
                 final List<IResource> resources = client().getResourceManager().getAllResources(ResourceUtils.getResource(modId, langPath));
