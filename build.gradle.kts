@@ -99,7 +99,8 @@ subprojects {
     val mcMappingsType by extra("mc_mappings_type"())
 
     val fileName = if (name == "forge") fmlName else name
-    val displayLoaderName = name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+    val displayLoaderName =
+        name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 
     extensions.getByType<SpotlessExtension>().apply {
         java {
@@ -473,7 +474,8 @@ subprojects {
             versionType = "deploymentType"()!!.lowercase()
             changelog = file("$rootDir/Changes.md").readText()
             projectVersion = "$displayFormat-$fileName" // Modrinth Only
-            displayName = "[$displayLoaderName $mcVersionLabel] $modName v${"versionId"()}${if (versionLabel.isEmpty()) "" else " $versionLabel"}"
+            displayName =
+                "[$displayLoaderName $mcVersionLabel] $modName v${"versionId"()}${if (versionLabel.isEmpty()) "" else " $versionLabel"}"
             gameVersions = uploadVersions
             loaders = uploadLoaders
             curseEnvironment = "client"
