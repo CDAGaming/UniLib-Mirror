@@ -1,3 +1,27 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2018 - 2024 CDAGaming (cstack2011@yahoo.com)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package com.gitlab.cdagaming.unilib.utils;
 
 import io.github.cdagaming.unicore.utils.MathUtils;
@@ -9,6 +33,11 @@ import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
+/**
+ * Game-Related Utilities used to Parse Item Data
+ *
+ * @author CDAGaming
+ */
 public class ItemUtils {
     /**
      * An Instance of an Empty Item
@@ -48,14 +77,32 @@ public class ItemUtils {
         return itemStack;
     }
 
+    /**
+     * Retrieve the {@link Item} form of the specified {@link ItemStack}
+     *
+     * @param stack The {@link ItemStack} to evaluate
+     * @return the {@link Item} form of the stack, or an empty item if the stack is null
+     */
     public static Item getItemFromStack(final ItemStack stack) {
         return stack != null ? stack.getItem() : EMPTY_ITEM;
     }
 
+    /**
+     * Retrieve the stack count of the specified {@link ItemStack}
+     *
+     * @param stack The {@link ItemStack} to evaluate
+     * @return the stack count of the stack, or 0 if the stack is null
+     */
     public static int getStackCount(final ItemStack stack) {
         return stack != null ? stack.getCount() : 0;
     }
 
+    /**
+     * Retrieve the current item damage from the specified {@link ItemStack}
+     *
+     * @param stack The {@link ItemStack} to evaluate
+     * @return the current item damage from the stack, or 0 if the stack is null
+     */
     public static int getStackDamage(final ItemStack stack) {
         return stack != null ? stack.getItemDamage() : 0;
     }

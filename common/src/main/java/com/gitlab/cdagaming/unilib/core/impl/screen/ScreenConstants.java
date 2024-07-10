@@ -148,90 +148,214 @@ public class ScreenConstants {
         return DEFAULT_TOOLTIP;
     }
 
+    /**
+     * Record Mapping for storing Tooltip Rendering Info
+     *
+     * @param renderTooltips  Whether rendering tooltips is allowed
+     * @param backgroundColor The background {@link ColorData} for the tooltip
+     * @param borderColor     The border {@link ColorData} for the tooltip
+     */
     public record TooltipData(boolean renderTooltips, ColorData backgroundColor, ColorData borderColor) {
     }
 
+    /**
+     * Record Mapping for storing Color Information
+     *
+     * @param start       The Starting {@link ColorSection} info
+     * @param end         The Ending {@link ColorSection} info
+     * @param texLocation The texture location, if any
+     */
     public record ColorData(ColorSection start, ColorSection end, String texLocation) {
+        /**
+         * Record Mapping for storing Color Information
+         *
+         * @param start The Starting {@link ColorSection} info
+         * @param end   The Ending {@link ColorSection} info
+         */
         public ColorData(ColorSection start, ColorSection end) {
             this(start, end, "");
         }
 
+        /**
+         * Record Mapping for storing Color Information
+         *
+         * @param start       The Starting {@link ColorSection} info
+         * @param texLocation The texture location, if any
+         */
         public ColorData(ColorSection start, String texLocation) {
             this(start, null, texLocation);
         }
 
+        /**
+         * Record Mapping for storing Color Information
+         *
+         * @param start The Starting {@link ColorSection} info
+         */
         public ColorData(ColorSection start) {
             this(start, "");
         }
 
+        /**
+         * Record Mapping for storing Color Information
+         *
+         * @param start       The Starting {@link Color} info
+         * @param end         The Ending {@link Color} info
+         * @param texLocation The texture location, if any
+         */
         public ColorData(Color start, Color end, String texLocation) {
             this(new ColorSection(start), end != null ? new ColorSection(end) : null, texLocation);
         }
 
+        /**
+         * Record Mapping for storing Color Information
+         *
+         * @param start The Starting {@link Color} info
+         * @param end   The Ending {@link Color} info
+         */
         public ColorData(Color start, Color end) {
             this(start, end, "");
         }
 
+        /**
+         * Record Mapping for storing Color Information
+         *
+         * @param start       The Starting {@link Color} info
+         * @param texLocation The texture location, if any
+         */
         public ColorData(Color start, String texLocation) {
             this(start, null, texLocation);
         }
 
+        /**
+         * Record Mapping for storing Color Information
+         *
+         * @param start The Starting {@link ColorSection} info
+         */
         public ColorData(Color start) {
             this(start, "");
         }
 
+        /**
+         * Record Mapping for storing Color Information
+         *
+         * @param texLocation The texture location, if any
+         */
         public ColorData(String texLocation) {
             this(new ColorSection(), null, texLocation);
         }
 
+        /**
+         * Record Mapping for storing Color Information
+         */
         public ColorData() {
             this(new ColorSection(), null, "");
         }
 
+        /**
+         * Record Mapping for storing Color Information
+         *
+         * @param other The {@link ColorData} to interpret
+         */
         public ColorData(ColorData other) {
             this(other.start, other.end, other.texLocation);
         }
 
+        /**
+         * Whether the ending {@link ColorSection} is present
+         *
+         * @return {@link Boolean#TRUE} if present
+         */
         public boolean hasEnd() {
             return end != null;
         }
 
+        /**
+         * Retrieve the ending {@link ColorSection} info, if present
+         *
+         * @return the ending {@link ColorSection} info, or the starting info if not present
+         */
         @Override
         public ColorSection end() {
             return hasEnd() ? end : start();
         }
 
+        /**
+         * Retrieve the starting {@link Color} instance
+         *
+         * @return the starting {@link Color} instance
+         */
         public Color startColor() {
             return start().color();
         }
 
+        /**
+         * Retrieve the ending {@link Color} instance
+         *
+         * @return the ending {@link Color} instance
+         */
         public Color endColor() {
             return end().color();
         }
 
+        /**
+         * Whether the texture location is present
+         *
+         * @return {@link Boolean#TRUE} if present
+         */
         public boolean hasTexLocation() {
             return !StringUtils.isNullOrEmpty(texLocation);
         }
 
+        /**
+         * Retrieve the texture location, if present
+         *
+         * @return the texture location, or an empty string if not present
+         */
         @Override
         public String texLocation() {
             return hasTexLocation() ? texLocation : "";
         }
     }
 
+    /**
+     * Record Mapping for storing Color Section Information
+     *
+     * @param red   The color index for the Red Channel
+     * @param green The color index for the Green Channel
+     * @param blue  The color index for the Blue Channel
+     * @param alpha The color index for the Alpha Channel
+     */
     public record ColorSection(int red, int green, int blue, int alpha) {
+        /**
+         * Record Mapping for storing Color Section Information
+         *
+         * @param color The {@link Color} to interpret
+         */
         public ColorSection(Color color) {
             this(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
         }
 
+        /**
+         * Record Mapping for storing Color Section Information
+         *
+         * @param other The {@link ColorSection} to interpret
+         */
         public ColorSection(ColorSection other) {
             this(other.red, other.green, other.blue, other.alpha);
         }
 
+        /**
+         * Record Mapping for storing Color Section Information
+         */
         public ColorSection() {
             this(Color.white);
         }
 
+        /**
+         * Retrieve the {@link Color} instance
+         *
+         * @return the {@link Color} instance
+         */
         public Color color() {
             return new Color(red(), green(), blue(), alpha());
         }
