@@ -148,7 +148,7 @@ public class GameUtils {
      */
     public static boolean isFocused(final Minecraft client) {
         final GuiScreen screen = getCurrentScreen(client);
-        return screen != null && (screen.isFocused() || getPlayer() != null);
+        return screen != null && (screen.isFocused() || WorldUtils.getPlayer(client) != null);
     }
 
     /**
