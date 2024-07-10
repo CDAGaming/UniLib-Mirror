@@ -158,7 +158,6 @@ public class CheckBoxControl extends ExtendedButtonControl {
      */
     @Override
     public void drawButton(@Nonnull Minecraft mc, int mouseX, int mouseY, float partial) {
-        setCurrentFontRender(mc.fontRenderer);
         if (isControlVisible()) {
             setHoveringOver(isOverScreen() && RenderUtils.isMouseOver(mouseX, mouseY, this));
 
@@ -167,7 +166,7 @@ public class CheckBoxControl extends ExtendedButtonControl {
 
             if (isChecked())
                 RenderUtils.renderCenteredString(
-                        getFontRenderer(),
+                        mc.fontRenderer,
                         "x",
                         getControlPosX() + (getBoxWidth() / 2) + 1,
                         getControlPosY() + 1,
@@ -176,8 +175,8 @@ public class CheckBoxControl extends ExtendedButtonControl {
 
             final int left = getControlPosX() + getBoxWidth() + 2;
             RenderUtils.renderScrollingString(mc,
-                    getFontRenderer(), getControlMessage(),
-                    left + (RenderUtils.getStringWidth(getFontRenderer(), getControlMessage()) / 2),
+                    mc.fontRenderer, getControlMessage(),
+                    left + (RenderUtils.getStringWidth(mc.fontRenderer, getControlMessage()) / 2),
                     left, getTop(), getRight() - 2, getBottom(),
                     color
             );

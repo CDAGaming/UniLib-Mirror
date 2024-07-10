@@ -28,7 +28,6 @@ import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 
 import javax.annotation.Nonnull;
@@ -51,10 +50,6 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * Event to Deploy when this Control is Hovered Over, if any
      */
     private Runnable onHoverEvent = null;
-    /**
-     * The current running Font Render Instance for this control
-     */
-    private FontRenderer currentFontRender = null;
     /**
      * Whether the mouse is currently within screen bounds
      */
@@ -201,7 +196,6 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
 
     @Override
     public void drawButton(@Nonnull Minecraft mc, int mouseX, int mouseY, float partialTicks) {
-        setCurrentFontRender(mc.fontRenderer);
         if (isControlVisible()) {
             setHoveringOver(isOverScreen() && RenderUtils.isMouseOver(mouseX, mouseY, this));
 
@@ -217,7 +211,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
             }
 
             RenderUtils.renderScrollingString(mc,
-                    getFontRenderer(), getControlMessage(),
+                    mc.fontRenderer, getControlMessage(),
                     getLeft() + 2, getTop(),
                     getRight() - 2, getBottom(),
                     color
@@ -303,33 +297,6 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      */
     public boolean isOverScreen() {
         return isOverScreen;
-    }
-
-    /**
-     * Get the Current Font Renderer for this Control
-     *
-     * @return The Current Font Renderer for this Control
-     */
-    public FontRenderer getFontRenderer() {
-        return currentFontRender != null ? currentFontRender : RenderUtils.getDefaultFontRenderer();
-    }
-
-    /**
-     * Set the Current Font Renderer for this Control
-     *
-     * @param currentFontRender The new current font renderer
-     */
-    public void setCurrentFontRender(final FontRenderer currentFontRender) {
-        this.currentFontRender = currentFontRender;
-    }
-
-    /**
-     * Get the Current Font Height for this Control
-     *
-     * @return The Current Font Height for this Control
-     */
-    public int getFontHeight() {
-        return RenderUtils.getFontHeight(getFontRenderer());
     }
 
     /**
