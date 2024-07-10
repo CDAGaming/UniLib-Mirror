@@ -14,11 +14,9 @@ val modId: String by extra
 val isLegacy: Boolean by extra
 val protocol: Int by extra
 val isJarMod: Boolean by extra
-val isNeoForge: Boolean by extra
 val accessWidenerFile: File by extra
 val isMCPJar: Boolean by extra
 val isModern: Boolean by extra
-val fmlName: String by extra
 val versionFormat: String by extra
 val versionLabel: String by extra
 val mcVersionLabel: String by extra
@@ -122,7 +120,7 @@ tasks.shadowJar {
         relocate("org.apache.logging.slf4j", "external.org.apache.logging.slf4j")
     }
 
-    archiveClassifier.set("shadow-dev")
+    archiveClassifier.set("dev-shadow")
 }
 
 tasks.processResources {

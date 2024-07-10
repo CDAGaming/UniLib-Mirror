@@ -41,11 +41,8 @@ val extDisplayFormat = extVersionFormat.replace(Regex("\\s"), "").lowercase()
 val extProtocol = "mc_protocol"()!!.toInt()
 val extIsLegacy = "isLegacy"()!!.toBoolean()
 val extIsJarMod = "isJarMod"()!!.toBoolean()
-val extIsNeoForge = "isNeoForge"()!!.toBoolean()
 val extIsModern = !extIsLegacy && extProtocol >= 498
 val extIsMCPJar = extIsJarMod && "mc_mappings_type"() == "mcp"
-
-val extFmlName = if (extIsNeoForge) "neoforge" else if (extIsJarMod) "modloader" else "forge"
 
 // Only apply ATs to forge on non-legacy builds, or on Legacy Protocols above 1.5
 // due to the way Forge requires core-mods for lower version usage
@@ -87,10 +84,8 @@ subprojects {
     val protocol by extra(extProtocol)
     val isLegacy by extra(extIsLegacy)
     val isJarMod by extra(extIsJarMod)
-    val isNeoForge by extra(extIsNeoForge)
     val isModern by extra(extIsModern)
     val isMCPJar by extra(extIsMCPJar)
-    val fmlName by extra(extFmlName)
     val accessWidenerFile by extra(extAWFile)
     val canUseATs by extra(extCanUseATs)
     val mcVersionLabel by extra(extMcVersion)
@@ -98,7 +93,6 @@ subprojects {
     val mcVersion by extra("mc_version"()!!)
     val mcMappingsType by extra("mc_mappings_type"())
 
-    val fileName = if (name == "forge") fmlName else name
     val displayLoaderName =
         name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 
@@ -453,8 +447,8 @@ subprojects {
     }
 
     if (isLoaderSource) {
-        val targetFile = "build/libs/$fileFormat-$fileName.jar"
-        val uploadLoaders = mutableListOf(fileName)
+        val targetFile = "build/libs/$fileFormat-$name.jar"
+        val uploadLoaders = mutableListOf(name)
         val additionalLoaders = "additional_${name}_loaders"()
         if (!additionalLoaders.isNullOrEmpty()) {
             for (v in additionalLoaders.split(",")) {
@@ -477,7 +471,7 @@ subprojects {
             nightbloomID = modId
             versionType = "deploymentType"()!!.lowercase()
             changelog = file("$rootDir/Changes.md").readText()
-            projectVersion = "$displayFormat-$fileName" // Modrinth Only
+            projectVersion = "$displayFormat-$name" // Modrinth Only
             displayName =
                 "[$displayLoaderName $mcVersionLabel] $modName v${"versionId"()}${if (versionLabel.isEmpty()) "" else " $versionLabel"}"
             gameVersions = uploadVersions
