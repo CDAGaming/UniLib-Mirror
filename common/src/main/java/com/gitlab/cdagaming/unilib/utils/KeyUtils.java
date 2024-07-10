@@ -408,7 +408,7 @@ public class KeyUtils {
 
                     if (!getKeyName(currentBind).equals(unknownKeyName) && !isValidClearCode(currentBind)) {
                         // Only process the key if it is not an unknown or invalid key
-                        if (Keyboard.isKeyDown(currentBind) && !(getInstance().currentScreen instanceof GuiControls)) {
+                        if (Keyboard.isKeyDown(currentBind) && !(GameUtils.getCurrentScreen(getInstance()) instanceof GuiControls)) {
                             try {
                                 keyData.runEvent().run();
                             } catch (Throwable ex) {
