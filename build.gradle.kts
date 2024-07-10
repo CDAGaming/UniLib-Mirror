@@ -9,8 +9,8 @@ import java.util.*
 
 plugins {
     java
-    id("xyz.wagyourtail.unimined") version "1.2.15-SNAPSHOT" apply false
-    id("xyz.wagyourtail.jvmdowngrader") version "0.7.2"
+    id("xyz.wagyourtail.unimined") version "1.3.0" apply false
+    id("xyz.wagyourtail.jvmdowngrader") version "0.8.2"
     id("com.diffplug.gradle.spotless") version "6.25.0" apply false
     id("io.github.goooler.shadow") version "8.1.7" apply false
     id("com.hypherionmc.modutils.modpublisher") version "2.1.5" apply false
@@ -287,13 +287,13 @@ subprojects {
 
             if (shouldDowngrade) {
                 val apiVersion = if (buildVersion.isJava7) JavaVersion.VERSION_1_8 else buildVersion
+                val downgradeClient = tasks.create("downgradeClient", DowngradeFiles::class.java) {
+                    inputCollection = sourceSet.output.classesDirs + sourceSet.runtimeClasspath
+                    classpath = project.files()
+                }
+
                 runs.config("client") {
-                    val downgradeClient = tasks.create("downgradeClient", DowngradeFiles::class.java) {
-                        inputCollection = sourceSet.output.classesDirs + sourceSet.runtimeClasspath
-                        classpath = project.files()
-                    }
-                    launchClasspath = downgradeClient.outputCollection + files(jvmdg.getDowngradedApi(apiVersion))
-                    runFirst.add(downgradeClient)
+                    classpath = downgradeClient.outputCollection + files(jvmdg.getDowngradedApi(apiVersion))
                 }
             }
         }
@@ -387,6 +387,10 @@ subprojects {
 
             tasks.shadeDowngradedApi {
                 archiveClassifier = remapJar.archiveClassifier
+            }
+
+            tasks.named("preRunClient") {
+                dependsOn("downgradeClient")
             }
         }
 
