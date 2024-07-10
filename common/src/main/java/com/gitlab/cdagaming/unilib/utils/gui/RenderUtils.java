@@ -173,7 +173,7 @@ public class RenderUtils {
      * @return {@link Boolean#TRUE} if the Mouse Position is within the bounds of the object, and thus is over it
      */
     public static boolean isMouseOver(final double mouseX, final double mouseY, final ExtendedTextControl textControl) {
-        return isMouseOver(mouseX, mouseY, textControl.getControlPosX(), textControl.getControlPosY(), textControl.getControlWidth() - 1, textControl.getControlHeight() - 1);
+        return textControl.isControlVisible() && isMouseOver(mouseX, mouseY, textControl.getControlPosX(), textControl.getControlPosY(), textControl.getControlWidth() - 1, textControl.getControlHeight() - 1);
     }
 
     /**

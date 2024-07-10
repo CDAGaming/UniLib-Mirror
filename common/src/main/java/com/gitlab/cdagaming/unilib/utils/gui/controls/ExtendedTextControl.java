@@ -162,6 +162,42 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
     }
 
     /**
+     * Gets whether the control is currently active or enabled
+     *
+     * @return Whether the control is currently active or enabled
+     */
+    public boolean isControlEnabled() {
+        return this.isEnabled;
+    }
+
+    /**
+     * Sets the control's current enabled state
+     *
+     * @param isEnabled The new enable state for this control
+     */
+    public void setControlEnabled(final boolean isEnabled) {
+        this.setEnabled(isEnabled);
+    }
+
+    /**
+     * Gets whether the control is currently visible
+     *
+     * @return Whether the control is currently visible
+     */
+    public boolean isControlVisible() {
+        return this.getVisible();
+    }
+
+    /**
+     * Sets the control's current visibility state
+     *
+     * @param isVisible The new visibility state for this control
+     */
+    public void setControlVisible(final boolean isVisible) {
+        this.setVisible(isVisible);
+    }
+
+    /**
      * Gets the control's maximum text length
      *
      * @return The control's maximum text contents
