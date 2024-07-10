@@ -152,11 +152,33 @@ public class GameUtils {
     }
 
     /**
-     * Retrieve whether the game client is "in-focus"
+     * Retrieve whether the game client is "in-focus", depending on the Game Version
+     * <p>Defined as: If an Element is being focused on in a GUI or if a GUI is currently open
      *
      * @return {@link Boolean#TRUE} if condition is satisfied
      */
     public static boolean isFocused() {
         return isFocused(getMinecraft());
+    }
+
+    /**
+     * Retrieve whether the game client is "loaded"
+     * <p>Defined as whether the screen is non-null or the player is non-null
+     *
+     * @param client the game client instance
+     * @return {@link Boolean#TRUE} if condition is satisfied
+     */
+    public static boolean isLoaded(final Minecraft client) {
+        return getCurrentScreen(client) != null || WorldUtils.getPlayer(client) != null;
+    }
+
+    /**
+     * Retrieve whether the game client is "loaded"
+     * <p>Defined as whether the screen is non-null or the player is non-null
+     *
+     * @return {@link Boolean#TRUE} if condition is satisfied
+     */
+    public static boolean isLoaded() {
+        return isLoaded(getMinecraft());
     }
 }
