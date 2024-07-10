@@ -171,6 +171,29 @@ public class CoreUtils {
     }
 
     /**
+     * Schedules an event to run once per client tick, after initialization
+     *
+     * @param name  The name of the new thread
+     * @param event The event to run
+     */
+    public static void scheduleTickEvent(final String name, final Runnable event) {
+        if (!IS_CLOSING) {
+            FileUtils.getThreadPool(name).scheduleAtFixedRate(
+                    event, 0, 50, TimeUtils.getTimeUnitFrom("MILLISECONDS")
+            );
+        }
+    }
+
+    /**
+     * Schedules an event to run once per client tick, after initialization
+     *
+     * @param event The event to run
+     */
+    public static void scheduleTickEvent(final Runnable event) {
+        scheduleTickEvent(NAME, event);
+    }
+
+    /**
      * Setup Important Data for this Module
      */
     public static void setup() {
@@ -181,20 +204,15 @@ public class CoreUtils {
                 })
         );
 
-        if (!IS_CLOSING) {
-            getThreadPool().scheduleAtFixedRate(
-                    () -> {
-                        for (Runnable event : onTickEvents.values()) {
-                            try {
-                                event.run();
-                            } catch (Throwable ex) {
-                                LOG.error(ex);
-                            }
-                        }
-                    },
-                    0, 50, TimeUtils.getTimeUnitFrom("MILLISECONDS")
-            );
-        }
+        scheduleTickEvent(() -> {
+            for (Runnable event : onTickEvents.values()) {
+                try {
+                    event.run();
+                } catch (Throwable ex) {
+                    LOG.error(ex);
+                }
+            }
+        });
     }
 
     /**
