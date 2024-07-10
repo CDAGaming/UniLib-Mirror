@@ -344,6 +344,7 @@ public class CoreUtils {
         )
                 .setUsingAssetsPath(!IS_LEGACY_SOFT || protocol >= 72)
                 .setDefaultLanguage(getDefaultLanguage(protocol))
+                .setStripFormatting(CoreUtils.isTextFormattingBlocked(protocol))
                 .build() : null;
     }
 
