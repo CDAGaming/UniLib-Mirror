@@ -1,5 +1,4 @@
 import xyz.wagyourtail.unimined.api.mapping.task.ExportMappingsTask
-import xyz.wagyourtail.unimined.api.minecraft.patch.forge.ForgeLikePatcher
 import xyz.wagyourtail.unimined.api.minecraft.task.RemapJarTask
 
 /**
@@ -84,7 +83,7 @@ tasks.processResources {
         expand(replaceProperties)
     }
 
-    filesMatching("mappings-$name.srg") {
+    filesMatching("mappings-${project.name}.srg") {
         filter { line ->
             @Suppress("NULL_FOR_NONNULL_TYPE")
             if (line.startsWith("CL:")) line.replace("/", ".") else null
@@ -97,7 +96,7 @@ tasks.named<ExportMappingsTask>("exportMappings") {
     export {
         setTargetNamespaces(listOf(target))
         setSourceNamespace("official")
-        location = file("$projectDir/src/main/resources/mappings-$name.srg")
+        location = file("$projectDir/src/main/resources/mappings-${project.name}.srg")
         setType("SRG")
     }
 }
