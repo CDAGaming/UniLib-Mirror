@@ -184,10 +184,6 @@ public class KeyUtils {
                                   final BiConsumer<Integer, Boolean> onBind,
                                   final Predicate<Integer> onOutdated,
                                   final BiFunction<Throwable, Pair<String, KeyBindData>, Boolean> callback) {
-        if (areKeysRegistered()) {
-            throw new UnsupportedOperationException("KeyBindings already registered!");
-        }
-
         final KeyBinding keyBind = createKey(id, name, category, defaultKey, currentKey);
         final KeyBindData keyData = new KeyBindData(
                 keyBind,
