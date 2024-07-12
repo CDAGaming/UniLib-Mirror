@@ -47,9 +47,17 @@ import java.util.function.*;
  */
 public class KeyUtils {
     /**
+     * The Global {@link KeyUtils} instance
+     */
+    public static final KeyUtils INSTANCE = new KeyUtils();
+    /**
      * List of Keys that are in queue for later syncing operations
      */
     public final Map<String, Integer> keySyncQueue = StringUtils.newHashMap();
+    /**
+     * List of Keys that are in queue for later registration operations
+     */
+    private final Map<String, KeyBindData> registrationQueue = StringUtils.newConcurrentHashMap();
     /**
      * Key Mappings for Vanilla MC KeyBind Schema
      * <p>
@@ -64,18 +72,6 @@ public class KeyUtils {
      * The game protocol for this module
      */
     private final int protocol;
-    /**
-     * Determines whether KeyBindings have been fully registered and attached to needed systems.
-     */
-    private boolean keysRegistered = false;
-    /**
-     * Whether registered keys can be iterated over
-     */
-    private Supplier<Boolean> canCheckKeys = () -> true;
-    /**
-     * Whether key sync operations are allowed
-     */
-    private Supplier<Boolean> canSyncKeys = () -> true;
 
     /**
      * Create an instance of this class.
@@ -102,66 +98,6 @@ public class KeyUtils {
      */
     public Minecraft getInstance() {
         return instance.get();
-    }
-
-    /**
-     * Retrieve whether registered keys can be iterated over
-     *
-     * @return {@link Boolean#TRUE} if condition is satisfied
-     */
-    public boolean canCheckKeys() {
-        return canCheckKeys.get();
-    }
-
-    /**
-     * Retrieve whether key sync operations are allowed
-     *
-     * @return {@link Boolean#TRUE} if condition is satisfied
-     */
-    public boolean canSyncKeys() {
-        return canSyncKeys.get();
-    }
-
-    /**
-     * Sets whether registered keys can be iterated over
-     *
-     * @param canCheckKeys the new condition
-     * @return the current instance of this module
-     */
-    public KeyUtils setCanCheckKeys(final Supplier<Boolean> canCheckKeys) {
-        this.canCheckKeys = canCheckKeys;
-        return this;
-    }
-
-    /**
-     * Sets whether registered keys can be iterated over
-     *
-     * @param canCheckKeys the new condition
-     * @return the current instance of this module
-     */
-    public KeyUtils setCanCheckKeys(final boolean canCheckKeys) {
-        return setCanCheckKeys(() -> canCheckKeys);
-    }
-
-    /**
-     * Sets whether key sync operations are allowed
-     *
-     * @param canSyncKeys the new condition
-     * @return the current instance of this module
-     */
-    public KeyUtils setCanSyncKeys(final Supplier<Boolean> canSyncKeys) {
-        this.canSyncKeys = canSyncKeys;
-        return this;
-    }
-
-    /**
-     * Sets whether key sync operations are allowed
-     *
-     * @param canSyncKeys the new condition
-     * @return the current instance of this module
-     */
-    public KeyUtils setCanSyncKeys(final boolean canSyncKeys) {
-        return setCanSyncKeys(() -> canSyncKeys);
     }
 
     /**
@@ -228,6 +164,8 @@ public class KeyUtils {
      * @param defaultKey        The default key for this binding
      * @param currentKey        The current key for this binding
      * @param detailsSupplier   The supplier for additional key details
+     * @param canCheckSupplier  The supplier for whether key iteration operations are allowed
+     * @param canSyncSupplier   The supplier for whether key sync operations are allowed
      * @param onPress           The event to execute when the KeyBind is being pressed
      * @param onBind            The event to execute when the KeyBind is being rebound to another key
      * @param onOutdated        The event to determine whether the KeyBind is up-to-date (Ex: Vanilla==Config)
@@ -240,6 +178,8 @@ public class KeyUtils {
                                   final Function<String, String> categoryFormatter,
                                   final int defaultKey, final int currentKey,
                                   final Supplier<String> detailsSupplier,
+                                  final Supplier<Boolean> canCheckSupplier,
+                                  final Supplier<Boolean> canSyncSupplier,
                                   final Runnable onPress,
                                   final BiConsumer<Integer, Boolean> onBind,
                                   final Predicate<Integer> onOutdated,
@@ -249,41 +189,47 @@ public class KeyUtils {
         }
 
         final KeyBinding keyBind = createKey(id, name, category, defaultKey, currentKey);
-        KEY_MAPPINGS.put(
-                id,
-                new KeyBindData(
-                        keyBind,
-                        nameFormatter,
-                        keyBind::getKeyCategory,
-                        categoryFormatter,
-                        keyBind::getKeyCodeDefault,
-                        detailsSupplier,
-                        onPress, onBind, onOutdated,
-                        callback
-                )
+        final KeyBindData keyData = new KeyBindData(
+                keyBind,
+                nameFormatter,
+                keyBind::getKeyCategory,
+                categoryFormatter,
+                keyBind::getKeyCodeDefault,
+                detailsSupplier,
+                canCheckSupplier,
+                canSyncSupplier,
+                onPress, onBind, onOutdated,
+                callback
         );
+
+        KEY_MAPPINGS.put(id, keyData);
+        registrationQueue.put(id, keyData);
         return keyBind;
     }
 
     /**
      * Registers a new Keybinding with the specified info
      *
-     * @param id              The keybinding internal identifier, used for the Key Sync Queue
-     * @param name            The name or description of the keybinding
-     * @param category        The category for the keybinding
-     * @param defaultKey      The default key for this binding
-     * @param currentKey      The current key for this binding
-     * @param detailsSupplier The supplier for additional key details
-     * @param onPress         The event to execute when the KeyBind is being pressed
-     * @param onBind          The event to execute when the KeyBind is being rebound to another key
-     * @param onOutdated      The event to determine whether the KeyBind is up-to-date (Ex: Vanilla==Config)
-     * @param callback        The event to execute upon an exception occurring during KeyBind events
+     * @param id               The keybinding internal identifier, used for the Key Sync Queue
+     * @param name             The name or description of the keybinding
+     * @param category         The category for the keybinding
+     * @param defaultKey       The default key for this binding
+     * @param currentKey       The current key for this binding
+     * @param detailsSupplier  The supplier for additional key details
+     * @param canCheckSupplier The supplier for whether key iteration operations are allowed
+     * @param canSyncSupplier  The supplier for whether key sync operations are allowed
+     * @param onPress          The event to execute when the KeyBind is being pressed
+     * @param onBind           The event to execute when the KeyBind is being rebound to another key
+     * @param onOutdated       The event to determine whether the KeyBind is up-to-date (Ex: Vanilla==Config)
+     * @param callback         The event to execute upon an exception occurring during KeyBind events
      * @return the created and registered KeyBind instance
      */
     public KeyBinding registerKey(final String id, final String name,
                                   final String category,
                                   final int defaultKey, final int currentKey,
                                   final Supplier<String> detailsSupplier,
+                                  final Supplier<Boolean> canCheckSupplier,
+                                  final Supplier<Boolean> canSyncSupplier,
                                   final Runnable onPress,
                                   final BiConsumer<Integer, Boolean> onBind,
                                   final Predicate<Integer> onOutdated,
@@ -293,6 +239,8 @@ public class KeyUtils {
                 category, (categoryName) -> categoryName,
                 defaultKey, currentKey,
                 detailsSupplier,
+                canCheckSupplier,
+                canSyncSupplier,
                 onPress, onBind, onOutdated,
                 callback
         );
@@ -301,20 +249,24 @@ public class KeyUtils {
     /**
      * Registers a new Keybinding with the specified info
      *
-     * @param id         The keybinding internal identifier, used for the Key Sync Queue
-     * @param name       The name or description of the keybinding
-     * @param category   The category for the keybinding
-     * @param defaultKey The default key for this binding
-     * @param currentKey The current key for this binding
-     * @param onPress    The event to execute when the KeyBind is being pressed
-     * @param onBind     The event to execute when the KeyBind is being rebound to another key
-     * @param onOutdated The event to determine whether the KeyBind is up-to-date (Ex: Vanilla==Config)
-     * @param callback   The event to execute upon an exception occurring during KeyBind events
+     * @param id               The keybinding internal identifier, used for the Key Sync Queue
+     * @param name             The name or description of the keybinding
+     * @param category         The category for the keybinding
+     * @param defaultKey       The default key for this binding
+     * @param currentKey       The current key for this binding
+     * @param canCheckSupplier The supplier for whether key iteration operations are allowed
+     * @param canSyncSupplier  The supplier for whether key sync operations are allowed
+     * @param onPress          The event to execute when the KeyBind is being pressed
+     * @param onBind           The event to execute when the KeyBind is being rebound to another key
+     * @param onOutdated       The event to determine whether the KeyBind is up-to-date (Ex: Vanilla==Config)
+     * @param callback         The event to execute upon an exception occurring during KeyBind events
      * @return the created and registered KeyBind instance
      */
     public KeyBinding registerKey(final String id, final String name,
                                   final String category,
                                   final int defaultKey, final int currentKey,
+                                  final Supplier<Boolean> canCheckSupplier,
+                                  final Supplier<Boolean> canSyncSupplier,
                                   final Runnable onPress,
                                   final BiConsumer<Integer, Boolean> onBind,
                                   final Predicate<Integer> onOutdated,
@@ -324,6 +276,8 @@ public class KeyUtils {
                 category,
                 defaultKey, currentKey,
                 () -> "",
+                canCheckSupplier,
+                canSyncSupplier,
                 onPress, onBind, onOutdated,
                 callback
         );
@@ -341,12 +295,25 @@ public class KeyUtils {
     }
 
     /**
-     * Retrieve if the keybindings are successfully registered to necessary systems
+     * Retrieve if the registration queue is currently empty
+     * <p>
+     * Meaning if current keybindings are successfully registered to necessary systems
      *
-     * @return {@link Boolean#TRUE} if and only if the keybindings are successfully registered
+     * @return {@link Boolean#TRUE} if and only if the current keybindings are successfully registered
      */
     public boolean areKeysRegistered() {
-        return keysRegistered;
+        return registrationQueue.isEmpty();
+    }
+
+    /**
+     * Retrieves the unfiltered registration queue (Keys to Register)
+     * <p>
+     * Format: rawKeyField:keyMapping
+     *
+     * @return The unfiltered key mappings
+     */
+    public Set<Map.Entry<String, KeyBindData>> getRegistrationEntries() {
+        return registrationQueue.entrySet();
     }
 
     /**
@@ -379,8 +346,10 @@ public class KeyUtils {
 
         if (!areKeysRegistered()) {
             if (getInstance().gameSettings != null) {
-                for (KeyBindData entry : KEY_MAPPINGS.values()) {
+                for (Map.Entry<String, KeyBindData> data : getRegistrationEntries()) {
+                    final KeyBindData entry = data.getValue();
                     final String category = entry.category();
+
                     final Map<String, Integer> categoryMap = KeyBinding.CATEGORY_ORDER;
                     if (!categoryMap.containsKey(category)) {
                         final Optional<Integer> largest = categoryMap.values().stream().max(Integer::compareTo);
@@ -388,14 +357,15 @@ public class KeyUtils {
                         categoryMap.put(category, largestInt + 1);
                     }
                     getInstance().gameSettings.keyBindings = StringUtils.addToArray(getInstance().gameSettings.keyBindings, entry.binding());
+
+                    registrationQueue.remove(data.getKey());
                 }
-                keysRegistered = true;
             } else {
                 return;
             }
         }
 
-        if (Keyboard.isCreated() && canCheckKeys()) {
+        if (Keyboard.isCreated()) {
             final boolean isLwjgl2 = protocol <= 340;
             final int unknownKeyCode = isLwjgl2 ? -1 : 0;
             final String unknownKeyName = (isLwjgl2 ? KeyConverter.fromGlfw : KeyConverter.toGlfw).get(unknownKeyCode).name();
@@ -403,39 +373,42 @@ public class KeyUtils {
                 for (Map.Entry<String, KeyBindData> entry : getKeyEntries()) {
                     final String keyName = entry.getKey();
                     final KeyBindData keyData = entry.getValue();
-                    final int currentBind = keyData.keyCode();
-                    boolean hasBeenRun = false;
 
-                    if (!getKeyName(currentBind).equals(unknownKeyName) && !isValidClearCode(currentBind)) {
-                        // Only process the key if it is not an unknown or invalid key
-                        if (Keyboard.isKeyDown(currentBind) && !(GameUtils.getCurrentScreen(getInstance()) instanceof GuiControls)) {
-                            try {
-                                keyData.runEvent().run();
-                            } catch (Throwable ex) {
-                                boolean resetKey;
-                                if (keyData.errorCallback() != null) {
-                                    resetKey = keyData.errorCallback().apply(ex, new Pair<>(keyName, keyData));
-                                } else {
-                                    CoreUtils.LOG.error(ex);
-                                    resetKey = true;
-                                }
+                    if (keyData.canCheck()) {
+                        final int currentBind = keyData.keyCode();
+                        boolean hasBeenRun = false;
 
-                                if (resetKey) {
-                                    syncKeyData(keyName, ImportMode.Specific, keyData.defaultKeyCode());
+                        if (!getKeyName(currentBind).equals(unknownKeyName) && !isValidClearCode(currentBind)) {
+                            // Only process the key if it is not an unknown or invalid key
+                            if (Keyboard.isKeyDown(currentBind) && !(GameUtils.getCurrentScreen(getInstance()) instanceof GuiControls)) {
+                                try {
+                                    keyData.runEvent().run();
+                                } catch (Throwable ex) {
+                                    boolean resetKey;
+                                    if (keyData.errorCallback() != null) {
+                                        resetKey = keyData.errorCallback().apply(ex, new Pair<>(keyName, keyData));
+                                    } else {
+                                        CoreUtils.LOG.error(ex);
+                                        resetKey = true;
+                                    }
+
+                                    if (resetKey) {
+                                        syncKeyData(keyName, ImportMode.Specific, keyData.defaultKeyCode());
+                                    }
+                                } finally {
+                                    hasBeenRun = true;
                                 }
-                            } finally {
-                                hasBeenRun = true;
                             }
                         }
-                    }
 
-                    // Only check for Keyboard updates if the key is not active but is in queue for a sync
-                    if (!hasBeenRun && canSyncKeys()) {
-                        if (keySyncQueue.containsKey(keyName)) {
-                            syncKeyData(keyName, ImportMode.Config, keySyncQueue.get(keyName));
-                            keySyncQueue.remove(keyName);
-                        } else if (keyData.vanillaPredicate().test(currentBind)) {
-                            syncKeyData(keyName, ImportMode.Vanilla, currentBind);
+                        // Only check for Keyboard updates if the key is not active but is in queue for a sync
+                        if (!hasBeenRun && keyData.canSync()) {
+                            if (keySyncQueue.containsKey(keyName)) {
+                                syncKeyData(keyName, ImportMode.Config, keySyncQueue.get(keyName));
+                                keySyncQueue.remove(keyName);
+                            } else if (keyData.vanillaPredicate().test(currentBind)) {
+                                syncKeyData(keyName, ImportMode.Vanilla, currentBind);
+                            }
                         }
                     }
                 }
@@ -531,6 +504,8 @@ public class KeyUtils {
      * @param categoryFormatter  The Function to supply extra formatting to the key category
      * @param defaultKeySupplier The supplier for the default key for this KeyBind
      * @param detailsSupplier    The supplier for additional key details
+     * @param canCheckSupplier   The supplier for whether key iteration operations are allowed
+     * @param canSyncSupplier    The supplier for whether key sync operations are allowed
      * @param runEvent           The event to execute when the KeyBind is being pressed
      * @param configEvent        The event to execute when the KeyBind is being rebound to another key
      * @param vanillaPredicate   The event to determine whether the KeyBind is up-to-date (Ex: Vanilla==Config)
@@ -542,6 +517,8 @@ public class KeyUtils {
                               Function<String, String> categoryFormatter,
                               Supplier<Integer> defaultKeySupplier,
                               Supplier<String> detailsSupplier,
+                              Supplier<Boolean> canCheckSupplier,
+                              Supplier<Boolean> canSyncSupplier,
                               Runnable runEvent, BiConsumer<Integer, Boolean> configEvent,
                               Predicate<Integer> vanillaPredicate,
                               BiFunction<Throwable, Pair<String, KeyBindData>, Boolean> errorCallback) {
@@ -570,6 +547,24 @@ public class KeyUtils {
          */
         public String details() {
             return detailsSupplier().get();
+        }
+
+        /**
+         * Whether interpretation is allowed for this KeyBind
+         *
+         * @return {@link Boolean#TRUE} if condition is satisfied
+         */
+        public boolean canCheck() {
+            return canCheckSupplier.get();
+        }
+
+        /**
+         * Whether sync operations are allowed for this KeyBind
+         *
+         * @return {@link Boolean#TRUE} if condition is satisfied
+         */
+        public boolean canSync() {
+            return canSyncSupplier.get();
         }
 
         /**

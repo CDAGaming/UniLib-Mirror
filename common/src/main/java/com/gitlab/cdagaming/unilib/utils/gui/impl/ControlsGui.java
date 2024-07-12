@@ -62,12 +62,24 @@ public class ControlsGui extends ExtendedScreen {
         sortMappings();
     }
 
+    public ControlsGui(final Runnable onKeyChanged, final Map<String, KeyUtils.KeyBindData> keyMappings) {
+        this(KeyUtils.INSTANCE, onKeyChanged, keyMappings);
+    }
+
     public ControlsGui(final KeyUtils instance, final Runnable onKeyChanged, final List<String> filterData) {
         this(instance, onKeyChanged, instance.getKeyMappings(filterData));
     }
 
+    public ControlsGui(final Runnable onKeyChanged, final List<String> filterData) {
+        this(KeyUtils.INSTANCE, onKeyChanged, filterData);
+    }
+
     public ControlsGui(final KeyUtils instance, final Runnable onKeyChanged, final String... filterData) {
         this(instance, onKeyChanged, instance.getKeyMappings(filterData));
+    }
+
+    public ControlsGui(final Runnable onKeyChanged, final String... filterData) {
+        this(KeyUtils.INSTANCE, onKeyChanged, filterData);
     }
 
     @Override

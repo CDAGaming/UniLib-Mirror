@@ -28,6 +28,7 @@ import com.gitlab.cdagaming.unilib.core.CoreUtils;
 import com.gitlab.cdagaming.unilib.core.utils.ModUpdaterUtils;
 import com.gitlab.cdagaming.unilib.impl.TranslationListener;
 import com.gitlab.cdagaming.unilib.impl.TranslationManager;
+import com.gitlab.cdagaming.unilib.utils.KeyUtils;
 import io.github.cdagaming.unicore.utils.MappingUtils;
 import net.minecraft.client.Minecraft;
 
@@ -113,6 +114,10 @@ public class UniLib {
      */
     private static void onTick() {
         TranslationListener.INSTANCE.onTick();
+        ModUtils.executeOnMainThread(
+                KeyUtils.INSTANCE.getInstance(),
+                KeyUtils.INSTANCE::onTick
+        );
     }
 
     /**
