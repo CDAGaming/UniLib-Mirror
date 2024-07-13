@@ -149,6 +149,7 @@ subprojects {
         maven("https://maven.legacyfabric.net/") {
             name = "Legacy Fabric"
         }
+        maven("https://repo.spongepowered.org/maven/")
         // WagYourTail Mavens
         maven("https://maven.wagyourtail.xyz/releases")
         maven("https://maven.wagyourtail.xyz/snapshots")
@@ -175,6 +176,10 @@ subprojects {
     extensions.getByType<UniminedExtension>().minecraft(sourceSets.getByName("main"), true) {
         side(if (isJarMod) "client" else "combined")
         version(mcVersion)
+
+        rift {
+            loader(mcVersion)
+        }
 
         mappings {
             val mcMappings = "mc_mappings"()!!
