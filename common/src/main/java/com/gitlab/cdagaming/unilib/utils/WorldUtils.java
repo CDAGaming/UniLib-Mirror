@@ -51,7 +51,10 @@ public class WorldUtils {
      * @return the Entity World Instance
      */
     public static World getWorld(final Entity entity) {
-        return entity != null ? entity.worldObj : null;
+        return entity != null ? (World) StringUtils.getField(
+                Entity.class, entity,
+                "worldObj", "field_615_ag", "ag"
+        ) : null;
     }
 
     /**

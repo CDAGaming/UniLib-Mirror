@@ -339,11 +339,11 @@ public class KeyUtils {
         }
 
         if (!areKeysRegistered()) {
-            if (getInstance().gameSettings != null) {
+            if (getInstance().options != null) {
                 for (Map.Entry<String, KeyBindData> data : getRegistrationEntries()) {
                     final KeyBindData entry = data.getValue();
 
-                    getInstance().gameSettings.keyBindings = StringUtils.addToArray(getInstance().gameSettings.keyBindings, entry.binding());
+                    getInstance().options.keyBindings = StringUtils.addToArray(getInstance().options.keyBindings, entry.binding());
 
                     registrationQueue.remove(data.getKey());
                 }

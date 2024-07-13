@@ -71,7 +71,7 @@ public class GameUtils {
      * @return the Game Session Instance
      */
     public static Session getSession(final Minecraft client) {
-        return client != null ? client.field_6320_i : null;
+        return client != null ? client.session : null;
     }
 
     /**
@@ -90,7 +90,7 @@ public class GameUtils {
      * @return the Game Session Username
      */
     public static String getUsername(final Minecraft client) {
-        return getSession(client).inventory;
+        return getSession(client).username;
     }
 
     /**
@@ -147,7 +147,7 @@ public class GameUtils {
      * @return {@link Boolean#TRUE} if condition is satisfied
      */
     public static boolean isFocused(final Minecraft client) {
-        return getCurrentScreen(client) != null && (client.field_6289_L || WorldUtils.getPlayer(client) != null);
+        return getCurrentScreen(client) != null && (client.inGameHasFocus || WorldUtils.getPlayer(client) != null);
     }
 
     /**
