@@ -103,7 +103,7 @@ public class ItemUtils {
      * @return the current item damage from the stack, or 0 if the stack is null
      */
     public static int getStackDamage(final ItemStack stack) {
-        return stack != null ? stack.itemDamage : 0;
+        return stack != null ? stack.itemDmg : 0;
     }
 
     /**
