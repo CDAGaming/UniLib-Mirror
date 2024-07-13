@@ -1,0 +1,14 @@
+{
+  "id": "${mod_id}",
+  "name": "${mod_name}",
+  "version": "${version}",
+  "authors": [
+    "CDAGaming"
+  ],
+  "listeners": [
+    "com.gitlab.cdagaming.unilib.rift.UniLibRift"
+  ],
+  "url": "https://www.curseforge.com/minecraft/mc-mods/unilib",
+  "description": "A common set of Utilities, designed for over 50 versions of Minecraft!",
+  "icon_file": "logo.png"
+}
