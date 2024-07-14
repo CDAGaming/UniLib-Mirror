@@ -243,7 +243,7 @@ public class TexturedWidget implements DynamicWidget {
 
     @Override
     public int getControlWidth() {
-        return width - startX;
+        return width;
     }
 
     @Override
