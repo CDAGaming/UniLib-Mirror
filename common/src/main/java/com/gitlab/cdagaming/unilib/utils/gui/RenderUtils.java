@@ -35,6 +35,7 @@ import com.gitlab.cdagaming.unilib.utils.ResourceUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.controls.ExtendedButtonControl;
 import com.gitlab.cdagaming.unilib.utils.gui.controls.ExtendedTextControl;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
+import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
 import io.github.cdagaming.unicore.impl.Pair;
 import io.github.cdagaming.unicore.impl.Tuple;
 import io.github.cdagaming.unicore.utils.MathUtils;
@@ -157,11 +158,23 @@ public class RenderUtils {
      *
      * @param mouseX The Mouse's Current X Position
      * @param mouseY The Mouse's Current Y Position
+     * @param widget The Object to check bounds and position
+     * @return {@link Boolean#TRUE} if the Mouse Position is within the bounds of the object, and thus is over it
+     */
+    public static boolean isMouseOver(final double mouseX, final double mouseY, final DynamicWidget widget) {
+        return isMouseOver(mouseX, mouseY, widget.getControlPosX(), widget.getControlPosY(), widget.getControlWidth() - 1, widget.getControlHeight() - 1);
+    }
+
+    /**
+     * Determines if the Mouse is over an element, following the defined Arguments
+     *
+     * @param mouseX The Mouse's Current X Position
+     * @param mouseY The Mouse's Current Y Position
      * @param button The Object to check bounds and position
      * @return {@link Boolean#TRUE} if the Mouse Position is within the bounds of the object, and thus is over it
      */
     public static boolean isMouseOver(final double mouseX, final double mouseY, final ExtendedButtonControl button) {
-        return button.isControlVisible() && isMouseOver(mouseX, mouseY, button.getControlPosX(), button.getControlPosY(), button.getControlWidth() - 1, button.getControlHeight() - 1);
+        return button.isControlVisible() && isMouseOver(mouseX, mouseY, (DynamicWidget) button);
     }
 
     /**
@@ -173,7 +186,7 @@ public class RenderUtils {
      * @return {@link Boolean#TRUE} if the Mouse Position is within the bounds of the object, and thus is over it
      */
     public static boolean isMouseOver(final double mouseX, final double mouseY, final ExtendedTextControl textControl) {
-        return textControl.isControlVisible() && isMouseOver(mouseX, mouseY, textControl.getControlPosX(), textControl.getControlPosY(), textControl.getControlWidth() - 1, textControl.getControlHeight() - 1);
+        return textControl.isControlVisible() && isMouseOver(mouseX, mouseY, (DynamicWidget) textControl);
     }
 
     /**
