@@ -107,6 +107,10 @@ public class TexturedWidget implements DynamicWidget {
 
     @Override
     public void draw(ExtendedScreen screen) {
+        if (!hasInfo()) {
+            return;
+        }
+
         if (hasBorder()) {
             RenderUtils.drawGradientBox(
                     getControlPosX() - 1, getControlPosY() - 1,
@@ -200,7 +204,25 @@ public class TexturedWidget implements DynamicWidget {
      * @return the {@link ScreenConstants.ColorData} info
      */
     public ScreenConstants.ColorData getInfo() {
-        return getInfoSupplier().get();
+        return hasInfoSupplier() ? getInfoSupplier().get() : null;
+    }
+
+    /**
+     * Retrieve whether the {@link ScreenConstants.ColorData} supplier exists
+     *
+     * @return {@link Boolean#TRUE} if condition is satisfied
+     */
+    public boolean hasInfoSupplier() {
+        return getInfoSupplier() != null;
+    }
+
+    /**
+     * Retrieve whether the {@link ScreenConstants.ColorData} exists
+     *
+     * @return {@link Boolean#TRUE} if condition is satisfied
+     */
+    public boolean hasInfo() {
+        return hasInfoSupplier() && getInfoSupplier().get() != null;
     }
 
     /**
