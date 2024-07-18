@@ -113,6 +113,10 @@ public class ExtendedScreen extends GuiScreen {
      */
     private int lastMouseY = 0;
     /**
+     * The Last Partial Tick Delta
+     */
+    private float lastPartialTicks = 0;
+    /**
      * The Last Ticked Scroll Delta
      */
     private int lastMouseScroll = 0;
@@ -744,6 +748,11 @@ public class ExtendedScreen extends GuiScreen {
 
             super.drawScreen(mouseX, mouseY, partialTicks);
 
+            lastMouseX = mouseX;
+            lastMouseY = mouseY;
+            lastPartialTicks = partialTicks;
+            isOverScreen = RenderUtils.isMouseOver(mouseX, mouseY, this);
+
             for (Gui extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedTextControl textField) {
                     textField.drawTextBox();
@@ -753,10 +762,6 @@ public class ExtendedScreen extends GuiScreen {
             renderExtra();
 
             RenderUtils.disableScissor(getGameInstance());
-
-            lastMouseX = mouseX;
-            lastMouseY = mouseY;
-            isOverScreen = RenderUtils.isMouseOver(mouseX, mouseY, this);
 
             for (Gui extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
@@ -1349,6 +1354,15 @@ public class ExtendedScreen extends GuiScreen {
      */
     public int getMouseY() {
         return lastMouseY;
+    }
+
+    /**
+     * Get the Current Partial Tick Delta
+     *
+     * @return The Partial Tick Delta
+     */
+    public float getPartialTicks() {
+        return lastPartialTicks;
     }
 
     /**
