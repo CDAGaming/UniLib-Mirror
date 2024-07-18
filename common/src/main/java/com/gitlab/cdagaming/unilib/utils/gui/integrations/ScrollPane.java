@@ -43,7 +43,7 @@ public class ScrollPane extends ExtendedScreen {
     private static final int DEFAULT_HEIGHT_PER_SCROLL = 8;
     private boolean clickedScrollbar;
     private int padding;
-    private float amountScrolled;
+    private float amountScrolled = 0.0F;
     // remove in 1.13+
     private int mousePrevX = 0;
     // remove in 1.13+
@@ -65,7 +65,6 @@ public class ScrollPane extends ExtendedScreen {
         setScreenWidth(width - startX);
         setScreenHeight(height - startY);
         setPadding(padding);
-        setScroll(0);
     }
 
     /**
