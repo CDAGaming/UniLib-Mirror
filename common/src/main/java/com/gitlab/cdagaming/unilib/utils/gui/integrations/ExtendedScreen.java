@@ -128,6 +128,10 @@ public class ExtendedScreen extends GuiScreen {
      * Whether the mouse is currently within screen bounds
      */
     private boolean isOverScreen;
+    /**
+     * Whether controls can be modified on this screen, true by default
+     */
+    private boolean canModifyControls;
 
     /**
      * Initialization Event for this Control, assigning defined arguments
@@ -143,6 +147,7 @@ public class ExtendedScreen extends GuiScreen {
         setScreenTitle(title);
         setScreenSubTitle(subTitle);
         setCanClose(true);
+        setCanModifyControls(true);
         setContentHeight(0);
         setScreenSettings();
     }
@@ -362,6 +367,10 @@ public class ExtendedScreen extends GuiScreen {
      */
     @Nonnull
     public <T extends Gui> T addControl(@Nonnull T buttonIn) {
+        if (!canModifyControls()) {
+            throw new IllegalStateException("Can't add control to control list");
+        }
+
         if (buttonIn instanceof DynamicWidget widget && !extendedWidgets.contains(buttonIn)) {
             addWidget(widget);
         }
@@ -383,6 +392,10 @@ public class ExtendedScreen extends GuiScreen {
      */
     @Nonnull
     public <T extends GuiSlot> T addList(@Nonnull T buttonIn) {
+        if (!canModifyControls()) {
+            throw new IllegalStateException("Can't add control to control list");
+        }
+
         if (!extendedLists.contains(buttonIn)) {
             extendedLists.add(buttonIn);
         }
@@ -398,6 +411,10 @@ public class ExtendedScreen extends GuiScreen {
      */
     @Nonnull
     public <T extends DynamicWidget> T addWidget(@Nonnull T buttonIn) {
+        if (!canModifyControls()) {
+            throw new IllegalStateException("Can't add control to control list");
+        }
+
         if (!extendedWidgets.contains(buttonIn)) {
             buttonIn.setControlPosY(getTop() + buttonIn.getTop());
             extendedWidgets.add(buttonIn);
@@ -1584,6 +1601,24 @@ public class ExtendedScreen extends GuiScreen {
      */
     public void setCanClose(final boolean canClose) {
         this.canClose = canClose;
+    }
+
+    /**
+     * Retrieve whether controls can be modified on this screen
+     *
+     * @return Whether controls can be modified on this screen
+     */
+    public boolean canModifyControls() {
+        return canModifyControls;
+    }
+
+    /**
+     * Sets whether controls can be modified on this screen
+     *
+     * @param canModifyControls the new "canModify" status
+     */
+    public void setCanModifyControls(final boolean canModifyControls) {
+        this.canModifyControls = canModifyControls;
     }
 
     /**
