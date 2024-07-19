@@ -266,7 +266,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
     public void checkScrollbarClick(double mouseX, double mouseY, int button) {
         super.checkScrollbarClick(mouseX, mouseY, button);
 
-        if (isLoaded() && isOverScreen() && button == 0) {
+        if (isLoaded() && isOverScreen() && isValidMouseClick(button)) {
             final E entry = getEntryAtPosition(mouseX, mouseY);
             if (entry != null) {
                 if (entry.mouseClicked(mouseX, mouseY, button)) {
@@ -381,7 +381,8 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
         final E entry = getEntry(index);
         entry.renderBack(client, index, yPos, xPos, entryWidth, entryHeight, mouseX, mouseY, Objects.equals(getHovered(), entry), partialTicks);
         if (isSelectedItem(index)) {
-            renderSelection(client, yPos, entryWidth, entryHeight, -8355712, -16777216);
+            final int outerColor = false ? -1 : -8355712;
+            renderSelection(client, yPos, entryWidth, entryHeight, outerColor, -16777216);
         }
         entry.render(client, index, yPos, xPos, entryWidth, entryHeight, mouseX, mouseY, Objects.equals(getHovered(), entry), partialTicks);
     }
@@ -553,13 +554,15 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
          * @param hovered      Whether the entry is being hovered over
          * @param partialTicks The Rendering Tick Rate
          */
-        public abstract void renderBack(final Minecraft client,
+        public void renderBack(final Minecraft client,
                                         final int index,
                                         final int yPos, final int xPos,
                                         final int entryWidth, final int entryHeight,
                                         final int mouseX, final int mouseY,
                                         final boolean hovered,
-                                        final float partialTicks);
+                                        final float partialTicks) {
+            // N/A
+        }
 
         /**
          * Determines if the Mouse is over an element, following the defined Arguments
@@ -568,7 +571,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
          * @param mouseY The Mouse's Current Y Position
          * @return {@link Boolean#TRUE} if the Mouse Position is within the bounds of the object, and thus is over it
          */
-        public boolean isMouseOver(final int mouseX, final int mouseY) {
+        public boolean isMouseOver(final double mouseX, final double mouseY) {
             return Objects.equals(list.getEntryAtPosition(mouseX, mouseY), this);
         }
 

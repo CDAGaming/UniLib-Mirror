@@ -175,6 +175,16 @@ public class ScrollPane extends ExtendedScreen {
         super.postRender();
     }
 
+    /**
+     * Retrieve whether a valid mouse click was performed
+     *
+     * @param button The Mouse Button to interpret
+     * @return {@link Boolean#TRUE} if condition was satisfied
+     */
+    protected boolean isValidMouseClick(final int button) {
+        return button == 0;
+    }
+
     // remove in 1.13+
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
@@ -200,7 +210,7 @@ public class ScrollPane extends ExtendedScreen {
     }
 
     public void mouseDragged(int mouseX, int mouseY, int button, int deltaX, int deltaY) {
-        if (button == 0 && needsScrollbar() && clickedScrollbar) {
+        if (isValidMouseClick(button) && needsScrollbar() && isScrolling()) {
             if (mouseY < getTop()) {
                 setScroll(0.0F);
             } else if (mouseY > getBottom()) {
@@ -299,7 +309,16 @@ public class ScrollPane extends ExtendedScreen {
      * @param button The Event Mouse Button Clicked
      */
     public void checkScrollbarClick(double mouseX, double mouseY, int button) {
-        clickedScrollbar = needsScrollbar() && button == 0 && MathUtils.isWithinValue(mouseX, getScrollBarX(), getScrollBarX() + getScrollBarWidth(), true, false);
+        clickedScrollbar = needsScrollbar() && isValidMouseClick(button) && MathUtils.isWithinValue(mouseX, getScrollBarX(), getScrollBarX() + getScrollBarWidth(), true, false);
+    }
+
+    /**
+     * Retrieve whether we are currently scrolling
+     *
+     * @return {@link Boolean#TRUE} if condition is satisfied
+     */
+    public boolean isScrolling() {
+        return clickedScrollbar;
     }
 
     /**
