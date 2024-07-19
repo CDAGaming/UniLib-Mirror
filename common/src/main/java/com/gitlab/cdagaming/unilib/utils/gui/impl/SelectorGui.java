@@ -144,10 +144,10 @@ public class SelectorGui extends ExtendedScreen {
     }
 
     protected void appendListControl() {
-        setListControl(addList(
+        setListControl(addControl(
                 new ScrollableListControl(
                         getGameInstance(), this,
-                        getScreenWidth(), getScreenHeight(),
+                        getScreenWidth(), getScreenHeight() - 64,
                         32, getScreenHeight() - 32,
                         getItemList(), getOriginalValue()
                 )

@@ -1,0 +1,627 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2018 - 2024 CDAGaming (cstack2011@yahoo.com)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package com.gitlab.cdagaming.unilib.utils.gui.controls;
+
+import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
+import com.gitlab.cdagaming.unilib.utils.gui.integrations.ScrollPane;
+import io.github.cdagaming.unicore.utils.StringUtils;
+import net.minecraft.client.Minecraft;
+
+import javax.annotation.Nullable;
+import java.util.AbstractList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * A Simplified Entry List Widget, using techniques from {@link ScrollPane} and Mojang's GuiSlot system
+ * <p>For 1.14+ usage, please use Mojangs AbstractSelectionList system, as this lacks some methods and key-combo support
+ *
+ * @param <E> The entry type for the widget
+ * @author CDAGaming
+ */
+public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends ScrollPane {
+    /**
+     * The height of each item in the list
+     */
+    protected final int itemHeight;
+    /**
+     * The list of entries in this widget
+     */
+    private final List<E> children = new EntryListPane<E>.TrackedList();
+    /**
+     * The selected entry in the list
+     */
+    @Nullable
+    private E selected;
+    /**
+     * The hovered entry in the list
+     */
+    @Nullable
+    private E hovered;
+
+    /**
+     * Initialization Event for this Control, assigning defined arguments
+     *
+     * @param client     The current game instance
+     * @param width      The width of the widget
+     * @param height     The height of the widget
+     * @param y          The starting Y position of the widget
+     * @param itemHeight The height of each entry for the widget
+     */
+    public EntryListPane(final Minecraft client,
+                         final int width, final int height,
+                         final int y, final int itemHeight) {
+        super(0, y, width, height);
+        setGameInstance(client);
+        setCanModifyControls(false);
+        this.itemHeight = itemHeight;
+    }
+
+    /**
+     * Retrieve the maximum width of each entry row
+     *
+     * @return the maximum entry row width
+     */
+    public int getRowWidth() {
+        return 220;
+    }
+
+    /**
+     * Retrieve the selected entry in the list
+     *
+     * @return the current selection, or null
+     */
+    @Nullable
+    public E getSelected() {
+        return selected;
+    }
+
+    /**
+     * Set the selected entry in the list
+     *
+     * @param selected The new selection, which can be null
+     */
+    public void setSelected(@Nullable final E selected) {
+        this.selected = selected;
+    }
+
+    /**
+     * Retrieve the first element in the entry list
+     *
+     * @return the first element found in the entry list
+     */
+    public E getFirstElement() {
+        return getEntry(0);
+    }
+
+    /**
+     * Retrieve the list of entries in this widget
+     *
+     * @return the current entry list
+     */
+    public final List<E> children() {
+        return children;
+    }
+
+    /**
+     * Clears the list of entries in this widget
+     */
+    protected void clearEntries() {
+        children.clear();
+        selected = null;
+    }
+
+    /**
+     * Replace the current entry list with the specified data
+     *
+     * @param collection The new entry list to interpret
+     */
+    protected void replaceEntries(final Collection<E> collection) {
+        clearEntries();
+        children.addAll(collection);
+    }
+
+    /**
+     * Retrieve the entry at the specified index
+     *
+     * @param index The index to interpret
+     * @return The entry at the specified index, if found
+     */
+    protected E getEntry(final int index) {
+        return children.get(index);
+    }
+
+    /**
+     * Add an entry to the entry list for this widget
+     *
+     * @param entry The entry to interpret
+     * @return The new entry list size
+     */
+    protected int addEntry(final E entry) {
+        children.add(entry);
+        return getItemCount() - 1;
+    }
+
+    /**
+     * Add an entry to the top of the entry list for this widget
+     *
+     * @param entry The entry to interpret
+     */
+    protected void addEntryToTop(final E entry) {
+        final float delta = getMaxScroll() - getAmountScrolled();
+        children.addFirst(entry);
+        setAmountScrolled(getMaxScroll() - delta);
+    }
+
+    /**
+     * Removes an entry from the top of the entry list for this widget
+     *
+     * @param entry The entry to interpret
+     * @return {@link Boolean#TRUE} if successfully removed
+     */
+    protected boolean removeEntryFromTop(final E entry) {
+        final float delta = getMaxScroll() - getAmountScrolled();
+        final boolean hasRemoved = removeEntry(entry);
+        setAmountScrolled(getMaxScroll() - delta);
+        return hasRemoved;
+    }
+
+    /**
+     * Retrieve the amount of items in the entry list
+     *
+     * @return The entry list item count
+     */
+    protected int getItemCount() {
+        return children.size();
+    }
+
+    /**
+     * Retrieve whether the specified index is that of the current selected item
+     *
+     * @param index The item index to interpret
+     * @return {@link Boolean#TRUE} if the index matches the current selection
+     */
+    protected boolean isSelectedItem(final int index) {
+        return Objects.equals(getSelected(), getEntry(index));
+    }
+
+    /**
+     * Retrieve the entry at the specified mouse position, if possible
+     *
+     * @param mouseX The X position to interpret
+     * @param mouseY The Y position to interpret
+     * @return The entry at the specified position, or null if no entry found
+     */
+    @Nullable
+    protected final E getEntryAtPosition(final double mouseX, final double mouseY) {
+        final int rowMiddle = getRowWidth() / 2;
+        final int listMiddle = getScreenX() + getScreenWidth() / 2;
+        final int left = listMiddle - rowMiddle;
+        final int right = listMiddle + rowMiddle;
+        final int yPos = (int) Math.floor(mouseY - getScreenY() + getAmountScrolled() - getPadding());
+        final int index = yPos / itemHeight;
+        return mouseX >= left && mouseX <= right && index >= 0 && yPos >= 0 && index < getItemCount() ? getEntry(index) : null;
+    }
+
+    /**
+     * Update the Size and Positioning of this Widget
+     *
+     * @param width  The new width to interpret
+     * @param height The new height to interpret
+     * @param yPos   The new starting Y position to interpret
+     */
+    public void updateSizeAndPosition(final int width, final int height, final int yPos) {
+        setScreenWidth(width);
+        setScreenHeight(height);
+        setScreenX(0);
+        setScreenY(yPos);
+        bindAmountScrolled();
+    }
+
+    /**
+     * Retrieve the maximum content position for this list
+     *
+     * @return the maximum content position
+     */
+    protected int getMaxPosition() {
+        return getItemCount() * itemHeight;
+    }
+
+    @Override
+    public void preRender() {
+        super.preRender();
+        hovered = isOverScreen() ? getEntryAtPosition(getMouseX(), getMouseY()) : null;
+    }
+
+    @Override
+    public void renderExtra() {
+        super.renderExtra();
+        renderListItems(getGameInstance(), getMouseX(), getMouseY(), getPartialTicks());
+    }
+
+    @Override
+    public void checkScrollbarClick(double mouseX, double mouseY, int button) {
+        super.checkScrollbarClick(mouseX, mouseY, button);
+
+        if (isLoaded() && isOverScreen() && button == 0) {
+            final E entry = getEntryAtPosition(mouseX, mouseY);
+            if (entry != null) {
+                if (entry.mouseClicked(mouseX, mouseY, button)) {
+                    setSelected(entry);
+                }
+            }
+        }
+    }
+
+    /**
+     * Center the Scrollbar to the specified entry on the list
+     *
+     * @param entry The entry to interpret
+     */
+    protected void centerScrollOn(final E entry) {
+        setScroll(children().indexOf(entry) * itemHeight + itemHeight / 2f - getScreenHeight() / 2f);
+    }
+
+    /**
+     * Ensure that the specified entry is visible on the list
+     * <p>Note: This works differently than {@link EntryListPane#centerScrollOn(Entry)}
+     *
+     * @param entry The entry to interpret
+     */
+    protected void ensureVisible(final E entry) {
+        final int rowTop = getRowTop(children().indexOf(entry));
+        final int j = rowTop - getScreenY() - getPadding() - itemHeight;
+        if (j < 0) {
+            scrollBy(j);
+        }
+
+        int k = getBottom() - rowTop - itemHeight - itemHeight;
+        if (k < 0) {
+            scrollBy(-k);
+        }
+    }
+
+    @Override
+    public int getContentHeight() {
+        return getMaxPosition();
+    }
+
+    @Override
+    public int getMaxScroll() {
+        return Math.max(0, getContentHeight() - (getScreenHeight() - getPadding()));
+    }
+
+    @Override
+    public int getScrollBarX() {
+        return getDefaultScrollbarPosition();
+    }
+
+    /**
+     * Retrieve the default scrollbar position
+     *
+     * @return The default scrollbar position
+     */
+    protected int getDefaultScrollbarPosition() {
+        return getRealRowRight() + getListOutlinePadding();
+    }
+
+    /**
+     * Retrieve the outline list padding
+     *
+     * @return The outline list padding
+     */
+    private int getListOutlinePadding() {
+        return 10;
+    }
+
+    @Override
+    public int getHeightPerScroll() {
+        return itemHeight / 2;
+    }
+
+    /**
+     * Render the List Items for this widget
+     *
+     * @param client       The current game instance
+     * @param mouseX       The Event Mouse X Coordinate
+     * @param mouseY       The Event Mouse Y Coordinate
+     * @param partialTicks The Rendering Tick Rate
+     */
+    protected void renderListItems(final Minecraft client, final int mouseX, final int mouseY, final float partialTicks) {
+        final int rowLeft = getRowLeft();
+        final int rowWidth = getRowWidth();
+        final int rowHeight = itemHeight - getPadding();
+
+        for (int index = 0; index < getItemCount(); index++) {
+            final int rowTop = getRowTop(index);
+            final int rowBottom = getRowBottom(index);
+            if (rowBottom >= getScreenY() && rowTop <= getBottom()) {
+                renderItem(client, mouseX, mouseY, partialTicks, index, rowLeft, rowTop, rowWidth, rowHeight);
+            }
+        }
+    }
+
+    /**
+     * Render the specified item for this widget
+     *
+     * @param client       The current game instance
+     * @param mouseX       The Event Mouse X Coordinate
+     * @param mouseY       The Event Mouse Y Coordinate
+     * @param partialTicks The Rendering Tick Rate
+     * @param index        The index representing the entry to render
+     * @param xPos         The starting X position for the entry
+     * @param yPos         The starting Y position for the entry
+     * @param entryWidth   The width of the entry
+     * @param entryHeight  The height of the entry
+     */
+    protected void renderItem(final Minecraft client, final int mouseX, final int mouseY, final float partialTicks, final int index, final int xPos, final int yPos, final int entryWidth, final int entryHeight) {
+        final E entry = getEntry(index);
+        entry.renderBack(client, index, yPos, xPos, entryWidth, entryHeight, mouseX, mouseY, Objects.equals(getHovered(), entry), partialTicks);
+        if (isSelectedItem(index)) {
+            renderSelection(client, yPos, entryWidth, entryHeight, -8355712, -16777216);
+        }
+        entry.render(client, index, yPos, xPos, entryWidth, entryHeight, mouseX, mouseY, Objects.equals(getHovered(), entry), partialTicks);
+    }
+
+    /**
+     * Render a selection box around the specified position
+     *
+     * @param client     The current game instance
+     * @param yPos       The starting Y position for the entry
+     * @param width      The width of the entry
+     * @param height     The height of the entry
+     * @param outerColor The outer (background) color
+     * @param innerColor The inner (foreground) color
+     */
+    protected void renderSelection(final Minecraft client, final int yPos, final int width, final int height, final int outerColor, final int innerColor) {
+        final int left = getScreenX() + (getScreenWidth() - width) / 2;
+        final int right = getScreenX() + (getScreenWidth() + width) / 2;
+        RenderUtils.drawGradient(left, right, yPos - 2, yPos + height + 2, 0.0D, outerColor, outerColor);
+        RenderUtils.drawGradient(left + 1, right - 1, yPos - 1, yPos + height + 1, 0.0D, innerColor, innerColor);
+    }
+
+    /**
+     * Retrieve the left-most position for entry list rows
+     *
+     * @return The left-most row position
+     */
+    public int getRowLeft() {
+        return getScreenX() + getScreenWidth() / 2 - getRowWidth() / 2 + 2;
+    }
+
+    /**
+     * Retrieve the "real" left-most position for entry list rows
+     *
+     * @return The "real" left-most row position
+     */
+    private int getRealRowLeft() {
+        return getScreenX() + getScreenWidth() / 2 - getRowWidth() / 2;
+    }
+
+    /**
+     * Retrieve the right-most position for entry list rows
+     *
+     * @return The right-most row position
+     */
+    public int getRowRight() {
+        return getRowLeft() + getRowWidth();
+    }
+
+    /**
+     * Retrieve the "real" right-most position for entry list rows
+     *
+     * @return The "real" right-most row position
+     */
+    private int getRealRowRight() {
+        return getRealRowLeft() + getRowWidth();
+    }
+
+    /**
+     * Retrieve the top-most position for entry list rows
+     *
+     * @param index The index to interpret
+     * @return The top-most position for entry list rows
+     */
+    protected int getRowTop(final int index) {
+        return getScreenY() + getPadding() - (int) getAmountScrolled() + index * itemHeight;
+    }
+
+    /**
+     * Retrieve the bottom-most position for entry list rows
+     *
+     * @param index The index to interpret
+     * @return The bottom-most position for entry list rows
+     */
+    protected int getRowBottom(final int index) {
+        return getRowTop(index) + itemHeight;
+    }
+
+    /**
+     * Remove the specified entry from the list
+     *
+     * @param index The index to interpret
+     * @return The removed entry, or null if not found
+     */
+    @Nullable
+    protected E remove(final int index) {
+        final E entry = getEntry(index);
+        return removeEntry(entry) ? entry : null;
+    }
+
+    /**
+     * Remove the specified entry from the list
+     *
+     * @param entry The entry to interpret
+     * @return {@link Boolean#TRUE} if removed successfully
+     */
+    protected boolean removeEntry(final E entry) {
+        final boolean hasRemoved = children.remove(entry);
+        if (hasRemoved && entry == getSelected()) {
+            setSelected(null);
+        }
+        return hasRemoved;
+    }
+
+    /**
+     * Retrieve the hovered entry in the list
+     *
+     * @return the current hovered entry, or null
+     */
+    @Nullable
+    protected E getHovered() {
+        return hovered;
+    }
+
+    /**
+     * Bind the specified Entry to the current widget instance
+     *
+     * @param entry The entry to interpret
+     */
+    void bindEntryToSelf(final EntryListPane.Entry<E> entry) {
+        entry.list = this;
+    }
+
+    /**
+     * Representation of an Entry for an {@link EntryListPane}
+     *
+     * @param <E> The entry type for the object
+     * @author CDAGaming
+     */
+    protected abstract static class Entry<E extends EntryListPane.Entry<E>> {
+        /**
+         * The entry list reference
+         */
+        @Deprecated
+        EntryListPane<E> list;
+
+        /**
+         * Render the entry content to the screen
+         *
+         * @param client       The current game index
+         * @param index        The index to interpret
+         * @param yPos         The starting Y position for the entry
+         * @param xPos         The starting X position for the entry
+         * @param entryWidth   The width of the entry
+         * @param entryHeight  The height of the entry
+         * @param mouseX       The Event Mouse X Coordinate
+         * @param mouseY       The Event Mouse Y Coordinate
+         * @param hovered      Whether the entry is being hovered over
+         * @param partialTicks The Rendering Tick Rate
+         */
+        public abstract void render(final Minecraft client,
+                                    final int index,
+                                    final int yPos, final int xPos,
+                                    final int entryWidth, final int entryHeight,
+                                    final int mouseX, final int mouseY,
+                                    final boolean hovered,
+                                    final float partialTicks);
+
+        /**
+         * Render the entry background content to the screen
+         *
+         * @param client       The current game index
+         * @param index        The index to interpret
+         * @param yPos         The starting Y position for the entry
+         * @param xPos         The starting X position for the entry
+         * @param entryWidth   The width of the entry
+         * @param entryHeight  The height of the entry
+         * @param mouseX       The Event Mouse X Coordinate
+         * @param mouseY       The Event Mouse Y Coordinate
+         * @param hovered      Whether the entry is being hovered over
+         * @param partialTicks The Rendering Tick Rate
+         */
+        public abstract void renderBack(final Minecraft client,
+                                        final int index,
+                                        final int yPos, final int xPos,
+                                        final int entryWidth, final int entryHeight,
+                                        final int mouseX, final int mouseY,
+                                        final boolean hovered,
+                                        final float partialTicks);
+
+        /**
+         * Determines if the Mouse is over an element, following the defined Arguments
+         *
+         * @param mouseX The Mouse's Current X Position
+         * @param mouseY The Mouse's Current Y Position
+         * @return {@link Boolean#TRUE} if the Mouse Position is within the bounds of the object, and thus is over it
+         */
+        public boolean isMouseOver(final int mouseX, final int mouseY) {
+            return Objects.equals(list.getEntryAtPosition(mouseX, mouseY), this);
+        }
+
+        /**
+         * Event to trigger upon the mouse being clicked
+         *
+         * @param mouseX The Event Mouse X Coordinate
+         * @param mouseY The Event Mouse Y Coordinate
+         * @param button The Event Mouse Button Clicked
+         * @return The Event Result
+         */
+        public boolean mouseClicked(final double mouseX, final double mouseY, final int button) {
+            return true;
+        }
+    }
+
+    /**
+     * Simple List Implementation for tracking entry data
+     *
+     * @author CDAGaming
+     */
+    class TrackedList extends AbstractList<E> {
+        /**
+         * The localized list storage
+         */
+        private final List<E> delegate = StringUtils.newArrayList();
+
+        @Override
+        public E get(final int index) {
+            return this.delegate.get(index);
+        }
+
+        @Override
+        public int size() {
+            return this.delegate.size();
+        }
+
+        @Override
+        public E set(final int index, final E entry) {
+            final E prevEntry = this.delegate.set(index, entry);
+            EntryListPane.this.bindEntryToSelf(entry);
+            return prevEntry;
+        }
+
+        @Override
+        public void add(final int index, final E entry) {
+            this.delegate.add(index, entry);
+            EntryListPane.this.bindEntryToSelf(entry);
+        }
+
+        @Override
+        public E remove(final int index) {
+            return this.delegate.remove(index);
+        }
+    }
+}
