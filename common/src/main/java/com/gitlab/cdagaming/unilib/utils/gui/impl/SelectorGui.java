@@ -147,7 +147,7 @@ public class SelectorGui extends ExtendedScreen {
         setListControl(addList(
                 new ScrollableListControl(
                         getGameInstance(), this,
-                        getScreenWidth(), getScreenHeight(),
+                        getScreenWidth(), getScreenHeight() - 64,
                         32, getScreenHeight() - 32,
                         getItemList(), getOriginalValue()
                 )

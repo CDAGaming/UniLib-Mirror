@@ -62,8 +62,8 @@ public class ScrollPane extends ExtendedScreen {
         super();
         setScreenX(startX);
         setScreenY(startY);
-        setScreenWidth(width - startX);
-        setScreenHeight(height - startY);
+        setScreenWidth(width);
+        setScreenHeight(height);
         setPadding(padding);
     }
 
