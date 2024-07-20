@@ -38,7 +38,6 @@ import java.util.function.Predicate;
 
 /**
  * A Simplified Entry List Widget, using techniques from {@link ScrollPane} and Mojang's GuiSlot system
- * <p>For 1.14+ usage, please use Mojangs AbstractSelectionList system, as this lacks some methods and key-combo support
  *
  * @param <E> The entry type for the widget
  * @author CDAGaming
@@ -272,6 +271,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
             if (entry != null) {
                 if (entry.mouseClicked(mouseX, mouseY, button)) {
                     setSelected(entry);
+                    setFocused(true);
                 }
             }
         }
@@ -431,7 +431,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
         final E entry = getEntry(index);
         entry.renderBack(client, index, yPos, xPos, entryWidth, entryHeight, mouseX, mouseY, Objects.equals(getHovered(), entry), partialTicks);
         if (isSelectedItem(index)) {
-            final int outerColor = false ? -1 : -8355712;
+            final int outerColor = isFocused() ? -1 : -8355712;
             renderSelection(client, yPos, entryWidth, entryHeight, outerColor, -16777216);
         }
         entry.render(client, index, yPos, xPos, entryWidth, entryHeight, mouseX, mouseY, Objects.equals(getHovered(), entry), partialTicks);
@@ -605,12 +605,12 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
          * @param partialTicks The Rendering Tick Rate
          */
         public void renderBack(final Minecraft client,
-                                        final int index,
-                                        final int yPos, final int xPos,
-                                        final int entryWidth, final int entryHeight,
-                                        final int mouseX, final int mouseY,
-                                        final boolean hovered,
-                                        final float partialTicks) {
+                               final int index,
+                               final int yPos, final int xPos,
+                               final int entryWidth, final int entryHeight,
+                               final int mouseX, final int mouseY,
+                               final boolean hovered,
+                               final float partialTicks) {
             // N/A
         }
 
