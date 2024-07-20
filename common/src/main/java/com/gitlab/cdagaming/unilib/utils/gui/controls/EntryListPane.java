@@ -34,6 +34,7 @@ import java.util.AbstractList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 /**
  * A Simplified Entry List Widget, using techniques from {@link ScrollPane} and Mojang's GuiSlot system
@@ -340,6 +341,53 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
     @Override
     public int getHeightPerScroll() {
         return itemHeight / 2;
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) {
+        E newEntry = null;
+        if (keyCode == getKeyByVersion(208, 264)) {
+            newEntry = nextEntry(1); // Down Arrow
+        } else if (keyCode == getKeyByVersion(200, 265)) {
+            newEntry = nextEntry(-1); // Up Arrow
+        }
+
+        if (newEntry != null) {
+            setSelected(newEntry);
+            ensureVisible(newEntry);
+        } else {
+            super.keyTyped(typedChar, keyCode);
+        }
+    }
+
+    @Nullable
+    protected E nextEntry(final int direction) {
+        return nextEntry(direction, entry -> true);
+    }
+
+    @Nullable
+    protected E nextEntry(final int direction, Predicate<E> predicate) {
+        return nextEntry(direction, predicate, getSelected());
+    }
+
+    @Nullable
+    protected E nextEntry(final int direction, Predicate<E> predicate, @Nullable E entry) {
+        if (!children().isEmpty() && direction != 0) {
+            int index;
+            if (entry == null) {
+                index = direction > 0 ? 0 : children().size() - 1;
+            } else {
+                index = children().indexOf(entry) + direction;
+            }
+
+            for (int i = index; i >= 0 && i < getItemCount(); i += direction) {
+                final E next = children().get(i);
+                if (predicate.test(next)) {
+                    return next;
+                }
+            }
+        }
+        return null;
     }
 
     /**
