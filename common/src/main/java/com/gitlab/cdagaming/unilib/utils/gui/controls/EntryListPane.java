@@ -52,6 +52,14 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
      */
     private final List<E> children = new EntryListPane<E>.TrackedList();
     /**
+     * Whether this widget is rendering a header element
+     */
+    private boolean renderHeader;
+    /**
+     * The height of the header element, or 0 if disabled
+     */
+    protected int headerHeight;
+    /**
      * The selected entry in the list
      */
     @Nullable
@@ -78,6 +86,20 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
         setGameInstance(client);
         setCanModifyControls(false);
         this.itemHeight = itemHeight;
+    }
+
+    /**
+     * Sets whether we are rendering a header element to this widget
+     *
+     * @param renderHeader Whether this widget is rendering a header element
+     * @param headerHeight The height of the header element, or 0 if disabled
+     */
+    protected void setRenderHeader(final boolean renderHeader, final int headerHeight) {
+        this.renderHeader = renderHeader;
+        this.headerHeight = headerHeight;
+        if (!renderHeader) {
+            this.headerHeight = 0;
+        }
     }
 
     /**
@@ -221,7 +243,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
         final int listMiddle = getScreenX() + getScreenWidth() / 2;
         final int left = listMiddle - rowMiddle;
         final int right = listMiddle + rowMiddle;
-        final int yPos = (int) Math.floor(mouseY - getScreenY() + getAmountScrolled() - getPadding());
+        final int yPos = (int) Math.floor(mouseY - getScreenY() - headerHeight + getAmountScrolled() - getPadding());
         final int index = yPos / itemHeight;
         return mouseX >= left && mouseX <= right && index >= 0 && yPos >= 0 && index < getItemCount() ? getEntry(index) : null;
     }
@@ -247,7 +269,40 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
      * @return the maximum content position
      */
     protected int getMaxPosition() {
-        return getItemCount() * itemHeight;
+        return getItemCount() * itemHeight + headerHeight;
+    }
+
+    /**
+     * Retrieve whether the header element has been clicked
+     *
+     * @param posX The X position to interpret
+     * @param posY The Y position to interpret
+     * @return {@link Boolean#TRUE} if condition is satisfied
+     */
+    protected boolean clickedHeader(final int posX, final int posY) {
+        return false;
+    }
+
+    /**
+     * Render the header element to the screen, if able
+     *
+     * @param client The current game instance
+     * @param posX   The Event X Coordinate
+     * @param posY   The Event Y Coordinate
+     */
+    protected void renderHeader(final Minecraft client, final int posX, final int posY) {
+        // N/A
+    }
+
+    /**
+     * Render additional decorations to the screen
+     *
+     * @param client The current game instance
+     * @param posX   The Event X Coordinate
+     * @param posY   The Event Y Coordinate
+     */
+    protected void renderDecorations(final Minecraft client, final int posX, final int posY) {
+        // N/A
     }
 
     @Override
@@ -257,8 +312,20 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
     }
 
     @Override
+    public void postRender() {
+        super.postRender();
+        renderDecorations(getGameInstance(), getMouseX(), getMouseY());
+    }
+
+    @Override
     public void renderExtra() {
         super.renderExtra();
+
+        if (renderHeader) {
+            final int posX = getRowLeft();
+            final int posY = getScreenY() + getPadding() - (int) getAmountScrolled();
+            renderHeader(getGameInstance(), posX, posY);
+        }
         renderListItems(getGameInstance(), getMouseX(), getMouseY(), getPartialTicks());
     }
 
@@ -273,6 +340,11 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
                     setSelected(entry);
                     setFocused(true);
                 }
+            } else {
+                clickedHeader(
+                        (int) (mouseX - (double) (getScreenX() + getScreenWidth() / 2 - getRowWidth() / 2)),
+                        (int) (mouseY - (double) getScreenY()) + (int) getAmountScrolled() - getPadding()
+                );
             }
         }
     }
@@ -497,7 +569,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
      * @return The top-most position for entry list rows
      */
     protected int getRowTop(final int index) {
-        return getScreenY() + getPadding() - (int) getAmountScrolled() + index * itemHeight;
+        return getScreenY() + getPadding() - (int) getAmountScrolled() + index * itemHeight + headerHeight;
     }
 
     /**
