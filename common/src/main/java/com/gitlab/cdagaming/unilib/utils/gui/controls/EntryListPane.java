@@ -457,17 +457,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
     }
 
     protected void moveSelection(final int direction) {
-        E entry;
-        if (!isFocused() && !children().isEmpty()) {
-            if (getSelected() != null) {
-                entry = getSelected();
-            } else {
-                entry = getFirstElement();
-            }
-        } else {
-            entry = nextEntry(direction);
-        }
-
+        final E entry = direction != 0 ? nextEntry(direction) : getSelected();
         if (entry != null) {
             setSelected(entry);
             ensureVisible(entry);
