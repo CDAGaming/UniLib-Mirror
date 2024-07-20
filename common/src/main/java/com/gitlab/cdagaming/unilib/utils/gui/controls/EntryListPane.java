@@ -345,16 +345,10 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) {
-        E newEntry = null;
         if (keyCode == getKeyByVersion(208, 264)) {
-            newEntry = nextEntry(1); // Down Arrow
+            moveSelection(1); // Down Arrow
         } else if (keyCode == getKeyByVersion(200, 265)) {
-            newEntry = nextEntry(-1); // Up Arrow
-        }
-
-        if (newEntry != null) {
-            setSelected(newEntry);
-            ensureVisible(newEntry);
+            moveSelection(-1); // Up Arrow
         } else {
             super.keyTyped(typedChar, keyCode);
         }
@@ -366,12 +360,12 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
     }
 
     @Nullable
-    protected E nextEntry(final int direction, Predicate<E> predicate) {
+    protected E nextEntry(final int direction, final Predicate<E> predicate) {
         return nextEntry(direction, predicate, getSelected());
     }
 
     @Nullable
-    protected E nextEntry(final int direction, Predicate<E> predicate, @Nullable E entry) {
+    protected E nextEntry(final int direction, final Predicate<E> predicate, final @Nullable E entry) {
         if (!children().isEmpty() && direction != 0) {
             int index;
             if (entry == null) {
@@ -388,6 +382,14 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
             }
         }
         return null;
+    }
+
+    protected void moveSelection(final int direction) {
+        final E entry = nextEntry(direction);
+        if (entry != null) {
+            setSelected(entry);
+            ensureVisible(entry);
+        }
     }
 
     /**
