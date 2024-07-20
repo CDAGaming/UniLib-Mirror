@@ -123,9 +123,10 @@ public class ScrollPane extends ExtendedScreen {
         return 0.5f;
     }
 
-    @Override
-    public void postRender() {
-        // Render Depth Decorations
+    /**
+     * Render the List Separators (Depth Decorations)
+     */
+    protected void renderListSeparators() {
         RenderUtils.drawGradient(
                 getLeft(), getRight(), getTop(), getTop() + getPadding(),
                 -100.0D,
@@ -138,8 +139,12 @@ public class ScrollPane extends ExtendedScreen {
                 NONE,
                 Color.black
         );
+    }
 
-        // Render Scrollbar Elements
+    /**
+     * Render the Scrollbar Elements, if needed
+     */
+    protected void renderScrollbar() {
         if (needsScrollbar()) {
             final int scrollBarX = getScrollBarX();
             final int scrollBarRight = scrollBarX + getScrollBarWidth();
@@ -171,6 +176,12 @@ public class ScrollPane extends ExtendedScreen {
                     Color.lightGray, Color.lightGray
             );
         }
+    }
+
+    @Override
+    public void postRender() {
+        renderListSeparators();
+        renderScrollbar();
 
         super.postRender();
     }
