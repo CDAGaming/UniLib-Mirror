@@ -1413,6 +1413,7 @@ public class ExtendedScreen extends GuiScreen {
 
     /**
      * Get whether this screen is the current screen
+     *
      * @return {@link Boolean#TRUE} if condition is satisfied
      */
     public boolean isCurrentScreen() {

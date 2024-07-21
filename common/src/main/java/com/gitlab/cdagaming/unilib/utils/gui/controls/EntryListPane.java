@@ -52,13 +52,13 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
      */
     private final List<E> children = new EntryListPane<E>.TrackedList();
     /**
-     * Whether this widget is rendering a header element
-     */
-    private boolean renderHeader;
-    /**
      * The height of the header element, or 0 if disabled
      */
     protected int headerHeight;
+    /**
+     * Whether this widget is rendering a header element
+     */
+    private boolean renderHeader;
     /**
      * The selected entry in the list
      */
@@ -426,16 +426,37 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
         }
     }
 
+    /**
+     * Retrieve the next entry in the specified direction
+     *
+     * @param direction The direction to travel
+     * @return the next entry, or null
+     */
     @Nullable
     protected E nextEntry(final int direction) {
         return nextEntry(direction, entry -> true);
     }
 
+    /**
+     * Retrieve the next entry in the specified direction
+     *
+     * @param direction The direction to travel
+     * @param predicate The condition to interpret the entry with
+     * @return the next entry, or null
+     */
     @Nullable
     protected E nextEntry(final int direction, final Predicate<E> predicate) {
         return nextEntry(direction, predicate, getSelected());
     }
 
+    /**
+     * Retrieve the next entry in the specified direction
+     *
+     * @param direction The direction to travel
+     * @param predicate The condition to interpret the entry with
+     * @param entry     The entry to interpret, if any
+     * @return the next entry, or null
+     */
     @Nullable
     protected E nextEntry(final int direction, final Predicate<E> predicate, final @Nullable E entry) {
         if (!children().isEmpty() && direction != 0) {
@@ -456,6 +477,11 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
         return null;
     }
 
+    /**
+     * Move the current selection in the specified direction
+     *
+     * @param direction The direction to travel
+     */
     protected void moveSelection(final int direction) {
         final E entry = direction != 0 ? nextEntry(direction) : getSelected();
         if (entry != null) {

@@ -28,7 +28,6 @@ import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -113,33 +112,6 @@ public class ScrollableListControl extends EntryListPane<ScrollableListControl.S
     @Override
     protected int getItemCount() {
         return itemList.size();
-    }
-
-    /**
-     * Retrieve the Game Instance attached to this Screen
-     *
-     * @return the current game instance
-     */
-    public Minecraft getGameInstance() {
-        return mc;
-    }
-
-    /**
-     * Get the Current Font Renderer for this Control
-     *
-     * @return The Current Font Renderer for this Control
-     */
-    public FontRenderer getFontRenderer() {
-        return getGameInstance().fontRenderer != null ? getGameInstance().fontRenderer : RenderUtils.getDefaultFontRenderer();
-    }
-
-    /**
-     * Get the Current Font Height for this Control
-     *
-     * @return The Current Font Height for this Control
-     */
-    public int getFontHeight() {
-        return RenderUtils.getFontHeight(getFontRenderer());
     }
 
     /**
