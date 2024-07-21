@@ -105,9 +105,9 @@ public class WorldUtils {
         String name = "clear";
         if (world != null) {
             final WorldInfo info = world.getWorldInfo();
-            if (info.getIsThundering()) {
+            if (info.getThundering()) {
                 name = "thunder";
-            } else if (info.getIsRaining()) {
+            } else if (info.getRaining()) {
                 name = "rain";
             } else {
                 name = "clear";
