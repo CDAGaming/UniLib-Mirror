@@ -185,11 +185,6 @@ public class ScrollableListControl extends EntryListPane<ScrollableListControl.S
         }
 
         @Override
-        public void renderBack(Minecraft client, int index, int yPos, int xPos, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float partialTicks) {
-            // N/A
-        }
-
-        @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             if (isValidMouseClick(button)) {
                 this.onPressed();
