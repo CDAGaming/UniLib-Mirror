@@ -34,6 +34,7 @@ import net.minecraft.client.gui.options.GuiOptions;
 import net.minecraft.client.gui.options.components.KeyBindingComponent;
 import net.minecraft.client.gui.options.components.OptionsCategory;
 import net.minecraft.client.gui.options.data.OptionsPages;
+import net.minecraft.client.input.InputDevice;
 import net.minecraft.client.option.KeyBinding;
 import org.lwjgl.input.Keyboard;
 
@@ -154,7 +155,7 @@ public class KeyUtils {
      * @return the created KeyBind instance
      */
     private KeyBinding createKey(final String id, final String name, final String category, final int defaultKey, final int currentKey) {
-        final KeyBinding result = new KeyBinding(name).bindKeyboard(defaultKey);
+        final KeyBinding result = new KeyBinding(name).setDefault(InputDevice.keyboard, defaultKey);
         keySyncQueue.put(id, currentKey);
         if (!categorySyncQueue.containsKey(category)) {
             categorySyncQueue.put(category, new OptionsCategory(category));
@@ -296,7 +297,7 @@ public class KeyUtils {
      * @param newKey   the new key for the specified KeyBinding
      */
     private void setKey(final KeyBinding instance, final int newKey) {
-        instance.bindKeyboard(newKey);
+        instance.bind(InputDevice.keyboard, newKey);
     }
 
     /**
