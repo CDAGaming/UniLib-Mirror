@@ -29,6 +29,7 @@ import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.src.Block;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.StringTranslate;
 
 import java.util.List;
 
@@ -157,7 +158,7 @@ public class ItemUtils {
         String result = "";
         if (!isItemEmpty(stack)) {
             result = StringUtils.getOrDefault(
-                    stack.getItem().func_25009_k()
+                    StringTranslate.getInstance().translateNamedKey(stack.getItem().getItemName())
             );
         }
 
