@@ -137,6 +137,10 @@ public class ExtendedScreen extends GuiScreen {
      * Whether controls can be modified on this screen, true by default
      */
     private boolean canModifyControls;
+    /**
+     * Whether we are focusing on a control
+     */
+    private boolean focused;
 
     /**
      * Initialization Event for this Control, assigning defined arguments
@@ -1643,6 +1647,24 @@ public class ExtendedScreen extends GuiScreen {
      */
     public void setCanModifyControls(final boolean canModifyControls) {
         this.canModifyControls = canModifyControls;
+    }
+
+    /**
+     * Sets the focus state of this screen
+     *
+     * @param hasFocusedControlIn The new focus state
+     */
+    public void setFocused(final boolean hasFocusedControlIn) {
+        this.focused = hasFocusedControlIn;
+    }
+
+    /**
+     * Whether we are focusing on a control
+     *
+     * @return {@link Boolean#TRUE} if condition is satisfied
+     */
+    public boolean isFocused() {
+        return this.focused;
     }
 
     /**
