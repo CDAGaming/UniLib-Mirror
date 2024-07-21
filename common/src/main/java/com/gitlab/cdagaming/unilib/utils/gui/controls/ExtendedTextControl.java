@@ -98,7 +98,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
     public int getControlWidth() {
         return StringUtils.getValidInteger(StringUtils.getField(
                 GuiTextField.class, this,
-                "width", "field_22077_f", "g"
+                "width", "field_22077_f", "f"
         )).getSecond();
     }
 
@@ -107,7 +107,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
         StringUtils.updateField(
                 GuiTextField.class, this,
                 width,
-                "width", "field_22077_f", "g"
+                "width", "field_22077_f", "f"
         );
     }
 
@@ -115,7 +115,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
     public int getControlHeight() {
         return StringUtils.getValidInteger(StringUtils.getField(
                 GuiTextField.class, this,
-                "height", "field_22076_g", "h"
+                "height", "field_22076_g", "g"
         )).getSecond();
     }
 
@@ -124,7 +124,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
         StringUtils.updateField(
                 GuiTextField.class, this,
                 height,
-                "height", "field_22076_g", "h"
+                "height", "field_22076_g", "g"
         );
     }
 
@@ -164,7 +164,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
     public int getControlPosY() {
         return StringUtils.getValidInteger(StringUtils.getField(
                 GuiTextField.class, this,
-                "yPos", "field_22078_e", "f"
+                "yPos", "field_22078_e", "e"
         )).getSecond();
     }
 
@@ -173,7 +173,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
         StringUtils.updateField(
                 GuiTextField.class, this,
                 posY,
-                "yPos", "field_22078_e", "f"
+                "yPos", "field_22078_e", "e"
         );
     }
 
@@ -238,7 +238,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
      * @return The control's maximum text contents
      */
     public int getControlMaxLength() {
-        final Object reflectedInfo = StringUtils.getField(GuiTextField.class, this, "maxStringLength", "field_22074_i", "j");
+        final Object reflectedInfo = StringUtils.getField(GuiTextField.class, this, "maxStringLength", "field_22074_i", "i");
         if (reflectedInfo != null) {
             final Pair<Boolean, Integer> integerData = StringUtils.getValidInteger(reflectedInfo);
             return integerData.getFirst() ? integerData.getSecond() : 0;
