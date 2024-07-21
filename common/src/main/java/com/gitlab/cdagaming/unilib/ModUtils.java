@@ -100,7 +100,7 @@ public class ModUtils {
     public static String getLanguage(final String fallback) {
         final String result;
         if (getMinecraft().gameSettings != null) {
-            result = getMinecraft().gameSettings.language;
+            result = getMinecraft().gameSettings.field_44018_Q;
         } else {
             result = fallback;
         }
