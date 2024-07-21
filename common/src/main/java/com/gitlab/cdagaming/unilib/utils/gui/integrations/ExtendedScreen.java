@@ -26,6 +26,7 @@ package com.gitlab.cdagaming.unilib.utils.gui.integrations;
 
 import com.gitlab.cdagaming.unilib.ModUtils;
 import com.gitlab.cdagaming.unilib.core.impl.screen.ScreenConstants;
+import com.gitlab.cdagaming.unilib.utils.GameUtils;
 import com.gitlab.cdagaming.unilib.utils.WorldUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.controls.ExtendedButtonControl;
@@ -833,7 +834,7 @@ public class ExtendedScreen extends GuiScreen {
     @Override
     protected void keyTyped(char typedChar, int keyCode) {
         if (isLoaded()) {
-            if (isEscapeKey(keyCode) && canClose()) {
+            if (isCurrentScreen() && isEscapeKey(keyCode) && canClose()) {
                 openScreen(getParent());
                 return;
             }
@@ -1408,6 +1409,14 @@ public class ExtendedScreen extends GuiScreen {
      */
     public boolean isOverScreen() {
         return isOverScreen;
+    }
+
+    /**
+     * Get whether this screen is the current screen
+     * @return {@link Boolean#TRUE} if condition is satisfied
+     */
+    public boolean isCurrentScreen() {
+        return GameUtils.getCurrentScreen(getGameInstance()) == this;
     }
 
     /**
