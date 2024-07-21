@@ -232,7 +232,7 @@ public class ExtendedScreen extends GuiScreen {
      * @param input the text to interpret
      */
     public static void copyToClipboard(final String input) {
-        setClipboardString(StringUtils.normalize(input));
+        func_50050_a(StringUtils.normalize(input));
     }
 
     /**
@@ -868,7 +868,9 @@ public class ExtendedScreen extends GuiScreen {
 
             for (Gui extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedTextControl textField) {
-                    textField.drawTextBox();
+                    if (textField.isControlVisible()) {
+                        textField.drawTextBox();
+                    }
                 }
             }
 
@@ -965,7 +967,7 @@ public class ExtendedScreen extends GuiScreen {
 
             for (Gui extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedTextControl textField) {
-                    textField.textboxKeyTyped(typedChar, keyCode);
+                    textField.func_50037_a(typedChar, keyCode);
                 }
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
                     extendedScreen.keyTyped(typedChar, keyCode);
