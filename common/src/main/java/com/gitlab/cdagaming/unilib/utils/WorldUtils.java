@@ -102,18 +102,7 @@ public class WorldUtils {
      * @return the current weather data
      */
     public static String getWeather(final World world) {
-        String name = "clear";
-        if (world != null) {
-            final WorldInfo info = world.func_22144_v();
-            if (info.func_27396_m()) {
-                name = "thunder";
-            } else if (info.func_27397_o()) {
-                name = "rain";
-            } else {
-                name = "clear";
-            }
-        }
-        return name;
+        return "clear";
     }
 
     /**
