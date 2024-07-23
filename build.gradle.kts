@@ -10,7 +10,7 @@ import java.util.*
 plugins {
     java
     id("xyz.wagyourtail.unimined") version "1.3.3" apply false
-    id("xyz.wagyourtail.jvmdowngrader") version "0.9.0"
+    id("xyz.wagyourtail.jvmdowngrader") version "0.9.1"
     id("com.diffplug.gradle.spotless") version "6.25.0" apply false
     id("io.github.goooler.shadow") version "8.1.8" apply false
     id("com.hypherionmc.modutils.modpublisher") version "2.1.6" apply false
@@ -369,19 +369,19 @@ subprojects {
                 jvmdg.debugSkipStubs.add(JavaVersion.VERSION_1_8)
             }
 
-            val remapJar = tasks.getByName<RemapJarTask>("remapJar") {
-                destinationDirectory = temporaryDir
-            }
+            val resultJar = tasks.getByName<RemapJarTask>("remapJar")
+            val resultClassifier = resultJar.archiveClassifier.get()
+            resultJar.archiveClassifier.set("$resultClassifier-native")
 
             tasks.getByName("assemble").dependsOn("shadeDowngradedApi")
             tasks.downgradeJar {
-                dependsOn(remapJar)
-                inputFile = remapJar.archiveFile.get().asFile
+                dependsOn(resultJar)
+                inputFile = resultJar.archiveFile.get().asFile
                 destinationDirectory = temporaryDir
             }
 
             tasks.shadeDowngradedApi {
-                archiveClassifier = remapJar.archiveClassifier
+                archiveClassifier = resultClassifier
             }
 
             tasks.named("preRunClient") {
@@ -399,15 +399,12 @@ subprojects {
 
                         artifact(tasks.getByName("jar"))
                         if (shouldDowngrade) {
-                            artifact(tasks.getByName("downgradeJar"))
                             artifact(tasks.getByName("shadeDowngradedApi"))
-                        } else {
-                            if (tasks.findByName("remapJar") != null) {
-                                artifact(tasks.getByName("remapJar"))
-                            } else {
-                                artifact(tasks.getByName("shadowJar"))
-                            }
                         }
+                        if (tasks.findByName("remapJar") != null) {
+                            artifact(tasks.getByName("remapJar"))
+                        }
+                        artifact(tasks.getByName("shadowJar"))
                         artifact(tasks.getByName("sourcesJar"))
 
                         pom {
