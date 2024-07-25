@@ -24,18 +24,23 @@ A common set of Utilities, designed for over 50 versions of Minecraft!
 * Some versions of the mod for Minecraft 1.13.x require
   the [Rift API](https://www.curseforge.com/minecraft/mc-mods/rift)
   and the [Rift mod loader](https://github.com/DimensionalDevelopment/Rift/releases)
-* Versions of the mod for Minecraft 1.1.0 and below
+* Some versions of the mod for Minecraft 1.1.0 and below
   require [Risugami's ModLoader](https://mcarchive.net/mods/modloader)
 
 ## Features
 
-TBD
+This library mod offers various API utilities that have been developed over the years,
+initially part of [CraftPresence](https://gitlab.com/CDAGaming/CraftPresence),
+that have been designed to work on over 50 versions of Minecraft, from the earliest Alphas to the latest Releases.
+
+These APIs range from utilities that can help with Rendering/UI design, Update Checker and Translation ease-of-access,
+as well as the APIs provided through the sibling-project, [UniCore](https://github.com/CDAGaming/UniCore)
 
 ## Disclaimers & Additional Info
 
 ### Minecraft Issues + Additional Build Info
 
-Despite best efforts, issues can occur due to the state of Mojang's Codebase.
+Despite best efforts, issues can occur due to the state of the Minecraft Codebase.
 
 These issues can hinder certain portions of the backend in addition to cause certain parts of the mod to not work.
 
@@ -72,7 +77,8 @@ on [the wiki](https://gitlab.com/CDAGaming/UniLib/-/wikis/Home)
 
 This Mod is under the MIT License as well as the Apache 2.0 License
 
-This project makes usage of the following dependencies internally:
+This project currently makes usage of the following dependencies internally:
 
+* [UniCore](https://github.com/CDAGaming/UniCore) by [CDAGaming](https://github.com/CDAGaming)
 * [Classgraph](https://github.com/classgraph/classgraph) by [lukehutch](https://github.com/lukehutch)
 * [Lenni Reflect](https://github.com/Lenni0451/Reflect) by [Lenni0451](https://github.com/Lenni0451)

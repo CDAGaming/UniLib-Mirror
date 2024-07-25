@@ -58,7 +58,8 @@ for (v in "additional_mc_versions"()!!.split(",")) {
 }
 
 // Setup Maven Info
-val isMavenRelease = "mavenType"().equals("release", true)
+val mavenType = "isMavenRelease"()
+val isMavenRelease = !mavenType.isNullOrEmpty() && mavenType.toBoolean()
 
 subprojects {
     val isLoaderSource = path != ":common"

@@ -26,6 +26,11 @@ on:
         required: true
         default: false
         type: boolean
+      deploy_maven_release:
+        description: 'Deploy Maven (Release)'
+        required: true
+        default: false
+        type: boolean
 
 env:
   CF_APIKEY: ${{ secrets.CF_APIKEY }}
@@ -64,7 +69,7 @@ jobs:
         run: ./gradlew --build-cache --info --stacktrace build
 
       - name: Deploy to Maven
-        run: ./gradlew --build-cache --info --stacktrace publish
+        run: ./gradlew --build-cache --info --stacktrace -PisMavenRelease=${{ inputs.deploy_all || inputs.deploy_maven_release }} publish
 
       - name: Deploy to CurseForge
         if: |
