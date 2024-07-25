@@ -68,8 +68,13 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew --build-cache --info --stacktrace build
 
-      - name: Deploy to Maven
-        run: ./gradlew --build-cache --info --stacktrace -PisMavenRelease=${{ inputs.deploy_all || inputs.deploy_maven_release }} publish
+      - name: Deploy to Maven (Snapshot)
+        run: ./gradlew --build-cache --info --stacktrace publish
+
+      - name: Deploy to Maven (Release)
+        if: |
+          inputs.deploy_all || inputs.deploy_maven_release
+        run: ./gradlew --build-cache --info --stacktrace -PisMavenRelease=true publish
 
       - name: Deploy to CurseForge
         if: |
