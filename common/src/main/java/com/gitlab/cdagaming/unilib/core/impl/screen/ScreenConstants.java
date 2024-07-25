@@ -357,7 +357,7 @@ public class ScreenConstants {
          * @return the {@link Color} instance
          */
         public Color color() {
-            return new Color(red(), green(), blue(), alpha());
+            return StringUtils.getColorFrom(red(), green(), blue(), alpha());
         }
     }
 }
