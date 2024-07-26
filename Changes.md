@@ -1,6 +1,6 @@
 # UniLib Changes
 
-## v1.0.0 (08/08/2024)
+## v1.0.0 (08/01/2024)
 
 _A Detailed Changelog from the last release is
 available [here](https://gitlab.com/CDAGaming/UniLib/-/compare/release%2Fv1.0.0...release%2Fv1.0.0)_
