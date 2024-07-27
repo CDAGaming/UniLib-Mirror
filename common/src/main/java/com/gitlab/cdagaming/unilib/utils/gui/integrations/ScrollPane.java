@@ -28,8 +28,9 @@ import com.gitlab.cdagaming.unilib.core.impl.screen.ScreenConstants;
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
 import io.github.cdagaming.unicore.utils.MathUtils;
-import io.github.cdagaming.unicore.utils.StringUtils;
+import net.minecraft.client.gui.GuiGraphics;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 
 /**
@@ -38,7 +39,6 @@ import java.awt.*;
  * @author CDAGaming
  */
 public class ScrollPane extends ExtendedScreen {
-    private static final Color NONE = StringUtils.getColorFrom(0, 0, 0, 0);
     private static final int DEFAULT_PADDING = 4;
     private static final int DEFAULT_BAR_WIDTH = 6;
     private static final int DEFAULT_HEIGHT_PER_SCROLL = 8;
@@ -117,7 +117,7 @@ public class ScrollPane extends ExtendedScreen {
 
     @Override
     public float getTintFactor() {
-        return 0.5f;
+        return super.getTintFactor();
     }
 
     @Override
@@ -133,22 +133,19 @@ public class ScrollPane extends ExtendedScreen {
         );
     }
 
+    @Override
+    public void renderBackground(@Nonnull GuiGraphics arg, int i, int j, float f) {
+        super.renderMenuBackground(arg);
+    }
+
     /**
      * Render the List Separators (Depth Decorations)
      */
     protected void renderListSeparators() {
-        RenderUtils.drawGradient(
-                getLeft(), getRight(), getTop(), getTop() + getPadding(),
-                0.0D,
-                Color.black,
-                NONE
-        );
-        RenderUtils.drawGradient(
-                getLeft(), getRight(), getBottom() - getPadding(), getBottom(),
-                0.0D,
-                NONE,
-                Color.black
-        );
+        RenderUtils.renderSprite(currentMatrix, (arg) -> {
+            arg.blit(hasWorld() ? INWORLD_HEADER_SEPARATOR : HEADER_SEPARATOR, getLeft(), getTop() - 2, 0.0F, 0.0F, getScreenWidth(), 2, 32, 2);
+            arg.blit(hasWorld() ? INWORLD_FOOTER_SEPARATOR : FOOTER_SEPARATOR, getLeft(), getBottom(), 0.0F, 0.0F, getScreenWidth(), 2, 32, 2);
+        });
     }
 
     /**
