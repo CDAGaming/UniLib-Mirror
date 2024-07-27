@@ -26,10 +26,10 @@ package com.gitlab.cdagaming.unilib.utils;
 
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
-import net.minecraft.world.storage.WorldInfo;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.LevelData;
 
 /**
  * Game-Related Utilities used to Parse World Data
@@ -43,8 +43,8 @@ public class WorldUtils {
      * @param client the game client instance
      * @return the Game World Instance
      */
-    public static World getWorld(final Minecraft client) {
-        return client != null ? client.world : null;
+    public static Level getWorld(final Minecraft client) {
+        return client != null ? client.level : null;
     }
 
     /**
@@ -53,8 +53,8 @@ public class WorldUtils {
      * @param entity The entity to interpret
      * @return the Entity World Instance
      */
-    public static World getWorld(final Entity entity) {
-        return entity != null ? entity.world : null;
+    public static Level getWorld(final Entity entity) {
+        return entity != null ? entity.level : null;
     }
 
     /**
@@ -63,7 +63,7 @@ public class WorldUtils {
      * @param client the game client instance
      * @return the Game Player Instance
      */
-    public static EntityPlayer getPlayer(final Minecraft client) {
+    public static Player getPlayer(final Minecraft client) {
         return client != null ? client.player : null;
     }
 
@@ -78,8 +78,8 @@ public class WorldUtils {
         String result = "";
         if (entity != null) {
             result = StringUtils.getOrDefault(
-                    entity.getDisplayName().getFormattedText(),
-                    entity.getName().getFormattedText()
+                    entity.getDisplayName().getString(),
+                    entity.getName().getString()
             );
         }
 
@@ -105,10 +105,10 @@ public class WorldUtils {
      * @param world The world object to interpret
      * @return the current weather data
      */
-    public static String getWeather(final World world) {
+    public static String getWeather(final Level world) {
         String name = "clear";
         if (world != null) {
-            final WorldInfo info = world.getWorldInfo();
+            final LevelData info = world.getLevelData();
             if (info.isThundering()) {
                 name = "thunder";
             } else if (info.isRaining()) {
