@@ -217,7 +217,7 @@ public class RenderUtils {
      * @return The Default/Global Font Renderer
      */
     public static FontRenderer getDefaultFontRenderer() {
-        return ModUtils.getMinecraft().fontRenderer;
+        return ModUtils.getMinecraft().fontRendererObj;
     }
 
     /**
