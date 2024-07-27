@@ -25,8 +25,8 @@
 package com.gitlab.cdagaming.unilib.impl;
 
 import io.github.cdagaming.unicore.utils.StringUtils;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.resources.IResourceManagerReloadListener;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 
 import java.util.Map;
 
@@ -35,7 +35,7 @@ import java.util.Map;
  *
  * @author CDAGaming
  */
-public class TranslationListener implements IResourceManagerReloadListener {
+public class TranslationListener implements ResourceManagerReloadListener {
     /**
      * The default instance for this module
      */
@@ -67,7 +67,7 @@ public class TranslationListener implements IResourceManagerReloadListener {
     }
 
     @Override
-    public void onResourceManagerReload(IResourceManager resourceManager) {
+    public void onResourceManagerReload(ResourceManager resourceManager) {
         for (TranslationManager manager : translationManagerList.values()) {
             manager.onReload();
         }
