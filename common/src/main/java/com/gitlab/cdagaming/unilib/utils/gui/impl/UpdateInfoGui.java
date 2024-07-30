@@ -89,7 +89,7 @@ public class UpdateInfoGui extends ExtendedScreen {
         final ScrollPane childFrame = addControl(
                 new ScrollPane(
                         0, 32,
-                        getScreenWidth(), getScreenHeight() - 32
+                        getScreenWidth(), getScreenHeight() - 64
                 )
         );
         infoPane = childFrame.addWidget(new TextDisplayWidget(
