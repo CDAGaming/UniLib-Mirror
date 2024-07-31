@@ -1,15 +1,15 @@
 # UniLib Changes
 
-## v1.0.0 (08/01/2024)
+## v1.0.1 (08/02/2024)
 
 _A Detailed Changelog from the last release is
-available [here](https://gitlab.com/CDAGaming/UniLib/-/compare/release%2Fv1.0.0...release%2Fv1.0.0)_
+available [here](https://gitlab.com/CDAGaming/UniLib/-/compare/release%2Fv1.0.0...release%2Fv1.0.1)_
 
 See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for more info regarding the mod.
 
 ### Changes
 
-* Initial Release
+* (Backend) Adjusted `ShadowJar` relocation paths to avoid mod conflicts
 
 ___
 
