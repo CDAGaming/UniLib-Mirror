@@ -9,6 +9,8 @@ See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for mor
 
 ### Changes
 
+* (Backend) Updated Build Dependencies (Please see the appropriate repositories for changes)
+    * JVMDowngrader (`0.9.1` -> `1.0.0`)
 * (Backend) Adjusted `ShadowJar` relocation paths to avoid mod conflicts
 
 ___
