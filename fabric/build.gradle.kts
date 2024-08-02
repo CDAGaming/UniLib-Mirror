@@ -105,8 +105,6 @@ tasks.named<ExportMappingsTask>("exportMappings") {
 }
 tasks.processResources.get().dependsOn(tasks.named("exportMappings"))
 
-val relocatePath = "$modId.external"
-
 tasks.shadowJar {
     mustRunAfter(project(":common").tasks.shadowJar)
     dependsOn(project(":common").tasks.shadowJar)
