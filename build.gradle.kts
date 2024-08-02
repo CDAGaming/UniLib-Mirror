@@ -1,4 +1,5 @@
 import com.diffplug.gradle.spotless.SpotlessExtension
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension
 import xyz.wagyourtail.jvmdg.gradle.task.files.DowngradeFiles
 import xyz.wagyourtail.replace_str.ProcessClasses
@@ -330,6 +331,31 @@ subprojects {
                     "Implementation-Vendor" to "CDAGaming"
                 )
             )
+        }
+    }
+
+    val relocatePath = "$modId.external"
+
+    tasks.named<ShadowJar>("shadowJar").configure {
+        // Meta Exclusions
+        exclude("**/DEPENDENCIES*")
+        exclude("**/LICENSE*")
+        exclude("**/Log4J*")
+        exclude("META-INF/NOTICE*")
+        exclude("META-INF/versions/**")
+
+        // Package Relocations
+        if (isLegacy) {
+            if (protocol <= 61) { // MC 1.5.2 and below
+                relocate("com.google.gson", "$relocatePath.com.google.gson")
+            }
+        }
+        relocate("net.lenni0451", "$relocatePath.net.lenni0451")
+        relocate("io.github.classgraph", "$relocatePath.io.github.classgraph")
+        relocate("nonapi.io.github.classgraph", "$relocatePath.nonapi.io.github.classgraph")
+        if (protocol < 755) {
+            relocate("org.slf4j", "$relocatePath.org.slf4j")
+            relocate("org.apache.logging.slf4j", "$relocatePath.org.apache.logging.slf4j")
         }
     }
 

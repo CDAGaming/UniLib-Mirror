@@ -113,22 +113,6 @@ tasks.shadowJar {
     from(zipTree(project(":common").tasks.shadowJar.get().archiveFile))
     configurations = listOf(shadowCommon)
     archiveClassifier.set("dev-shadow")
-
-    // Meta Exclusions
-    exclude("**/DEPENDENCIES*")
-    exclude("**/LICENSE*")
-    exclude("**/Log4J*")
-    exclude("META-INF/NOTICE*")
-    exclude("META-INF/versions/**")
-
-    // Package Relocations
-    relocate("net.lenni0451", "$relocatePath.net.lenni0451")
-    relocate("io.github.classgraph", "$relocatePath.io.github.classgraph")
-    relocate("nonapi.io.github.classgraph", "$relocatePath.nonapi.io.github.classgraph")
-    if (protocol < 755) {
-        relocate("org.slf4j", "$relocatePath.org.slf4j")
-        relocate("org.apache.logging.slf4j", "$relocatePath.org.apache.logging.slf4j")
-    }
 }
 
 tasks.named<RemapJarTask>("remapJar") {
