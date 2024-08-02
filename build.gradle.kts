@@ -345,11 +345,6 @@ subprojects {
         exclude("META-INF/versions/**")
 
         // Package Relocations
-        if (isLegacy) {
-            if (protocol <= 61) { // MC 1.5.2 and below
-                relocate("com.google.gson", "$relocatePath.com.google.gson")
-            }
-        }
         relocate("net.lenni0451", "$relocatePath.net.lenni0451")
         relocate("io.github.classgraph", "$relocatePath.io.github.classgraph")
         relocate("nonapi.io.github.classgraph", "$relocatePath.nonapi.io.github.classgraph")
