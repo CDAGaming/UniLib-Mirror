@@ -22,22 +22,17 @@
  * SOFTWARE.
  */
 
+import com.fox2code.foxloader.loader.Mod;
 import com.gitlab.cdagaming.unilib.modloader.UniLibML;
-import net.minecraft.src.BaseMod;
 
 /**
  * The Base Mod Class to begin Triggering Events
  *
  * @author CDAGaming
  */
-public class mod_UniLib extends BaseMod {
+public class mod_UniLib extends Mod {
     @Override
-    public String Version() {
-        return "v@VERSION_ID@";
-    }
-
-    @Override
-    public void ModsLoaded() {
+    public void onInit() {
         // Initialize a New Instance of the Mod, triggering Ticking
         new UniLibML();
     }
