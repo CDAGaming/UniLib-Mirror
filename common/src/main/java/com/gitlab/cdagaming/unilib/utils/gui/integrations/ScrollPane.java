@@ -163,6 +163,24 @@ public class ScrollPane extends ExtendedScreen {
     }
 
     /**
+     * Retrieve the height of the header decoration
+     *
+     * @return the header height
+     */
+    protected int getHeaderHeight() {
+        return getPadding();
+    }
+
+    /**
+     * Retrieve the height of the footer decoration
+     *
+     * @return the footer height
+     */
+    protected int getFooterHeight() {
+        return getPadding();
+    }
+
+    /**
      * Retrieve the rendering info for the Header Background
      *
      * @return the processed {@link ScreenConstants.ColorData} info
@@ -212,13 +230,13 @@ public class ScrollPane extends ExtendedScreen {
      */
     protected void renderListSeparators() {
         drawBackground(
-                getLeft(), getRight(), getTop(), getTop() + getPadding(),
+                getLeft(), getRight(), getTop(), getTop() + getHeaderHeight(),
                 0.0D, 1.0F,
                 0.0D, 0.0D,
                 getHeaderBackground()
         );
         drawBackground(
-                getLeft(), getRight(), getBottom() - getPadding(), getBottom(),
+                getLeft(), getRight(), getBottom() - getFooterHeight(), getBottom(),
                 0.0D, 1.0F,
                 0.0D, 0.0D,
                 getFooterBackground()
