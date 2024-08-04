@@ -424,6 +424,7 @@ public class RenderUtils {
      * @param top           The Top Position of the Object
      * @param bottom        The Bottom Position of the Object
      * @param zLevel        The Z Level Position of the Object
+     * @param asFullTexture Whether to render as full-texture or color-only
      * @param minU          The minimum horizontal axis to render this Object by
      * @param maxU          The maximum horizontal axis to render this Object by
      * @param minV          The minimum vertical axis to render this Object by
@@ -434,7 +435,7 @@ public class RenderUtils {
      */
     public static void drawTexture(@Nonnull final Minecraft mc,
                                    final double left, final double right, final double top, final double bottom,
-                                   final double zLevel,
+                                   final double zLevel, final boolean asFullTexture,
                                    final double minU, final double maxU, final double minV, final double maxV,
                                    final Object startColorObj, final Object endColorObj,
                                    final ResourceLocation texLocation) {
@@ -458,6 +459,11 @@ public class RenderUtils {
             return;
         }
 
+        if (!asFullTexture) {
+            GlStateManager.disableDepth();
+            GlStateManager.disableTexture2D();
+        }
+
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -479,6 +485,86 @@ public class RenderUtils {
         GlStateManager.shadeModel(GL11.GL_FLAT);
         GlStateManager.disableBlend();
         GlStateManager.disableAlpha();
+
+        if (!asFullTexture) {
+            GlStateManager.enableTexture2D();
+            GlStateManager.enableDepth();
+        }
+    }
+
+    /**
+     * Draws a Textured Rectangle, following the defined arguments
+     *
+     * @param mc            The current game instance
+     * @param left          The Left Position of the Object
+     * @param right         The Right Position of the Object
+     * @param top           The Top Position of the Object
+     * @param bottom        The Bottom Position of the Object
+     * @param zLevel        The Z Level Position of the Object
+     * @param minU          The minimum horizontal axis to render this Object by
+     * @param maxU          The maximum horizontal axis to render this Object by
+     * @param minV          The minimum vertical axis to render this Object by
+     * @param maxV          The minimum vertical axis to render this Object by
+     * @param startColorObj The starting texture RGB data to interpret
+     * @param endColorObj   The ending texture RGB data to interpret
+     * @param texLocation   The game texture to render the object as
+     */
+    public static void drawTexture(@Nonnull final Minecraft mc,
+                                   final double left, final double right, final double top, final double bottom,
+                                   final double zLevel,
+                                   final double minU, final double maxU, final double minV, final double maxV,
+                                   final Object startColorObj, final Object endColorObj,
+                                   final ResourceLocation texLocation) {
+        drawTexture(mc,
+                left, right, top, bottom,
+                zLevel, true,
+                minU, maxU,
+                minV, maxV,
+                startColorObj, endColorObj,
+                texLocation
+        );
+    }
+
+    /**
+     * Draws a Textured Rectangle, following the defined arguments
+     *
+     * @param mc                   The current game instance
+     * @param left                 The Left Position of the Object
+     * @param right                The Right Position of the Object
+     * @param top                  The Top Position of the Object
+     * @param bottom               The Bottom Position of the Object
+     * @param zLevel               The Z Level Position of the Object
+     * @param asFullTexture        Whether to render as full-texture or color-only
+     * @param usingExternalTexture Whether we are using a non-local/external texture
+     * @param regionWidth          The Width of the Texture Region
+     * @param regionHeight         The Height of the Texture Region
+     * @param u                    The U Mapping Value
+     * @param v                    The V Mapping Value
+     * @param textureWidth         The Width of the Texture
+     * @param textureHeight        The Height of the Texture
+     * @param startColorObj        The starting texture RGB data to interpret
+     * @param endColorObj          The ending texture RGB data to interpret
+     * @param texLocation          The game texture to render the object as
+     */
+    public static void drawTexture(@Nonnull final Minecraft mc,
+                                   final double left, final double right, final double top, final double bottom,
+                                   final double zLevel, final boolean asFullTexture,
+                                   final boolean usingExternalTexture,
+                                   final double regionWidth, final double regionHeight,
+                                   final double u, final double v,
+                                   final double textureWidth, final double textureHeight,
+                                   final Object startColorObj, final Object endColorObj,
+                                   final ResourceLocation texLocation) {
+        drawTexture(mc,
+                left, right, top, bottom,
+                zLevel, asFullTexture,
+                getUVCoord(u + 0.0D, 0.0D, usingExternalTexture, textureWidth),
+                getUVCoord(u + regionWidth, 1.0D, usingExternalTexture, textureWidth),
+                getUVCoord(v + 0.0D, 0.0D, usingExternalTexture, textureHeight),
+                getUVCoord(v + regionHeight, 1.0D, usingExternalTexture, textureHeight),
+                startColorObj, endColorObj,
+                texLocation
+        );
     }
 
     /**
@@ -511,11 +597,44 @@ public class RenderUtils {
                                    final ResourceLocation texLocation) {
         drawTexture(mc,
                 left, right, top, bottom,
-                zLevel,
-                getUVCoord(u + 0.0D, 0.0D, usingExternalTexture, textureWidth),
-                getUVCoord(u + regionWidth, 1.0D, usingExternalTexture, textureWidth),
-                getUVCoord(v + 0.0D, 0.0D, usingExternalTexture, textureHeight),
-                getUVCoord(v + regionHeight, 1.0D, usingExternalTexture, textureHeight),
+                zLevel, true,
+                usingExternalTexture,
+                regionWidth, regionHeight,
+                u, v,
+                textureWidth, textureHeight,
+                startColorObj, endColorObj,
+                texLocation
+        );
+    }
+
+    /**
+     * Draws a Textured Rectangle, following the defined arguments
+     *
+     * @param mc                   The current game instance
+     * @param left                 The Left Position of the Object
+     * @param right                The Right Position of the Object
+     * @param top                  The Top Position of the Object
+     * @param bottom               The Bottom Position of the Object
+     * @param zLevel               The Z Level Position of the Object
+     * @param asFullTexture        Whether to render as full-texture or color-only
+     * @param usingExternalTexture Whether we are using a non-local/external texture
+     * @param startColorObj        The starting texture RGB data to interpret
+     * @param endColorObj          The ending texture RGB data to interpret
+     * @param texLocation          The game texture to render the object as
+     */
+    public static void drawTexture(@Nonnull final Minecraft mc,
+                                   final double left, final double right, final double top, final double bottom,
+                                   final double zLevel, final boolean asFullTexture,
+                                   final boolean usingExternalTexture,
+                                   final Object startColorObj, final Object endColorObj,
+                                   final ResourceLocation texLocation) {
+        drawTexture(mc,
+                left, right, top, bottom,
+                zLevel, asFullTexture,
+                usingExternalTexture,
+                right - left, bottom - top,
+                left, top,
+                32.0D, 32.0D,
                 startColorObj, endColorObj,
                 texLocation
         );
@@ -542,10 +661,8 @@ public class RenderUtils {
                                    final ResourceLocation texLocation) {
         drawTexture(mc,
                 left, right, top, bottom,
-                zLevel, usingExternalTexture,
-                right - left, bottom - top,
-                left, top,
-                32.0D, 32.0D,
+                zLevel, true,
+                usingExternalTexture,
                 startColorObj, endColorObj,
                 texLocation
         );
