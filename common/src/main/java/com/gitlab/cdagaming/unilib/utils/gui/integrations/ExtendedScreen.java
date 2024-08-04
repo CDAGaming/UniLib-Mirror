@@ -466,7 +466,7 @@ public class ExtendedScreen extends GuiScreen {
 
         if (StringUtils.isNullOrEmpty(data.texLocation())) {
             RenderUtils.drawGradient(left, right, top, bottom,
-                    300.0F,
+                    data.colorLevel(),
                     startColor, endColor
             );
         } else {
@@ -479,6 +479,7 @@ public class ExtendedScreen extends GuiScreen {
 
             drawTexture(
                     left, right, top, bottom,
+                    data.texLevel(), data.useFullTexture(),
                     usingExternalTexture,
                     offset,
                     u, v,
@@ -518,6 +519,76 @@ public class ExtendedScreen extends GuiScreen {
      * @param right                The Right Position of the Object
      * @param top                  The Top Position of the Object
      * @param bottom               The Bottom Position of the Object
+     * @param zLevel               The Z Level Position of the Object
+     * @param asFullTexture        Whether to render as full-texture or color-only
+     * @param usingExternalTexture Whether we are using a non-local/external texture
+     * @param offset               The vertical offset to render the background to
+     * @param u                    The U Mapping Value
+     * @param v                    The V Mapping Value
+     * @param startColorObj        The starting texture RGB data to interpret
+     * @param endColorObj          The ending texture RGB data to interpret
+     * @param texLocation          The game texture to render the object as
+     */
+    public void drawTexture(final double left, final double right,
+                            final double top, final double bottom,
+                            final double zLevel, final boolean asFullTexture,
+                            final boolean usingExternalTexture, final double offset,
+                            final double u, final double v,
+                            final Object startColorObj, final Object endColorObj,
+                            final ResourceLocation texLocation) {
+        RenderUtils.drawTexture(getGameInstance(),
+                left, right, top, bottom,
+                zLevel, asFullTexture,
+                usingExternalTexture,
+                right - left, bottom - top,
+                u, v + offset,
+                32.0D, 32.0D,
+                startColorObj, endColorObj,
+                texLocation
+        );
+    }
+
+    /**
+     * Draws a Textured Rectangle, following the defined arguments
+     *
+     * @param left                 The Left Position of the Object
+     * @param right                The Right Position of the Object
+     * @param top                  The Top Position of the Object
+     * @param bottom               The Bottom Position of the Object
+     * @param zLevel               The Z Level Position of the Object
+     * @param usingExternalTexture Whether we are using a non-local/external texture
+     * @param offset               The vertical offset to render the background to
+     * @param u                    The U Mapping Value
+     * @param v                    The V Mapping Value
+     * @param startColorObj        The starting texture RGB data to interpret
+     * @param endColorObj          The ending texture RGB data to interpret
+     * @param texLocation          The game texture to render the object as
+     */
+    public void drawTexture(final double left, final double right,
+                            final double top, final double bottom,
+                            final double zLevel, final boolean usingExternalTexture,
+                            final double offset,
+                            final double u, final double v,
+                            final Object startColorObj, final Object endColorObj,
+                            final ResourceLocation texLocation) {
+        drawTexture(
+                left, right,
+                top, bottom,
+                zLevel, true,
+                usingExternalTexture, offset,
+                u, v,
+                startColorObj, endColorObj,
+                texLocation
+        );
+    }
+
+    /**
+     * Draws a Textured Rectangle, following the defined arguments
+     *
+     * @param left                 The Left Position of the Object
+     * @param right                The Right Position of the Object
+     * @param top                  The Top Position of the Object
+     * @param bottom               The Bottom Position of the Object
      * @param usingExternalTexture Whether we are using a non-local/external texture
      * @param offset               The vertical offset to render the background to
      * @param u                    The U Mapping Value
@@ -532,12 +603,12 @@ public class ExtendedScreen extends GuiScreen {
                             final double u, final double v,
                             final Object startColorObj, final Object endColorObj,
                             final ResourceLocation texLocation) {
-        RenderUtils.drawTexture(getGameInstance(),
-                left, right, top, bottom,
+        drawTexture(
+                left, right,
+                top, bottom,
                 0.0D, usingExternalTexture,
-                right - left, bottom - top,
-                u, v + offset,
-                32.0D, 32.0D,
+                offset,
+                u, v,
                 startColorObj, endColorObj,
                 texLocation
         );

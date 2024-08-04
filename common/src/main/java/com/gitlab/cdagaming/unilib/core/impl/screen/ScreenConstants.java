@@ -161,11 +161,43 @@ public class ScreenConstants {
     /**
      * Record Mapping for storing Color Information
      *
-     * @param start       The Starting {@link ColorSection} info
-     * @param end         The Ending {@link ColorSection} info
-     * @param texLocation The texture location, if any
+     * @param start          The Starting {@link ColorSection} info
+     * @param end            The Ending {@link ColorSection} info
+     * @param texLocation    The texture location, if any
+     * @param texLevel       The Z-Level to use when rendering as a texture
+     * @param colorLevel     The Z-Level to use when rendering as color-only
+     * @param useFullTexture Whether to render as full-texture or color-only
      */
-    public record ColorData(ColorSection start, ColorSection end, String texLocation) {
+    public record ColorData(ColorSection start, ColorSection end,
+                            String texLocation,
+                            double texLevel, double colorLevel,
+                            boolean useFullTexture) {
+        /**
+         * Record Mapping for storing Color Information
+         *
+         * @param start       The Starting {@link ColorSection} info
+         * @param end         The Ending {@link ColorSection} info
+         * @param texLocation The texture location, if any
+         * @param texLevel    The Z-Level to use when rendering as a texture
+         * @param colorLevel  The Z-Level to use when rendering as color-only
+         */
+        public ColorData(ColorSection start, ColorSection end,
+                         String texLocation,
+                         double texLevel, double colorLevel) {
+            this(start, end, texLocation, texLevel, colorLevel, true);
+        }
+
+        /**
+         * Record Mapping for storing Color Information
+         *
+         * @param start       The Starting {@link ColorSection} info
+         * @param end         The Ending {@link ColorSection} info
+         * @param texLocation The texture location, if any
+         */
+        public ColorData(ColorSection start, ColorSection end, String texLocation) {
+            this(start, end, texLocation, 0.0D, 300.0D);
+        }
+
         /**
          * Record Mapping for storing Color Information
          *
@@ -198,12 +230,45 @@ public class ScreenConstants {
         /**
          * Record Mapping for storing Color Information
          *
+         * @param start          The Starting {@link Color} info
+         * @param end            The Ending {@link Color} info
+         * @param texLocation    The texture location, if any
+         * @param texLevel       The Z-Level to use when rendering as a texture
+         * @param colorLevel     The Z-Level to use when rendering as color-only
+         * @param useFullTexture Whether to render as full-texture or color-only
+         */
+        public ColorData(Color start, Color end,
+                         String texLocation,
+                         double texLevel, double colorLevel,
+                         boolean useFullTexture) {
+            this(new ColorSection(start), end != null ? new ColorSection(end) : null, texLocation,
+                    texLevel, colorLevel, useFullTexture);
+        }
+
+        /**
+         * Record Mapping for storing Color Information
+         *
+         * @param start       The Starting {@link Color} info
+         * @param end         The Ending {@link Color} info
+         * @param texLocation The texture location, if any
+         * @param texLevel    The Z-Level to use when rendering as a texture
+         * @param colorLevel  The Z-Level to use when rendering as color-only
+         */
+        public ColorData(Color start, Color end,
+                         String texLocation,
+                         double texLevel, double colorLevel) {
+            this(start, end, texLocation, texLevel, colorLevel, true);
+        }
+
+        /**
+         * Record Mapping for storing Color Information
+         *
          * @param start       The Starting {@link Color} info
          * @param end         The Ending {@link Color} info
          * @param texLocation The texture location, if any
          */
         public ColorData(Color start, Color end, String texLocation) {
-            this(new ColorSection(start), end != null ? new ColorSection(end) : null, texLocation);
+            this(start, end, texLocation, 0.0D, 300.0D);
         }
 
         /**
