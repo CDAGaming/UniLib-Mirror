@@ -24,7 +24,7 @@
 
 package com.gitlab.cdagaming.unilib.utils.gui.integrations;
 
-import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
+import com.gitlab.cdagaming.unilib.core.impl.screen.ScreenConstants;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
 import io.github.cdagaming.unicore.utils.MathUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
@@ -41,6 +41,11 @@ public class ScrollPane extends ExtendedScreen {
     private static final int DEFAULT_PADDING = 4;
     private static final int DEFAULT_BAR_WIDTH = 6;
     private static final int DEFAULT_HEIGHT_PER_SCROLL = 8;
+    private final ScreenConstants.ColorData DEFAULT_HEADER_BACKGROUND;
+    private final ScreenConstants.ColorData DEFAULT_FOOTER_BACKGROUND;
+    private final ScreenConstants.ColorData DEFAULT_SCROLLBAR_BACKGROUND;
+    private final ScreenConstants.ColorData DEFAULT_SCROLLBAR_BORDER;
+    private final ScreenConstants.ColorData DEFAULT_SCROLLBAR_FOREGROUND;
     private boolean clickedScrollbar;
     private int padding;
     private float amountScrolled = 0.0F;
@@ -65,6 +70,40 @@ public class ScrollPane extends ExtendedScreen {
         setScreenWidth(width);
         setScreenHeight(height);
         setPadding(padding);
+
+        // Setup Default Depth Decoration Info
+        DEFAULT_HEADER_BACKGROUND = new ScreenConstants.ColorData(
+                Color.black, NONE,
+                getScreenBackground().texLocation(),
+                0.0D, -100.0D,
+                false
+        );
+        DEFAULT_FOOTER_BACKGROUND = new ScreenConstants.ColorData(
+                NONE, Color.black,
+                getScreenBackground().texLocation(),
+                0.0D, -100.0D,
+                false
+        );
+
+        // Setup Default Scrollbar Info
+        DEFAULT_SCROLLBAR_BACKGROUND = new ScreenConstants.ColorData(
+                Color.black, Color.black,
+                getScreenBackground().texLocation(),
+                0.0D, 0.0D,
+                false
+        );
+        DEFAULT_SCROLLBAR_BORDER = new ScreenConstants.ColorData(
+                Color.gray, Color.gray,
+                getScreenBackground().texLocation(),
+                0.0D, 0.0D,
+                false
+        );
+        DEFAULT_SCROLLBAR_FOREGROUND = new ScreenConstants.ColorData(
+                Color.lightGray, Color.lightGray,
+                getScreenBackground().texLocation(),
+                0.0D, 0.0D,
+                false
+        );
     }
 
     /**
@@ -124,20 +163,65 @@ public class ScrollPane extends ExtendedScreen {
     }
 
     /**
+     * Retrieve the rendering info for the Header Background
+     *
+     * @return the processed {@link ScreenConstants.ColorData} info
+     */
+    protected ScreenConstants.ColorData getHeaderBackground() {
+        return DEFAULT_HEADER_BACKGROUND;
+    }
+
+    /**
+     * Retrieve the rendering info for the Footer Background
+     *
+     * @return the processed {@link ScreenConstants.ColorData} info
+     */
+    protected ScreenConstants.ColorData getFooterBackground() {
+        return DEFAULT_FOOTER_BACKGROUND;
+    }
+
+    /**
+     * Retrieve the rendering info for the Scrollbar Background
+     *
+     * @return the processed {@link ScreenConstants.ColorData} info
+     */
+    protected ScreenConstants.ColorData getScrollbarBackground() {
+        return DEFAULT_SCROLLBAR_BACKGROUND;
+    }
+
+    /**
+     * Retrieve the rendering info for the Scrollbar Border
+     *
+     * @return the processed {@link ScreenConstants.ColorData} info
+     */
+    protected ScreenConstants.ColorData getScrollbarBorder() {
+        return DEFAULT_SCROLLBAR_BORDER;
+    }
+
+    /**
+     * Retrieve the rendering info for the Scrollbar Foreground
+     *
+     * @return the processed {@link ScreenConstants.ColorData} info
+     */
+    protected ScreenConstants.ColorData getScrollbarForeground() {
+        return DEFAULT_SCROLLBAR_FOREGROUND;
+    }
+
+    /**
      * Render the List Separators (Depth Decorations)
      */
     protected void renderListSeparators() {
-        RenderUtils.drawGradient(
+        drawBackground(
                 getLeft(), getRight(), getTop(), getTop() + getPadding(),
-                -100.0D,
-                Color.black,
-                NONE
+                0.0D, 1.0F,
+                0.0D, 0.0D,
+                getHeaderBackground()
         );
-        RenderUtils.drawGradient(
+        drawBackground(
                 getLeft(), getRight(), getBottom() - getPadding(), getBottom(),
-                -100.0D,
-                NONE,
-                Color.black
+                0.0D, 1.0F,
+                0.0D, 0.0D,
+                getFooterBackground()
         );
     }
 
@@ -157,23 +241,25 @@ public class ScrollPane extends ExtendedScreen {
             if (barTop < top) {
                 barTop = top;
             }
+            final float barBottom = barTop + height;
 
-            RenderUtils.drawGradient(
+            drawBackground(
                     scrollBarX, scrollBarRight, top, bottom,
-                    0.0D,
-                    Color.black, Color.black
+                    0.0D, 1.0F,
+                    0.0D, 0.0D,
+                    getScrollbarBackground()
             );
-
-            RenderUtils.drawGradient(
-                    scrollBarX, scrollBarRight, barTop, barTop + height,
-                    0.0D,
-                    Color.gray, Color.gray
+            drawBackground(
+                    scrollBarX, scrollBarRight, barTop, barBottom,
+                    0.0D, 1.0F,
+                    0.0D, 0.0D,
+                    getScrollbarBorder()
             );
-
-            RenderUtils.drawGradient(
-                    scrollBarX, scrollBarRight - 1, barTop, barTop + height - 1,
-                    0.0D,
-                    Color.lightGray, Color.lightGray
+            drawBackground(
+                    scrollBarX, scrollBarRight - 1, barTop, barBottom - 1,
+                    0.0D, 1.0F,
+                    0.0D, 0.0D,
+                    getScrollbarForeground()
             );
         }
     }
