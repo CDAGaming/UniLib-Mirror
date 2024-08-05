@@ -483,6 +483,7 @@ public class ExtendedScreen extends GuiScreen {
                     usingExternalTexture,
                     offset,
                     u, v,
+                    data.textureWidth(), data.textureHeight(),
                     startColor, endColor,
                     texLocation
             );
