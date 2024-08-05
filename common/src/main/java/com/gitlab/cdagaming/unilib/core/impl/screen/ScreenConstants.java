@@ -231,11 +231,60 @@ public class ScreenConstants {
         /**
          * Record Mapping for storing Color Information
          *
+         * @param start          The Starting {@link ColorSection} info
+         * @param texLocation    The texture location, if any
+         * @param texLevel       The Z-Level to use when rendering as a texture
+         * @param colorLevel     The Z-Level to use when rendering as color-only
+         * @param useFullTexture Whether to render as full-texture or color-only
+         * @param textureWidth   The Width of the Texture
+         * @param textureHeight  The Height of the Texture
+         */
+        public ColorData(ColorSection start,
+                         String texLocation,
+                         double texLevel, double colorLevel,
+                         boolean useFullTexture,
+                         double textureWidth, double textureHeight) {
+            this(start, null, texLocation, texLevel, colorLevel, useFullTexture, textureWidth, textureHeight);
+        }
+
+        /**
+         * Record Mapping for storing Color Information
+         *
+         * @param start          The Starting {@link ColorSection} info
+         * @param texLocation    The texture location, if any
+         * @param texLevel       The Z-Level to use when rendering as a texture
+         * @param colorLevel     The Z-Level to use when rendering as color-only
+         * @param useFullTexture Whether to render as full-texture or color-only
+         */
+        public ColorData(ColorSection start,
+                         String texLocation,
+                         double texLevel, double colorLevel,
+                         boolean useFullTexture) {
+            this(start, texLocation, texLevel, colorLevel, useFullTexture, 32.0D, 32.0D);
+        }
+
+        /**
+         * Record Mapping for storing Color Information
+         *
+         * @param start       The Starting {@link ColorSection} info
+         * @param texLocation The texture location, if any
+         * @param texLevel    The Z-Level to use when rendering as a texture
+         * @param colorLevel  The Z-Level to use when rendering as color-only
+         */
+        public ColorData(ColorSection start,
+                         String texLocation,
+                         double texLevel, double colorLevel) {
+            this(start, texLocation, texLevel, colorLevel, true);
+        }
+
+        /**
+         * Record Mapping for storing Color Information
+         *
          * @param start       The Starting {@link ColorSection} info
          * @param texLocation The texture location, if any
          */
         public ColorData(ColorSection start, String texLocation) {
-            this(start, null, texLocation);
+            this(start, texLocation, 0.0D, 300.0D);
         }
 
         /**
@@ -324,11 +373,60 @@ public class ScreenConstants {
         /**
          * Record Mapping for storing Color Information
          *
+         * @param start          The Starting {@link Color} info
+         * @param texLocation    The texture location, if any
+         * @param texLevel       The Z-Level to use when rendering as a texture
+         * @param colorLevel     The Z-Level to use when rendering as color-only
+         * @param useFullTexture Whether to render as full-texture or color-only
+         * @param textureWidth   The Width of the Texture
+         * @param textureHeight  The Height of the Texture
+         */
+        public ColorData(Color start,
+                         String texLocation,
+                         double texLevel, double colorLevel,
+                         boolean useFullTexture,
+                         double textureWidth, double textureHeight) {
+            this(start, null, texLocation, texLevel, colorLevel, useFullTexture, textureWidth, textureHeight);
+        }
+
+        /**
+         * Record Mapping for storing Color Information
+         *
+         * @param start          The Starting {@link Color} info
+         * @param texLocation    The texture location, if any
+         * @param texLevel       The Z-Level to use when rendering as a texture
+         * @param colorLevel     The Z-Level to use when rendering as color-only
+         * @param useFullTexture Whether to render as full-texture or color-only
+         */
+        public ColorData(Color start,
+                         String texLocation,
+                         double texLevel, double colorLevel,
+                         boolean useFullTexture) {
+            this(start, texLocation, texLevel, colorLevel, useFullTexture, 32.0D, 32.0D);
+        }
+
+        /**
+         * Record Mapping for storing Color Information
+         *
+         * @param start       The Starting {@link Color} info
+         * @param texLocation The texture location, if any
+         * @param texLevel    The Z-Level to use when rendering as a texture
+         * @param colorLevel  The Z-Level to use when rendering as color-only
+         */
+        public ColorData(Color start,
+                         String texLocation,
+                         double texLevel, double colorLevel) {
+            this(start, texLocation, texLevel, colorLevel, true);
+        }
+
+        /**
+         * Record Mapping for storing Color Information
+         *
          * @param start       The Starting {@link Color} info
          * @param texLocation The texture location, if any
          */
         public ColorData(Color start, String texLocation) {
-            this(start, null, texLocation);
+            this(start, texLocation, 0.0D, 300.0D);
         }
 
         /**
@@ -343,10 +441,34 @@ public class ScreenConstants {
         /**
          * Record Mapping for storing Color Information
          *
+         * @param texLocation   The texture location, if any
+         * @param texLevel      The Z-Level to use when rendering as a texture
+         * @param textureWidth  The Width of the Texture
+         * @param textureHeight The Height of the Texture
+         */
+        public ColorData(String texLocation,
+                         double texLevel,
+                         double textureWidth, double textureHeight) {
+            this(new ColorSection(), texLocation, texLevel, 300.0D, true, textureWidth, textureHeight);
+        }
+
+        /**
+         * Record Mapping for storing Color Information
+         *
+         * @param texLocation The texture location, if any
+         * @param texLevel    The Z-Level to use when rendering as a texture
+         */
+        public ColorData(String texLocation, double texLevel) {
+            this(texLocation, texLevel, 32.0D, 32.0D);
+        }
+
+        /**
+         * Record Mapping for storing Color Information
+         *
          * @param texLocation The texture location, if any
          */
         public ColorData(String texLocation) {
-            this(new ColorSection(), null, texLocation);
+            this(texLocation, 0.0D);
         }
 
         /**
