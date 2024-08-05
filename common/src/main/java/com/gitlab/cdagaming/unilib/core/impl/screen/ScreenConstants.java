@@ -334,7 +334,7 @@ public class ScreenConstants {
         /**
          * Record Mapping for storing Color Information
          *
-         * @param start The Starting {@link ColorSection} info
+         * @param start The Starting {@link Color} info
          */
         public ColorData(Color start) {
             this(start, "");
@@ -353,7 +353,7 @@ public class ScreenConstants {
          * Record Mapping for storing Color Information
          */
         public ColorData() {
-            this(new ColorSection(), null, "");
+            this("");
         }
 
         /**
