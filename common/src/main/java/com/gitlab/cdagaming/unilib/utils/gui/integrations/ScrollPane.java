@@ -39,6 +39,8 @@ import java.awt.*;
 public class ScrollPane extends ExtendedScreen {
     private static final Color NONE = StringUtils.getColorFrom(0, 0, 0, 0);
     private static final int DEFAULT_PADDING = 4;
+    private static final int DEFAULT_HEADER_HEIGHT = 4;
+    private static final int DEFAULT_FOOTER_HEIGHT = 4;
     private static final int DEFAULT_BAR_WIDTH = 6;
     private static final int DEFAULT_HEIGHT_PER_SCROLL = 8;
     private final ScreenConstants.ColorData DEFAULT_HEADER_BACKGROUND;
@@ -163,12 +165,39 @@ public class ScrollPane extends ExtendedScreen {
     }
 
     /**
+     * Retrieve the top-most coordinate for the header decoration
+     *
+     * @return the top-most coordinate for the header decoration
+     */
+    protected int getHeaderTop() {
+        return getTop();
+    }
+
+    /**
      * Retrieve the height of the header decoration
      *
      * @return the header height
      */
     protected int getHeaderHeight() {
-        return getPadding();
+        return DEFAULT_HEADER_HEIGHT;
+    }
+
+    /**
+     * Retrieve the bottom-most coordinate for the header decoration
+     *
+     * @return the bottom-most coordinate for the header decoration
+     */
+    protected int getHeaderBottom() {
+        return getHeaderTop() + getHeaderHeight();
+    }
+
+    /**
+     * Retrieve the top-most coordinate for the footer decoration
+     *
+     * @return the top-most coordinate for the footer decoration
+     */
+    protected int getFooterTop() {
+        return getBottom() - getFooterHeight();
     }
 
     /**
@@ -177,7 +206,16 @@ public class ScrollPane extends ExtendedScreen {
      * @return the footer height
      */
     protected int getFooterHeight() {
-        return getPadding();
+        return DEFAULT_FOOTER_HEIGHT;
+    }
+
+    /**
+     * Retrieve the bottom-most coordinate for the footer decoration
+     *
+     * @return the bottom-most coordinate for the footer decoration
+     */
+    protected int getFooterBottom() {
+        return getFooterTop() + getFooterHeight();
     }
 
     /**
@@ -230,13 +268,13 @@ public class ScrollPane extends ExtendedScreen {
      */
     protected void renderListSeparators() {
         drawBackground(
-                getLeft(), getRight(), getTop(), getTop() + getHeaderHeight(),
+                getLeft(), getRight(), getHeaderTop(), getHeaderBottom(),
                 0.0D, 1.0F,
                 0.0D, 0.0D,
                 getHeaderBackground()
         );
         drawBackground(
-                getLeft(), getRight(), getBottom() - getFooterHeight(), getBottom(),
+                getLeft(), getRight(), getFooterTop(), getFooterBottom(),
                 0.0D, 1.0F,
                 0.0D, 0.0D,
                 getFooterBackground()
@@ -255,11 +293,8 @@ public class ScrollPane extends ExtendedScreen {
             final int maxScroll = getMaxScroll();
             final int screenHeight = getScreenHeight();
             final int height = getBarHeight();
-            float barTop = getAmountScrolled() * (screenHeight - height) / maxScroll + top;
-            if (barTop < top) {
-                barTop = top;
-            }
-            final float barBottom = barTop + height;
+            final int barTop = Math.max((int) getAmountScrolled() * (screenHeight - height) / maxScroll + top, top);
+            final int barBottom = barTop + height;
 
             drawBackground(
                     scrollBarX, scrollBarRight, top, bottom,
