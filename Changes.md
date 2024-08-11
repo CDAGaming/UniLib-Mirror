@@ -10,8 +10,9 @@ See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for mor
 ### Changes
 
 * (Backend) Updated Build Dependencies (Please see the appropriate repositories for changes)
-    * JVMDowngrader (`1.0.0` -> `1.0.1`)
+    * JVMDowngrader (`1.0.0` -> `1.1.0`)
     * Shadow (`8.1.8` -> `8.3.0`)
+    * Unimined (`1.3.4` -> `1.3.5`)
 * `RenderUtils#drawTexture` now includes an optional `asFullTexture` param
     * This flag defaults to `true` and is used to toggle additional GL flags to replicate the behaviors
       of `drawGradient`
