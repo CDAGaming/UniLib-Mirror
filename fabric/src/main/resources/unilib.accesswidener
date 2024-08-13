@@ -1,6 +1,7 @@
 accessWidener   v2  named
 
 accessible field net/minecraft/client/gui/GuiTextField isEnabled Z
+accessible    field    net/minecraft/client/settings/KeyBinding    keyCode    Lnet/minecraft/client/util/InputMappings$Input;
 accessible    field    net/minecraft/client/settings/KeyBinding    CATEGORY_ORDER    Ljava/util/Map;
 mutable    field    net/minecraft/client/settings/KeyBinding    CATEGORY_ORDER    Ljava/util/Map;
 accessible    field    net/minecraft/client/gui/GuiTextField    width    I
