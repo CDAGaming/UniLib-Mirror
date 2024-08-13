@@ -452,16 +452,20 @@ public class RenderUtils {
             return;
         }
 
+        if (!asFullTexture) {
+            drawGradient(
+                    left, right, top, bottom,
+                    zLevel,
+                    startColorObj, endColorObj
+            );
+            return;
+        }
+
         final Pair<Color, Color> colorData = StringUtils.findColor(startColorObj, endColorObj);
         final Color startColor = colorData.getFirst();
         final Color endColor = colorData.getSecond();
         if (startColor == null || endColor == null) {
             return;
-        }
-
-        if (!asFullTexture) {
-            GlStateManager.disableDepth();
-            GlStateManager.disableTexture2D();
         }
 
         GlStateManager.enableBlend();
@@ -485,11 +489,6 @@ public class RenderUtils {
         GlStateManager.shadeModel(GL11.GL_FLAT);
         GlStateManager.disableBlend();
         GlStateManager.disableAlpha();
-
-        if (!asFullTexture) {
-            GlStateManager.enableTexture2D();
-            GlStateManager.enableDepth();
-        }
     }
 
     /**
