@@ -439,6 +439,15 @@ public class RenderUtils {
                                    final double minU, final double maxU, final double minV, final double maxV,
                                    final Object startColorObj, final Object endColorObj,
                                    final ResourceLocation texLocation) {
+        if (!asFullTexture) {
+            drawGradient(
+                    left, right, top, bottom,
+                    zLevel,
+                    startColorObj, endColorObj
+            );
+            return;
+        }
+
         try {
             if (texLocation != null) {
                 final Pair<Boolean, Integer> data = StringUtils.getValidInteger(texLocation);
@@ -449,15 +458,6 @@ public class RenderUtils {
                 }
             }
         } catch (Exception ignored) {
-            return;
-        }
-
-        if (!asFullTexture) {
-            drawGradient(
-                    left, right, top, bottom,
-                    zLevel,
-                    startColorObj, endColorObj
-            );
             return;
         }
 
