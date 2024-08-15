@@ -1,6 +1,6 @@
 # UniLib Changes
 
-## v1.0.2 (08/15/2024)
+## v1.0.2 (08/20/2024)
 
 _A Detailed Changelog from the last release is
 available [here](https://gitlab.com/CDAGaming/UniLib/-/compare/release%2Fv1.0.1...release%2Fv1.0.2)_
@@ -12,7 +12,7 @@ See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for mor
 * (Backend) Updated Build Dependencies (Please see the appropriate repositories for changes)
     * JVMDowngrader (`1.0.0` -> `1.1.0`)
     * Shadow (`8.1.8` -> `8.3.0`)
-    * Unimined (`1.3.4` -> `1.3.5`)
+    * Unimined (`1.3.4` -> `1.3.6`)
 * `RenderUtils#drawTexture` now includes an optional `asFullTexture` param
     * This flag defaults to `true` and is used to toggle additional GL flags to replicate the behaviors
       of `drawGradient`
