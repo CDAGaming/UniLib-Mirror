@@ -13,9 +13,13 @@ jobs:
       - name: Get all branches
         run: |
           git fetch --all
-          git branch -r | grep -v '\->' | while read remote; do git branch --track "${remote#origin/}" "$remote"; done
-          git fetch --all
-          git pull --all
+          # Only create local branches for remote branches that do not already exist locally
+          git branch -r | grep -v '\->' | while read remote; do
+            branch="${remote#origin/}"
+            if [ "$branch" != "$(git branch --show-current)" ] && [ -z "$(git branch --list "$branch")" ]; then
+              git branch --track "$branch" "$remote"
+            fi
+          done
 
       - name: update cache
         uses: actions/cache@v4
