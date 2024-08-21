@@ -498,16 +498,6 @@ subprojects {
             loaders = uploadLoaders
             curseEnvironment = "client"
             artifact = targetFile
-
-            if (name == "quilt") {
-                curseDepends {
-                    required("qsl")
-                }
-
-                modrinthDepends {
-                    required("qsl")
-                }
-            }
         }
     }
 }

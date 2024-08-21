@@ -32,8 +32,8 @@ See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for mor
 
 ### Fixes
 
-* Fixed a publishing issue where `quilted_fabric_api` was not marked as `required`
-    * Effected the 1.18.2+ builds on deployment platforms
+* Removed the `quilted_fabric_api` requirement from Quilt Jars
+    * Dependencies are now JIJd the same way as Fabric Jars are
 * Fixed documentation errors in `ScreenConstants#ColorData`
 * Fixed incorrect parameter type on `ExtendedScreen#drawBackground` with `drawGradient` calls
 * Fixed an incorrect calculation for the Scrollbar top coordinate in `ScrollPane`
