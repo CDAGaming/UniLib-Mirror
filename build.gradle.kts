@@ -47,7 +47,7 @@ val extIsMCPJar = extIsJarMod && "mc_mappings_type"() == "mcp"
 
 // Only apply ATs to forge on non-legacy builds, or on Legacy Protocols above 1.5
 // due to the way Forge requires core-mods for lower version usage
-val extAWFile = file("$rootDir/fabric/src/main/resources/$extModId.accesswidener")
+val extAWFile = file("$rootDir/flint/src/main/resources/$extModId.accesswidener")
 val extCanUseATs = extAWFile.exists() && (!extIsLegacy || extProtocol > 60)
 
 // Setup Game Versions to upload for
@@ -152,6 +152,7 @@ subprojects {
         maven("https://maven.legacyfabric.net/") {
             name = "Legacy Fabric"
         }
+        maven("https://maven.flintloader.net/releases")
         // WagYourTail Mavens
         maven("https://maven.wagyourtail.xyz/releases")
         maven("https://maven.wagyourtail.xyz/snapshots")
@@ -178,6 +179,13 @@ subprojects {
     extensions.getByType<UniminedExtension>().minecraft(sourceSets.getByName("main"), true) {
         side(if (isJarMod) "client" else "combined")
         version(mcVersion)
+
+        flint {
+            if (accessWidenerFile.exists()) {
+                accessWidener(accessWidenerFile)
+            }
+            loader("flint_version"()!!)
+        }
 
         mappings {
             val mcMappings = "mc_mappings"()!!
