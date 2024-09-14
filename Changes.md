@@ -13,6 +13,7 @@ See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for mor
     * JVMDowngrader (`1.1.2` -> `1.1.3`)
     * Fabric Loader (`0.15.11` -> `0.16.5`)
     * Gradle (`8.9` -> `8.10.1`)
+    * Shadow (`8.3.0` -> `8.3.1`)
 
 ___
 
