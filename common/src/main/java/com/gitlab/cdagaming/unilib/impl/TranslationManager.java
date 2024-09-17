@@ -24,8 +24,8 @@
 
 package com.gitlab.cdagaming.unilib.impl;
 
+import com.mojang.minecraft.Minecraft;
 import io.github.cdagaming.unicore.utils.TranslationUtils;
-import net.minecraft.client.Minecraft;
 
 /**
  * Utilities for Hooking a {@link TranslationUtils} instance to the Game Resource Manager
