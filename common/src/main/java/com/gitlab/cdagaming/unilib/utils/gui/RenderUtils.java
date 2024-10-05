@@ -399,6 +399,8 @@ public class RenderUtils {
                 } else {
                     mc.getTextureManager().bindTexture(texLocation);
                 }
+            } else {
+                return;
             }
         } catch (Exception ignored) {
             return;
@@ -456,6 +458,8 @@ public class RenderUtils {
                 } else {
                     mc.getTextureManager().bindTexture(texLocation);
                 }
+            } else {
+                return;
             }
         } catch (Exception ignored) {
             return;
