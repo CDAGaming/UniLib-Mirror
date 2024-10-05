@@ -25,6 +25,7 @@
 package com.gitlab.cdagaming.unilib.utils;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StringUtils;
 
 /**
  * Image Utilities used to Parse texture resource data
@@ -75,5 +76,35 @@ public class ResourceUtils {
      */
     public static ResourceLocation getEmptyResource() {
         return EMPTY_RESOURCE;
+    }
+
+    /**
+     * Retrieve the namespace of the specified resource
+     *
+     * @param location The texture resource to interpret
+     * @return the namespace of the resource
+     */
+    public static String getNamespace(final ResourceLocation location) {
+        return location != null ? location.getNamespace() : "";
+    }
+
+    /**
+     * Retrieve the path of the specified resource
+     *
+     * @param location The texture resource to interpret
+     * @return the path of the resource
+     */
+    public static String getPath(final ResourceLocation location) {
+        return location != null ? location.getPath() : "";
+    }
+
+    /**
+     * Detects whether the specified Texture contains valid information
+     *
+     * @param location The texture resource to interpret
+     * @return Whether the specified Texture contains valid information
+     */
+    public static boolean isValidResource(final ResourceLocation location) {
+        return location != null && !StringUtils.isNullOrEmpty(getNamespace(location)) && !StringUtils.isNullOrEmpty(getPath(location));
     }
 }

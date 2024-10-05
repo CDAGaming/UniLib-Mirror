@@ -281,9 +281,11 @@ public class ImageUtils {
      *
      * @param location The texture to parse
      * @return Whether the specified Texture lacks critical information
+     * @deprecated Use {@link ResourceUtils#isValidResource(ResourceLocation)} instead
      */
+    @Deprecated(forRemoval = true, since = "v1.0.3")
     public static boolean isTextureNull(final ResourceLocation location) {
-        return location == null || (StringUtils.isNullOrEmpty(location.getNamespace()) || StringUtils.isNullOrEmpty(location.getPath()));
+        return !ResourceUtils.isValidResource(location);
     }
 
     /**

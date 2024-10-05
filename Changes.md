@@ -17,6 +17,11 @@ See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for mor
     * UniCore (`1.2.2` -> `1.2.4`)
     * ClassGraph (`4.8.175` -> `4.8.177`)
 
+### Fixes
+
+* Resolved cases of exceptions being thrown when using empty textures
+    * This fix comes with a behavior change where empty textures will no longer be bound or rendered
+
 ___
 
 ### More Information

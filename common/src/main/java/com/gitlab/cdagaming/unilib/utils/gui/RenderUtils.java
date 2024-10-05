@@ -392,7 +392,7 @@ public class RenderUtils {
                                     final double zLevel,
                                     final ResourceLocation texLocation) {
         try {
-            if (texLocation != null) {
+            if (ResourceUtils.isValidResource(texLocation)) {
                 final Pair<Boolean, Integer> data = StringUtils.getValidInteger(texLocation);
                 if (data.getFirst()) {
                     GlStateManager.bindTexture(data.getSecond());
@@ -449,7 +449,7 @@ public class RenderUtils {
         }
 
         try {
-            if (texLocation != null) {
+            if (ResourceUtils.isValidResource(texLocation)) {
                 final Pair<Boolean, Integer> data = StringUtils.getValidInteger(texLocation);
                 if (data.getFirst()) {
                     GlStateManager.bindTexture(data.getSecond());
