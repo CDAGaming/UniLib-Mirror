@@ -14,7 +14,7 @@ See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for mor
     * Fabric Loader (`0.15.11` -> `0.16.5`)
     * Gradle (`8.9` -> `8.10.2`)
     * Shadow (`8.3.0` -> `8.3.3`)
-    * UniCore (`1.2.2` -> `1.2.4`)
+    * UniCore (`1.2.2` -> `1.2.5`)
     * ClassGraph (`4.8.175` -> `4.8.177`)
 
 ### Fixes
