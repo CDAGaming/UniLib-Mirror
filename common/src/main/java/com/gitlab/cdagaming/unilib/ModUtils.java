@@ -29,8 +29,8 @@ import io.github.cdagaming.unicore.utils.TranslationUtils;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.Minecraft;
+import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
-import net.minecraft.server.packs.resources.SimpleReloadableResourceManager;
 
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
@@ -70,7 +70,7 @@ public class ModUtils {
      * Consumer Event for Resource Reload Listener Registration
      */
     private static final BiConsumer<String, ResourceManagerReloadListener> RELOAD_LISTENER_HOOK = (
-            (id, listener) -> ((SimpleReloadableResourceManager) getMinecraft().getResourceManager()).registerReloadListener(listener)
+            (id, listener) -> ((ReloadableResourceManager) getMinecraft().getResourceManager()).registerReloadListener(listener)
     );
 
     /**

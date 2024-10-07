@@ -33,7 +33,7 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.fmllegacy.network.FMLNetworkConstants;
+import net.minecraftforge.network.NetworkConstants;
 
 /**
  * The Primary Application Class and Utilities
@@ -53,7 +53,7 @@ public class UniLibForge {
         try {
             // Workaround: Client-side only fix for Forge Clients
             // - Reference => https://gitlab.com/CDAGaming/CraftPresence/-/issues/99
-            ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> FMLNetworkConstants.IGNORESERVERONLY, (a, b) -> true));
+            ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
         } catch (Throwable ignored) {
             // before forge-1.13.2-25.0.103
         }
