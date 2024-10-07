@@ -26,11 +26,11 @@ package com.gitlab.cdagaming.unilib.utils;
 
 import com.gitlab.cdagaming.unilib.ModUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiScreenLoading;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.Session;
-import net.minecraft.world.World;
+import net.minecraft.client.User;
+import net.minecraft.client.gui.screens.LoadingOverlay;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 
 /**
  * Game-Related Utilities used to Parse base Game Data
@@ -52,7 +52,7 @@ public class GameUtils {
      *
      * @return the Game World Instance
      */
-    public static World getWorld() {
+    public static Level getWorld() {
         return WorldUtils.getWorld(getMinecraft());
     }
 
@@ -61,7 +61,7 @@ public class GameUtils {
      *
      * @return the Game Player Instance
      */
-    public static EntityPlayer getPlayer() {
+    public static Player getPlayer() {
         return WorldUtils.getPlayer(getMinecraft());
     }
 
@@ -71,8 +71,8 @@ public class GameUtils {
      * @param client the game client instance
      * @return the Game Session Instance
      */
-    public static Session getSession(final Minecraft client) {
-        return client != null ? client.getSession() : null;
+    public static User getSession(final Minecraft client) {
+        return client != null ? client.getUser() : null;
     }
 
     /**
@@ -80,7 +80,7 @@ public class GameUtils {
      *
      * @return the Game Session Instance
      */
-    public static Session getSession() {
+    public static User getSession() {
         return getSession(getMinecraft());
     }
 
@@ -91,7 +91,7 @@ public class GameUtils {
      * @return the Game Session Username
      */
     public static String getUsername(final Minecraft client) {
-        return getSession(client).getUsername();
+        return getSession(client).getName();
     }
 
     /**
@@ -110,7 +110,7 @@ public class GameUtils {
      * @return the Game Session UUID
      */
     public static String getUuid(final Minecraft client) {
-        return getSession(client).getPlayerID();
+        return getSession(client).getUuid();
     }
 
     /**
@@ -128,8 +128,8 @@ public class GameUtils {
      * @param client the game client instance
      * @return the game's current screen instance
      */
-    public static GuiScreen getCurrentScreen(final Minecraft client) {
-        return client != null ? client.currentScreen : null;
+    public static Screen getCurrentScreen(final Minecraft client) {
+        return client != null ? client.screen : null;
     }
 
     /**
@@ -137,7 +137,7 @@ public class GameUtils {
      *
      * @return the game's current screen instance
      */
-    public static GuiScreen getCurrentScreen() {
+    public static Screen getCurrentScreen() {
         return getCurrentScreen(getMinecraft());
     }
 
@@ -148,8 +148,8 @@ public class GameUtils {
      * @return {@link Boolean#TRUE} if condition is satisfied
      */
     public static boolean isFocused(final Minecraft client) {
-        final GuiScreen screen = getCurrentScreen(client);
-        return screen != null && ((screen.getFocused() != null && screen.getFocused().canFocus()) || WorldUtils.getPlayer(client) != null);
+        final Screen screen = getCurrentScreen(client);
+        return screen != null && (screen.getFocused() != null || WorldUtils.getPlayer(client) != null);
     }
 
     /**
@@ -170,8 +170,7 @@ public class GameUtils {
      * @return {@link Boolean#TRUE} if condition is satisfied
      */
     public static boolean isLoaded(final Minecraft client) {
-        final GuiScreen screen = getCurrentScreen(client);
-        return (screen != null && !(screen instanceof GuiScreenLoading)) || WorldUtils.getPlayer(client) != null;
+        return (getCurrentScreen(client) != null && !(client.getOverlay() instanceof LoadingOverlay)) || WorldUtils.getPlayer(client) != null;
     }
 
     /**
