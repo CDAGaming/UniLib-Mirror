@@ -201,6 +201,7 @@ public class CheckBoxControl extends ExtendedButtonControl {
             final String contentColor = "#2b2b2b";
 
             RenderUtils.drawGradientBox(
+                    matrixStack,
                     getControlPosX(), getControlPosY(),
                     getBoxWidth(), getControlHeight(),
                     getZLevel(),
