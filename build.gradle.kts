@@ -278,7 +278,7 @@ subprojects {
                     devFallbackNamespace("searge")
                 }
             } else if (usingIntermediary) {
-                devFallbackNamespace("intermediary")
+                devFallbackNamespace("official")
             }
 
             if (shouldDowngrade) {

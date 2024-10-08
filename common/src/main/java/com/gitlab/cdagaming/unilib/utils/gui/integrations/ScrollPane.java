@@ -29,10 +29,10 @@ import com.gitlab.cdagaming.unilib.utils.ResourceUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
 import io.github.cdagaming.unicore.utils.MathUtils;
-import io.github.cdagaming.unicore.utils.StringUtils;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
-import java.awt.*;
+import javax.annotation.Nonnull;
 
 /**
  * Implementation for a Scrollable Screen Pane
@@ -41,15 +41,14 @@ import java.awt.*;
  */
 public class ScrollPane extends ExtendedScreen {
     private static final ResourceLocation SCROLLER_SPRITE = ResourceUtils.getResource("widget/scroller");
-    private static final Color NONE = StringUtils.getColorFrom(0, 0, 0, 0);
+    private static final ResourceLocation SCROLLER_BACKGROUND_SPRITE = ResourceUtils.getResource("widget/scroller_background");
     private static final int DEFAULT_PADDING = 4;
-    private static final int DEFAULT_HEADER_HEIGHT = 4;
-    private static final int DEFAULT_FOOTER_HEIGHT = 4;
+    private static final int DEFAULT_HEADER_HEIGHT = 2;
+    private static final int DEFAULT_FOOTER_HEIGHT = 2;
     private static final int DEFAULT_BAR_WIDTH = 6;
     private static final int DEFAULT_HEIGHT_PER_SCROLL = 8;
     private final ScreenConstants.ColorData DEFAULT_HEADER_BACKGROUND;
     private final ScreenConstants.ColorData DEFAULT_FOOTER_BACKGROUND;
-    private final ScreenConstants.ColorData DEFAULT_SCROLLBAR_BACKGROUND;
     private boolean clickedScrollbar;
     private int padding;
     private float amountScrolled = 0.0F;
@@ -73,24 +72,12 @@ public class ScrollPane extends ExtendedScreen {
 
         // Setup Default Depth Decoration Info
         DEFAULT_HEADER_BACKGROUND = new ScreenConstants.ColorData(
-                Color.black, NONE,
-                getScreenBackground().texLocation(),
-                0.0D, -100.0D,
-                false
+                (hasWorld() ? ExtendedScreen.INWORLD_HEADER_SEPARATOR : ExtendedScreen.HEADER_SEPARATOR).toString(),
+                0.0D, 32.0D, 2.0D
         );
         DEFAULT_FOOTER_BACKGROUND = new ScreenConstants.ColorData(
-                NONE, Color.black,
-                getScreenBackground().texLocation(),
-                0.0D, -100.0D,
-                false
-        );
-
-        // Setup Default Scrollbar Info
-        DEFAULT_SCROLLBAR_BACKGROUND = new ScreenConstants.ColorData(
-                Color.black, Color.black,
-                getScreenBackground().texLocation(),
-                0.0D, 0.0D,
-                false
+                (hasWorld() ? ExtendedScreen.INWORLD_FOOTER_SEPARATOR : ExtendedScreen.FOOTER_SEPARATOR).toString(),
+                0.0D, 32.0D, 2.0D
         );
     }
 
@@ -147,7 +134,7 @@ public class ScrollPane extends ExtendedScreen {
 
     @Override
     public float getTintFactor() {
-        return 0.5f;
+        return super.getTintFactor();
     }
 
     @Override
@@ -163,13 +150,18 @@ public class ScrollPane extends ExtendedScreen {
         );
     }
 
+    @Override
+    public void renderBackground(@Nonnull GuiGraphics arg, int i, int j, float f) {
+        super.renderMenuBackground(arg);
+    }
+
     /**
      * Retrieve the top-most coordinate for the header decoration
      *
      * @return the top-most coordinate for the header decoration
      */
     protected int getHeaderTop() {
-        return getTop();
+        return getTop() - getHeaderHeight();
     }
 
     /**
@@ -196,7 +188,7 @@ public class ScrollPane extends ExtendedScreen {
      * @return the top-most coordinate for the footer decoration
      */
     protected int getFooterTop() {
-        return getBottom() - getFooterHeight();
+        return getBottom();
     }
 
     /**
@@ -238,10 +230,10 @@ public class ScrollPane extends ExtendedScreen {
     /**
      * Retrieve the rendering info for the Scrollbar Background
      *
-     * @return the processed {@link ScreenConstants.ColorData} info
+     * @return the processed info
      */
-    protected ScreenConstants.ColorData getScrollbarBackground() {
-        return DEFAULT_SCROLLBAR_BACKGROUND;
+    protected ResourceLocation getScrollerBackgroundSprite() {
+        return SCROLLER_BACKGROUND_SPRITE;
     }
 
     /**
@@ -278,7 +270,6 @@ public class ScrollPane extends ExtendedScreen {
         if (needsScrollbar()) {
             final int scrollBarX = getScrollBarX();
             final int scrollBarWidth = getScrollBarWidth();
-            final int scrollBarRight = scrollBarX + scrollBarWidth;
             final int bottom = getBottom();
             final int top = getTop();
             final int maxScroll = getMaxScroll();
@@ -286,13 +277,8 @@ public class ScrollPane extends ExtendedScreen {
             final int height = getBarHeight();
             final int barTop = Math.max((int) getAmountScrolled() * (screenHeight - height) / maxScroll + top, top);
 
-            drawBackground(
-                    scrollBarX, scrollBarRight, top, bottom,
-                    0.0D, 1.0F,
-                    0.0D, 0.0D,
-                    getScrollbarBackground()
-            );
             RenderUtils.renderSprite(getCurrentMatrix(), graphics -> {
+                graphics.blitSprite(getScrollerBackgroundSprite(), scrollBarX, top, scrollBarWidth, bottom - top);
                 graphics.blitSprite(getScrollerSprite(), scrollBarX, barTop, scrollBarWidth, height);
             });
         }
