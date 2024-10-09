@@ -1,21 +1,18 @@
 # UniLib Changes
 
-## v1.0.3 (10/08/2024)
+## v1.0.4 (??/??/2024)
 
 _A Detailed Changelog from the last release is
-available [here](https://gitlab.com/CDAGaming/UniLib/-/compare/release%2Fv1.0.2...release%2Fv1.0.3)_
+available [here](https://gitlab.com/CDAGaming/UniLib/-/compare/release%2Fv1.0.3...release%2Fv1.0.4)_
 
 See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for more info regarding the mod.
 
 ### Changes
 
 * (Backend) Updated Build Dependencies (Please see the appropriate repositories for changes)
-    * JVMDowngrader (`1.1.2` -> `1.1.3`)
-    * Fabric Loader (`0.15.11` -> `0.16.5`)
-    * Gradle (`8.9` -> `8.10.2`)
-    * Shadow (`8.3.0` -> `8.3.3`)
-    * UniCore (`1.2.2` -> `1.2.5`)
-    * ClassGraph (`4.8.175` -> `4.8.177`)
+    * ASM (`9.7` -> `9.7.1`)
+    * Fabric Loader (`0.16.5` -> `0.16.6`)
+    * Commons Compress (`1.26.1` -> `1.27.1`)
 
 ### Fixes
 
