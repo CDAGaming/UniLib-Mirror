@@ -11,13 +11,12 @@ See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for mor
 
 * (Backend) Updated Build Dependencies (Please see the appropriate repositories for changes)
     * ASM (`9.7` -> `9.7.1`)
-    * Fabric Loader (`0.16.5` -> `0.16.6`)
+    * Fabric Loader (`0.16.5` -> `0.16.7`)
     * Commons Compress (`1.26.1` -> `1.27.1`)
 
 ### Fixes
 
-* Resolved cases of exceptions being thrown when using empty textures
-    * This fix comes with a behavior change where empty textures will no longer be bound or rendered
+* TBD
 
 ___
 
