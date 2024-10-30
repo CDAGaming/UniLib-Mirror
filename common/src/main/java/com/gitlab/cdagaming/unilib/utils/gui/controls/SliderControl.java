@@ -248,7 +248,7 @@ public class SliderControl extends ExtendedButtonControl {
      */
     @Override
     public void onClick(double mouseX, double mouseY) {
-        if (super.clicked(mouseX, mouseY)) {
+        if (super.isMouseOver(mouseX, mouseY)) {
             setValueFromMouse(mouseX);
         }
     }
