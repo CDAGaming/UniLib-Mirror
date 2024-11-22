@@ -134,10 +134,6 @@ subprojects {
         // ModLoader Mavens
         maven("https://maven.neoforged.net/releases") {
             name = "NeoForged"
-            metadataSources {
-                mavenPom()
-                artifact()
-            }
         }
         maven("https://maven.minecraftforge.net/") {
             name = "Forge"

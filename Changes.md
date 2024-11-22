@@ -1,6 +1,6 @@
 # UniLib Changes
 
-## v1.0.4 (11/19/2024)
+## v1.0.4 (11/26/2024)
 
 _A Detailed Changelog from the last release is
 available [here](https://gitlab.com/CDAGaming/UniLib/-/compare/release%2Fv1.0.3...release%2Fv1.0.4)_
@@ -19,6 +19,11 @@ See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for mor
     * ClassGraph (`4.8.177` -> `4.8.179`)
     * JVMDowngrader (`1.1.3` -> `1.2.1`)
     * Shadow (`8.3.3` -> `8.3.5`)
+
+### Fixes
+
+* (Backend) Fixed a misc. build config issue preventing some branches from compiling
+* (Backend) Fixed a missing method override for `isMouseOver` in `ExtendedScreen`, causing issues in MC 1.14+
 
 ___
 
