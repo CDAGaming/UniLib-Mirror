@@ -28,9 +28,7 @@ import com.gitlab.cdagaming.unilib.UniLib;
 import com.gitlab.cdagaming.unilib.core.CoreUtils;
 import io.github.cdagaming.unicore.utils.MappingUtils;
 import io.github.cdagaming.unicore.utils.OSUtils;
-import net.neoforged.fml.IExtensionPoint;
 import net.neoforged.fml.ModList;
-import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLEnvironment;
 
@@ -47,14 +45,6 @@ public class UniLibNeoForge {
     public UniLibNeoForge() {
         if (OSUtils.JAVA_SPEC < 1.8f) {
             throw new UnsupportedOperationException("Incompatible JVM!!! @MOD_NAME@ requires Java 8 or above to work properly!");
-        }
-
-        try {
-            // Workaround: Client-side only fix for Forge Clients
-            // - Reference => https://gitlab.com/CDAGaming/CraftPresence/-/issues/99
-            ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> IExtensionPoint.DisplayTest.IGNORESERVERONLY, (a, b) -> true));
-        } catch (Throwable ignored) {
-            // before forge-1.13.2-25.0.103
         }
 
         if (FMLEnvironment.dist.isClient()) {
