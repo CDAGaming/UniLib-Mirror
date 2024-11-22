@@ -160,6 +160,19 @@ public class ScrollPane extends ExtendedScreen {
         return 0.5f;
     }
 
+    @Override
+    public void drawBackground(final double left, final double right,
+                               final double top, final double bottom,
+                               final double offset, float tintFactor,
+                               final ScreenConstants.ColorData data) {
+        drawBackground(
+                left, right, top, bottom,
+                offset, tintFactor,
+                right, bottom,
+                data
+        );
+    }
+
     /**
      * Retrieve the top-most coordinate for the header decoration
      *
