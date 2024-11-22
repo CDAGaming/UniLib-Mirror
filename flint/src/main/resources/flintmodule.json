@@ -1,0 +1,14 @@
+{
+  "id": "${mod_id}",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "A common set of Utilities, designed for over 50 versions of Minecraft!",
+  "authors": [
+    "CDAGaming"
+  ],
+  "license": "MIT",
+  "icon": "logo.png",
+  "entryPoints": {
+    "main": "com.gitlab.cdagaming.unilib.flint.UniLibFlint"
+  }
+}
