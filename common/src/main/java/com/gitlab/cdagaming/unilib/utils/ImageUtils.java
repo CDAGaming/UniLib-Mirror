@@ -26,11 +26,11 @@ package com.gitlab.cdagaming.unilib.utils;
 
 import com.gitlab.cdagaming.unilib.core.CoreUtils;
 import com.gitlab.cdagaming.unilib.impl.ImageFrame;
+import com.mojang.minecraft.Minecraft;
 import io.github.cdagaming.unicore.impl.Pair;
 import io.github.cdagaming.unicore.impl.Tuple;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import io.github.cdagaming.unicore.utils.UrlUtils;
-import net.minecraft.client.Minecraft;
 
 import javax.imageio.ImageIO;
 import java.io.ByteArrayInputStream;
