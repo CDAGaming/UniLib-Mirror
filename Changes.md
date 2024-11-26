@@ -1,6 +1,6 @@
 # UniLib Changes
 
-## v1.0.4 (11/26/2024)
+## v1.0.4 (11/28/2024)
 
 _A Detailed Changelog from the last release is
 available [here](https://gitlab.com/CDAGaming/UniLib/-/compare/release%2Fv1.0.3...release%2Fv1.0.4)_
@@ -12,7 +12,6 @@ See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for mor
 * (Backend) Updated Build Dependencies (Please see the appropriate repositories for changes)
     * ASM (`9.7` -> `9.7.1`)
     * Fabric Loader (`0.16.5` -> `0.16.9`)
-    * Commons Compress (`1.26.1` -> `1.27.1`)
     * UniCore (`1.2.5` -> `1.2.6`)
     * Gradle (`8.10.2` -> `8.11`)
     * Lenni Reflect (`1.3.4` -> `1.4.0`)
