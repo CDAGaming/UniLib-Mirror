@@ -1,28 +1,21 @@
 # UniLib Changes
 
-## v1.0.4 (11/28/2024)
+## v1.0.5 (12/03/2024)
 
 _A Detailed Changelog from the last release is
-available [here](https://gitlab.com/CDAGaming/UniLib/-/compare/release%2Fv1.0.3...release%2Fv1.0.4)_
+available [here](https://gitlab.com/CDAGaming/UniLib/-/compare/release%2Fv1.0.4...release%2Fv1.0.5)_
 
 See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for more info regarding the mod.
 
 ### Changes
 
 * (Backend) Updated Build Dependencies (Please see the appropriate repositories for changes)
-    * ASM (`9.7` -> `9.7.1`)
-    * Fabric Loader (`0.16.5` -> `0.16.9`)
-    * UniCore (`1.2.5` -> `1.2.6`)
-    * Gradle (`8.10.2` -> `8.11`)
-    * Lenni Reflect (`1.3.4` -> `1.4.0`)
-    * ClassGraph (`4.8.177` -> `4.8.179`)
-    * JVMDowngrader (`1.1.3` -> `1.2.1`)
-    * Shadow (`8.3.3` -> `8.3.5`)
+    * UniCore (`1.2.6` -> `1.2.7`)
+    * Gradle (`8.11` -> `8.11.1`)
 
 ### Fixes
 
-* (Backend) Fixed a misc. build config issue preventing some branches from compiling
-* (Backend) Fixed a missing method override for `isMouseOver` in `ExtendedScreen`, causing issues in MC 1.14+
+* (Backend) Fixed `ModUtils#getMinecraftInstance` failing from MC 1.2.5 to b1.1_02, if not using `MinecraftApplet`
 
 ___
 
