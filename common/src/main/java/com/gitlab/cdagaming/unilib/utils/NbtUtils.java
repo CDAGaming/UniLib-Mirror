@@ -25,12 +25,13 @@
 package com.gitlab.cdagaming.unilib.utils;
 
 import com.gitlab.cdagaming.unilib.core.CoreUtils;
+import com.mojang.nbt.tags.*;
 import io.github.cdagaming.unicore.utils.FileUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
-import com.mojang.nbt.*;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.EntityDispatcher;
 import net.minecraft.core.item.ItemStack;
+import net.minecraft.core.util.collection.NamespaceID;
 
 import java.util.List;
 
@@ -192,10 +193,10 @@ public class NbtUtils {
     }
 
     public static CompoundTag serializeNBT(Entity entity) {
-        String name = EntityDispatcher.getEntityString(entity);
+        NamespaceID name = EntityDispatcher.idForClass(entity.getClass());
         CompoundTag ret = new CompoundTag();
-        if (!StringUtils.isNullOrEmpty(name)) {
-            ret.putString("id", name);
+        if (name != null) {
+            ret.putString("id", name.toString());
         }
         entity.saveWithoutId(ret);
         return ret;
