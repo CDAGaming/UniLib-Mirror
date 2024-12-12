@@ -30,7 +30,7 @@ import com.gitlab.cdagaming.unilib.core.impl.KeyConverter;
 import io.github.cdagaming.unicore.impl.Pair;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.options.GuiOptions;
+import net.minecraft.client.gui.options.ScreenOptions;
 import net.minecraft.client.gui.options.components.KeyBindingComponent;
 import net.minecraft.client.gui.options.components.OptionsCategory;
 import net.minecraft.client.gui.options.data.OptionsPages;
@@ -351,11 +351,11 @@ public class KeyUtils {
         }
 
         if (!areKeysRegistered()) {
-            if (getInstance().gameSettings != null && getInstance().fontRenderer != null && OptionsPages.CONTROLS != null) {
+            if (getInstance().gameSettings != null && getInstance().font != null && OptionsPages.CONTROLS != null) {
                 for (Map.Entry<String, KeyBindData> data : getRegistrationEntries()) {
                     final KeyBindData entry = data.getValue();
 
-                    getInstance().gameSettings.keys = StringUtils.addToArray(getInstance().gameSettings.keys, entry.binding());
+                    //getInstance().gameSettings.keys = StringUtils.addToArray(getInstance().gameSettings.keys, entry.binding());
 
                     registrationQueue.remove(data.getKey());
                 }
@@ -382,7 +382,7 @@ public class KeyUtils {
 
                         if (!getKeyName(currentBind).equals(unknownKeyName) && !isValidClearCode(currentBind)) {
                             // Only process the key if it is not an unknown or invalid key
-                            if (Keyboard.isKeyDown(currentBind) && !(GameUtils.getCurrentScreen(getInstance()) instanceof GuiOptions)) {
+                            if (Keyboard.isKeyDown(currentBind) && !(GameUtils.getCurrentScreen(getInstance()) instanceof ScreenOptions)) {
                                 try {
                                     keyData.runEvent().run();
                                 } catch (Throwable ex) {
