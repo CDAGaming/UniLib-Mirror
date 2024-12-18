@@ -12,6 +12,7 @@ See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for mor
 * (Backend) Updated Build Dependencies (Please see the appropriate repositories for changes)
     * UniCore (`1.2.6` -> `1.2.7`)
     * Gradle (`8.11` -> `8.11.1`)
+    * Unimined (`1.3.9` -> `1.3.11`)
 
 ### Fixes
 
