@@ -1,6 +1,6 @@
 # UniLib Changes
 
-## v1.0.5 (12/23/2024)
+## v1.0.5 (01/14/2025)
 
 _A Detailed Changelog from the last release is
 available [here](https://gitlab.com/CDAGaming/UniLib/-/compare/release%2Fv1.0.4...release%2Fv1.0.5)_
@@ -10,8 +10,8 @@ See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for mor
 ### Changes
 
 * (Backend) Updated Build Dependencies (Please see the appropriate repositories for changes)
-    * UniCore (`1.2.6` -> `1.2.7`)
-    * Gradle (`8.11` -> `8.11.1`)
+    * UniCore (`1.2.6` -> `1.2.8`)
+    * Gradle (`8.11` -> `8.12`)
     * Unimined (`1.3.9` -> `1.3.11`)
 
 ### Fixes
