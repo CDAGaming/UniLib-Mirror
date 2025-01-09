@@ -24,12 +24,12 @@
 
 package com.gitlab.cdagaming.unilib.utils;
 
+import io.github.cdagaming.unicore.utils.MappingUtils;
 import io.github.cdagaming.unicore.utils.MathUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.src.Block;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.StringTranslate;
 
 import java.util.List;
 
@@ -157,8 +157,8 @@ public class ItemUtils {
         final ItemStack stack = getStackFrom(data);
         String result = "";
         if (!isItemEmpty(stack)) {
-            result = StringUtils.getOrDefault(
-                    StringTranslate.func_20162_a().func_20161_b(stack.getItem().func_20009_a())
+            result = MappingUtils.getClassName(
+                    stack.getItem()
             );
         }
 
