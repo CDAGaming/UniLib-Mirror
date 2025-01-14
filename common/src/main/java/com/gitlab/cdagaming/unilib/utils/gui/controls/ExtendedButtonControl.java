@@ -390,7 +390,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * @return Whether the control is currently visible
      */
     public boolean isControlVisible() {
-        return this.drawButton;
+        return this.enabled2;
     }
 
     /**
@@ -399,7 +399,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * @param isVisible The new visibility state for this control
      */
     public void setControlVisible(final boolean isVisible) {
-        this.drawButton = isVisible;
+        this.enabled2 = isVisible;
     }
 
     /**
