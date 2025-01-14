@@ -28,7 +28,7 @@ import com.gitlab.cdagaming.unilib.core.CoreUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import io.github.cdagaming.unicore.utils.TranslationUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.ThreadClientSleep;
+import net.minecraft.src.ThreadSleepForever;
 import net.minecraft.src.UnexpectedThrowable;
 
 import java.util.function.BiConsumer;
@@ -101,7 +101,7 @@ public class ModUtils {
     public static String getLanguage(final String fallback) {
         final String result;
         if (getMinecraft().gameSettings != null) {
-            result = getMinecraft().gameSettings.language;
+            result = getMinecraft().gameSettings.field_44018_Q;
         } else {
             result = fallback;
         }
@@ -159,7 +159,7 @@ public class ModUtils {
 
                 for (Thread thread : threads) {
                     if (thread != null && thread.getName().equals("Timer hack thread")) {
-                        localInstance = (Minecraft) StringUtils.getField(ThreadClientSleep.class, thread, "mc", "field_1588_a", "field_2825", "a");
+                        localInstance = (Minecraft) StringUtils.getField(ThreadSleepForever.class, thread, "mc", "field_1588_a", "field_2825", "a");
                         break;
                     }
                 }
