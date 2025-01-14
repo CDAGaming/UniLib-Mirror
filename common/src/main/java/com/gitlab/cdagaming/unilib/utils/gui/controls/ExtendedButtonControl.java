@@ -29,7 +29,9 @@ import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 
 import javax.annotation.Nonnull;
 
@@ -38,7 +40,7 @@ import javax.annotation.Nonnull;
  *
  * @author CDAGaming
  */
-public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
+public class ExtendedButtonControl extends Button implements DynamicWidget {
     /**
      * Optional Arguments used for functions within the Mod, if any
      */
@@ -68,7 +70,8 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * @param optionalArgs The optional Arguments, if any, to associate with this control
      */
     public ExtendedButtonControl(final int buttonId, final int x, final int y, final int widthIn, final int heightIn, final String buttonText, final String... optionalArgs) {
-        super(buttonId, x, y, widthIn, heightIn, buttonText);
+        super(x, y, widthIn, heightIn, buttonText, (button) -> {
+        });
 
         this.optionalArgs = optionalArgs;
     }
@@ -213,7 +216,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
             }
 
             RenderUtils.renderScrollingString(mc,
-                    mc.fontRenderer, getControlMessage(),
+                    mc.font, getControlMessage(),
                     getLeft() + 2, getTop(),
                     getRight() - 2, getBottom(),
                     color
@@ -228,7 +231,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
     @Override
     protected void renderBg(@Nonnull Minecraft mc, int mouseX, int mouseY) {
         if (isControlVisible()) {
-            final int hoverState = getHoverState(isHoveringOrFocusingOver());
+            final int hoverState = getYImage(isHoveringOrFocusingOver());
             final int hoverValue = 46 + hoverState * 20;
             final double xOffset = getControlWidth() / 2D;
 
@@ -248,7 +251,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * Equivalent of MouseListener.mousePressed(MouseEvent e).
      */
     @Override
-    protected boolean isPressable(double mouseX, double mouseY) {
+    protected boolean clicked(double mouseX, double mouseY) {
         return isOverScreen() && isControlEnabled() && isControlVisible() && isHoveringOver();
     }
 
@@ -330,16 +333,10 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
 
     /**
      * Event to trigger upon Button Action, including onClick Events
-     *
-     * @param mouseX The Event Mouse X Coordinate
-     * @param mouseY The Event Mouse Y Coordinate
      */
     @Override
-    public void onClick(double mouseX, double mouseY) {
-        if (isPressable(mouseX, mouseY)) {
-            onClick();
-            super.onClick(mouseX, mouseY);
-        }
+    public void onPress() {
+        onClick();
     }
 
     /**
@@ -361,12 +358,30 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
     }
 
     /**
+     * Gets the control's current raw display message
+     *
+     * @return The control's current raw display message
+     */
+    public Component getControlRawMessage() {
+        return new TextComponent(this.getMessage());
+    }
+
+    /**
+     * Sets the control's raw display message to the specified value
+     *
+     * @param newMessage The new raw display message for this control
+     */
+    public void setControlRawMessage(final Component newMessage) {
+        this.setMessage(newMessage.getString());
+    }
+
+    /**
      * Gets the control's current text contents
      *
      * @return The control's current text contents
      */
     public String getControlMessage() {
-        return this.displayString;
+        return getControlRawMessage().getString();
     }
 
     /**
@@ -375,7 +390,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * @param newMessage The new display message for this control
      */
     public void setControlMessage(final String newMessage) {
-        this.displayString = newMessage;
+        setControlRawMessage(new TextComponent(newMessage));
     }
 
     /**
@@ -384,7 +399,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * @return Whether the control is currently active or enabled
      */
     public boolean isControlEnabled() {
-        return this.enabled;
+        return this.active;
     }
 
     /**
@@ -393,7 +408,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * @param isEnabled The new enable state for this control
      */
     public void setControlEnabled(final boolean isEnabled) {
-        this.enabled = isEnabled;
+        this.active = isEnabled;
     }
 
     /**
@@ -420,7 +435,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * @return the current hover state
      */
     public boolean isHoveringOver() {
-        return this.hovered;
+        return this.isHovered;
     }
 
     /**
@@ -429,7 +444,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * @param isHovered the new hover state
      */
     public void setHoveringOver(final boolean isHovered) {
-        this.hovered = isHovered;
+        this.isHovered = isHovered;
     }
 
     /**
@@ -438,7 +453,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * @return the current focus state
      */
     public boolean isFocusedOver() {
-        return false;
+        return isFocused();
     }
 
     /**
@@ -447,7 +462,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * @param isFocused the new focus state
      */
     public void setFocusedOver(final boolean isFocused) {
-        // N/A
+        setFocused(isFocused);
     }
 
     /**
@@ -465,7 +480,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * @return the current Z Level
      */
     public double getZLevel() {
-        return this.zLevel;
+        return this.blitOffset;
     }
 
     /**
@@ -474,6 +489,6 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * @param zLevel the new Z Level
      */
     public void setZLevel(final double zLevel) {
-        this.zLevel = (float) zLevel;
+        this.blitOffset = (int) zLevel;
     }
 }
