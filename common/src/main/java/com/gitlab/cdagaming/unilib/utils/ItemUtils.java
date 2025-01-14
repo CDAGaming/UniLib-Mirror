@@ -26,9 +26,9 @@ package com.gitlab.cdagaming.unilib.utils;
 
 import io.github.cdagaming.unicore.utils.MathUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.src.Block;
+import net.minecraft.src.Item;
+import net.minecraft.src.ItemStack;
 
 import java.util.List;
 
@@ -157,7 +157,7 @@ public class ItemUtils {
         String result = "";
         if (!isItemEmpty(stack)) {
             result = StringUtils.getOrDefault(
-                    stack.getDisplayName()
+                    stack.getItem().getStatName()
             );
         }
 
