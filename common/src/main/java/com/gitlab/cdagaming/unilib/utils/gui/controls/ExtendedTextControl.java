@@ -207,7 +207,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
      * @param isEnabled The new enable state for this control
      */
     public void setControlEnabled(final boolean isEnabled) {
-        this.setEnabled(isEnabled);
+        this.method_4243(isEnabled);
     }
 
     /**

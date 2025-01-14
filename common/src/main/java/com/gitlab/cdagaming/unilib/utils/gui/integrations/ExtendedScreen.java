@@ -37,6 +37,7 @@ import io.github.cdagaming.unicore.utils.MathUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
+import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -140,6 +141,10 @@ public class ExtendedScreen extends GuiScreen {
      * Whether we are focusing on a control
      */
     private boolean focused;
+
+    private int prevEventButton = 0;
+    private long prevMouseEvent = 0L;
+    private int touchValue = 0;
 
     /**
      * Restore Buttons, if any, for screen re-initialization
@@ -278,6 +283,15 @@ public class ExtendedScreen extends GuiScreen {
     }
 
     /**
+     * Retrieve the system time
+     *
+     * @return the system time
+     */
+    public static long getSystemTime() {
+        return Sys.getTime() * 1000L / Sys.getTimerResolution();
+    }
+
+    /**
      * Pre-Initializes this Screen
      * <p>
      * Responsible for Setting preliminary data
@@ -286,8 +300,8 @@ public class ExtendedScreen extends GuiScreen {
     public void initGui() {
         // Restore Fixes -- MC 1.19.3 and below
         if (!restoreButtons.isEmpty()) {
-            buttonList.clear();
-            buttonList.addAll(restoreButtons);
+            controlList.clear();
+            controlList.addAll(restoreButtons);
             restoreButtons.clear();
         }
         // Clear Data before Initialization
@@ -308,7 +322,7 @@ public class ExtendedScreen extends GuiScreen {
             currentPhase = Phase.PREINIT;
             setContentHeight(0);
 
-            buttonList.clear();
+            controlList.clear();
             extendedControls.clear();
             extendedWidgets.clear();
             extendedLists.clear();
@@ -323,7 +337,7 @@ public class ExtendedScreen extends GuiScreen {
     public void initializeUi() {
         if (isUnloaded()) {
             // Restore Fixes -- MC 1.19.3 and below
-            restoreButtons.addAll(buttonList);
+            restoreButtons.addAll(controlList);
 
             setWorldAndResolution(getGameInstance(), getScreenWidth(), getScreenHeight());
             return;
@@ -403,8 +417,8 @@ public class ExtendedScreen extends GuiScreen {
         if (buttonIn instanceof DynamicWidget widget && !extendedWidgets.contains(buttonIn)) {
             addWidget(widget);
         }
-        if (buttonIn instanceof GuiButton button && !buttonList.contains(buttonIn)) {
-            buttonList.add(button);
+        if (buttonIn instanceof GuiButton button && !controlList.contains(buttonIn)) {
+            controlList.add(button);
         }
         if (!extendedControls.contains(buttonIn)) {
             extendedControls.add(buttonIn);
@@ -919,7 +933,30 @@ public class ExtendedScreen extends GuiScreen {
             if (dw != 0) {
                 mouseScrolled(getMouseX(), getMouseY(), (int) (dw / 60D));
             }
-            super.handleMouseInput();
+
+            // Stub: Re-implement handleMouseInput for method_4259 (mouseClickMove)
+            final int mouseX = Mouse.getEventX() * getScreenWidth() / getGameInstance().displayWidth;
+            final int mouseY = getScreenHeight() - Mouse.getEventY() * getScreenHeight() / getGameInstance().displayHeight - 1;
+            final int eventButton = Mouse.getEventButton();
+            if (Mouse.getEventButtonState()) {
+                if (getGameInstance().gameSettings.touchscreen && touchValue++ > 0) {
+                    return;
+                }
+
+                prevEventButton = eventButton;
+                prevMouseEvent = getSystemTime();
+                mouseClicked(mouseX, mouseY, prevEventButton);
+            } else if (eventButton != -1) {
+                if (getGameInstance().gameSettings.touchscreen && --touchValue > 0) {
+                    return;
+                }
+
+                prevEventButton = -1;
+                mouseMovedOrUp(mouseX, mouseY, eventButton);
+            } else if (prevEventButton != -1 && prevMouseEvent > 0L) {
+                final long timeSinceLastClick = getSystemTime() - prevMouseEvent;
+                method_4259(mouseX, mouseY, prevEventButton, timeSinceLastClick);
+            }
         }
     }
 
