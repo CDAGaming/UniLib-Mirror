@@ -44,7 +44,7 @@ public class WorldUtils {
      * @return the Game World Instance
      */
     public static World getWorld(final Minecraft client) {
-        return client != null ? client.world : null;
+        return client != null ? client.theWorld : null;
     }
 
     /**
@@ -54,7 +54,7 @@ public class WorldUtils {
      * @return the Entity World Instance
      */
     public static World getWorld(final Entity entity) {
-        return entity != null ? entity.world : null;
+        return entity != null ? entity.worldObj : null;
     }
 
     /**
@@ -64,7 +64,7 @@ public class WorldUtils {
      * @return the Game Player Instance
      */
     public static EntityPlayer getPlayer(final Minecraft client) {
-        return client != null ? client.player : null;
+        return client != null ? client.thePlayer : null;
     }
 
     /**
