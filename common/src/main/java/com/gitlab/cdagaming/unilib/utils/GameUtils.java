@@ -147,8 +147,7 @@ public class GameUtils {
      * @return {@link Boolean#TRUE} if condition is satisfied
      */
     public static boolean isFocused(final Minecraft client) {
-        final GuiScreen screen = getCurrentScreen(client);
-        return screen != null && (screen.isFocused() || WorldUtils.getPlayer(client) != null);
+        return getCurrentScreen(client) != null && (client.inGameHasFocus || WorldUtils.getPlayer(client) != null);
     }
 
     /**

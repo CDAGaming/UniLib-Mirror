@@ -85,7 +85,7 @@ public class ResourceUtils {
      * @return the namespace of the resource
      */
     public static String getNamespace(final ResourceLocation location) {
-        return location != null ? location.getNamespace() : "";
+        return location != null ? location.getResourceDomain() : "";
     }
 
     /**
@@ -95,7 +95,7 @@ public class ResourceUtils {
      * @return the path of the resource
      */
     public static String getPath(final ResourceLocation location) {
-        return location != null ? location.getPath() : "";
+        return location != null ? location.getResourcePath() : "";
     }
 
     /**
