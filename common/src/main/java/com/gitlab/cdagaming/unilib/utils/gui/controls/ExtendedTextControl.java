@@ -27,8 +27,8 @@ package com.gitlab.cdagaming.unilib.utils.gui.controls;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
 import io.github.cdagaming.unicore.utils.StringUtils;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.src.FontRenderer;
+import net.minecraft.src.GuiTextField;
 
 /**
  * Extended Gui Widget for a Text Field
@@ -207,7 +207,10 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
      * @param isEnabled The new enable state for this control
      */
     public void setControlEnabled(final boolean isEnabled) {
-        this.method_4243(isEnabled);
+        StringUtils.updateField(GuiTextField.class, this,
+                isEnabled,
+                "isEnabled", "field_73819_m", "field_1127", "m"
+        );
     }
 
     /**
