@@ -36,7 +36,6 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.*;
 
@@ -344,14 +343,7 @@ public class KeyUtils {
             if (getInstance().gameSettings != null) {
                 for (Map.Entry<String, KeyBindData> data : getRegistrationEntries()) {
                     final KeyBindData entry = data.getValue();
-                    final String category = entry.category();
 
-                    final Map<String, Integer> categoryMap = KeyBinding.CATEGORY_ORDER;
-                    if (!categoryMap.containsKey(category)) {
-                        final Optional<Integer> largest = categoryMap.values().stream().max(Integer::compareTo);
-                        final int largestInt = largest.orElse(0);
-                        categoryMap.put(category, largestInt + 1);
-                    }
                     getInstance().gameSettings.keyBindings = StringUtils.addToArray(getInstance().gameSettings.keyBindings, entry.binding());
 
                     registrationQueue.remove(data.getKey());
