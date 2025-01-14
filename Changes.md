@@ -17,6 +17,8 @@ See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for mor
 ### Fixes
 
 * (Backend) Fixed `ModUtils#getMinecraftInstance` failing from MC 1.2.5 to b1.1_02, if not using `MinecraftApplet`
+* (Backend) Fixed `CoreUtils#MOD_COUNT_SUPPLIER` throwing a `ClassNotFound` exception on MC 1.6.4 and below with Fabric
+* (Backend) Fixed an incorrect `fabric_loader_range`, causing `0.12.x` Fabric Loader issues even when compatible
 
 ___
 
