@@ -23,7 +23,7 @@ jobs:
       - name: Get list of branches
         id: branches
         run: |
-          git branch -r | grep -v "origin/HEAD" | grep -v "origin/I18n_master" | sed 's/origin\///' > branches.txt
+          git branch -r | grep -v "origin/HEAD" | grep -v "origin/I18n_master" | grep -v "origin/snapshot" | grep -v "origin/legacy" | sed 's/origin\///' > branches.txt
 
       - name: Display branches to process
         run: cat branches.txt
