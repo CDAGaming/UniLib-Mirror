@@ -166,7 +166,7 @@ public class CheckBoxControl extends ExtendedButtonControl {
 
             if (isChecked())
                 RenderUtils.renderCenteredString(
-                        mc.fontRenderer,
+                        mc.fontRendererObj,
                         "x",
                         getControlPosX() + (getBoxWidth() / 2) + 1,
                         getControlPosY() + 1,
@@ -175,8 +175,8 @@ public class CheckBoxControl extends ExtendedButtonControl {
 
             final int left = getControlPosX() + getBoxWidth() + 2;
             RenderUtils.renderScrollingString(mc,
-                    mc.fontRenderer, getControlMessage(),
-                    left + (RenderUtils.getStringWidth(mc.fontRenderer, getControlMessage()) / 2),
+                    mc.fontRendererObj, getControlMessage(),
+                    left + (RenderUtils.getStringWidth(mc.fontRendererObj, getControlMessage()) / 2),
                     left, getTop(), getRight() - 2, getBottom(),
                     color
             );

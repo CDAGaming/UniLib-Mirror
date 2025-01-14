@@ -211,7 +211,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
             }
 
             RenderUtils.renderScrollingString(mc,
-                    mc.fontRenderer, getControlMessage(),
+                    mc.fontRendererObj, getControlMessage(),
                     getLeft() + 2, getTop(),
                     getRight() - 2, getBottom(),
                     color
@@ -272,22 +272,22 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
 
     @Override
     public int getControlPosX() {
-        return this.x;
+        return this.xPosition;
     }
 
     @Override
     public void setControlPosX(final int posX) {
-        this.x = posX;
+        this.xPosition = posX;
     }
 
     @Override
     public int getControlPosY() {
-        return this.y;
+        return this.yPosition;
     }
 
     @Override
     public void setControlPosY(final int posY) {
-        this.y = posY;
+        this.yPosition = posY;
     }
 
     /**

@@ -1689,7 +1689,7 @@ public class ExtendedScreen extends GuiScreen {
      * @return The Current Font Renderer for this Screen
      */
     public FontRenderer getFontRenderer() {
-        return StringUtils.getOrDefault(getGameInstance().fontRenderer, RenderUtils.getDefaultFontRenderer());
+        return StringUtils.getOrDefault(getGameInstance().fontRendererObj, RenderUtils.getDefaultFontRenderer());
     }
 
     /**
