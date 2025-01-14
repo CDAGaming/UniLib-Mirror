@@ -27,7 +27,6 @@ package com.gitlab.cdagaming.unilib.utils;
 import io.github.cdagaming.unicore.utils.MathUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.block.Block;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -46,13 +45,12 @@ public class ItemUtils {
     /**
      * An Instance of an Empty ItemStack
      */
-    public static final ItemStack EMPTY_STACK = ItemStack.EMPTY;
+    public static final ItemStack EMPTY_STACK = new ItemStack(EMPTY_ITEM);
     /**
      * A list of items that count as "empty"
      */
     private static final List<Item> EMPTY_ITEMS = StringUtils.newArrayList(
-            EMPTY_ITEM,
-            Items.AIR
+            EMPTY_ITEM
     );
 
     /**
@@ -94,7 +92,7 @@ public class ItemUtils {
      * @return the stack count of the stack, or 0 if the stack is null
      */
     public static int getStackCount(final ItemStack stack) {
-        return stack != null ? stack.getCount() : 0;
+        return stack != null ? stack.stackSize : 0;
     }
 
     /**
