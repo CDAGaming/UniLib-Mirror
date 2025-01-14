@@ -27,10 +27,7 @@ package com.gitlab.cdagaming.unilib.utils;
 import com.gitlab.cdagaming.unilib.core.CoreUtils;
 import io.github.cdagaming.unicore.utils.FileUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.*;
+import net.minecraft.src.*;
 
 import java.util.List;
 
