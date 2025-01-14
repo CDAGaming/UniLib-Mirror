@@ -373,7 +373,7 @@ public class ImageFrame {
                         ((blue & 0xFF) << 16) |
                         ((green & 0xFF) << 8) |
                         ((red & 0xFF));
-                newImage.setPixelRGBA(x, y, rgb);
+                newImage.setPixel(x, y, rgb);
             }
         }
 

@@ -113,6 +113,7 @@ public class TexturedWidget implements DynamicWidget {
 
         if (hasBorder()) {
             RenderUtils.drawGradientBox(
+                    screen.getCurrentMatrix(),
                     getControlPosX() - 1, getControlPosY() - 1,
                     getControlWidth() + 2, getControlHeight() + 2,
                     300,
