@@ -211,7 +211,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
             }
 
             RenderUtils.renderScrollingString(mc,
-                    mc.fontRendererObj, getControlMessage(),
+                    mc.fontRenderer, getControlMessage(),
                     getLeft() + 2, getTop(),
                     getRight() - 2, getBottom(),
                     color
@@ -386,7 +386,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * @return Whether the control is currently visible
      */
     public boolean isControlVisible() {
-        return this.visible;
+        return this.drawButton;
     }
 
     /**
@@ -395,7 +395,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * @param isVisible The new visibility state for this control
      */
     public void setControlVisible(final boolean isVisible) {
-        this.visible = isVisible;
+        this.drawButton = isVisible;
     }
 
     /**
@@ -404,7 +404,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * @return the current hover state
      */
     public boolean isHoveringOver() {
-        return this.hovered;
+        return this.field_5056;
     }
 
     /**
@@ -413,7 +413,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * @param isHovered the new hover state
      */
     public void setHoveringOver(final boolean isHovered) {
-        this.hovered = isHovered;
+        this.field_5056 = isHovered;
     }
 
     /**
