@@ -66,6 +66,9 @@ dependencies {
     // ClassGraph
     shade("io.github.classgraph:classgraph:${"classgraph_version"()!!}")
 
+    // ImageIO WebP
+    shade("com.twelvemonkeys.imageio:imageio-webp:${"imageio_version"()!!}")
+
     // SLF4J Dependencies (If below 1.17)
     if (isLegacy || protocol < 755) {
         shade("org.slf4j:slf4j-api:1.7.36")

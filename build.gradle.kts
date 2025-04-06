@@ -1,5 +1,6 @@
 import com.diffplug.gradle.spotless.SpotlessExtension
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransformer
 import com.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension
 import xyz.wagyourtail.jvmdg.gradle.task.files.DowngradeFiles
 import xyz.wagyourtail.replace_str.ProcessClasses
@@ -10,10 +11,10 @@ import java.util.*
 
 plugins {
     java
-    id("xyz.wagyourtail.unimined") version "1.3.12" apply false
-    id("xyz.wagyourtail.jvmdowngrader") version "1.2.1"
-    id("com.diffplug.gradle.spotless") version "6.25.0" apply false
-    id("com.gradleup.shadow") version "8.3.5" apply false
+    id("xyz.wagyourtail.unimined") version "1.3.14" apply false
+    id("xyz.wagyourtail.jvmdowngrader") version "1.2.2"
+    id("com.diffplug.gradle.spotless") version "7.0.2" apply false
+    id("com.gradleup.shadow") version "8.3.6" apply false
     id("com.hypherionmc.modutils.modpublisher") version "2.1.6" apply false
     `maven-publish`
 }
@@ -309,7 +310,7 @@ subprojects {
         options.encoding = "UTF-8"
 
         // JDK 9 introduced a new way of specifying this that will make sure no newer classes or methods are used.
-        // We"ll use that if it"s available, but otherwise we"ll use the older option.
+        // We'll use that if it's available, but otherwise we"ll use the older option.
         if (sourceVersion.isJava9Compatible) {
             options.release.set(sourceVersionInt)
         }
@@ -341,6 +342,7 @@ subprojects {
         exclude("META-INF/versions/**")
 
         // Package Relocations
+        relocate("com.twelvemonkeys", "$relocatePath.com.twelvemonkeys")
         relocate("net.lenni0451", "$relocatePath.net.lenni0451")
         relocate("io.github.classgraph", "$relocatePath.io.github.classgraph")
         relocate("nonapi.io.github.classgraph", "$relocatePath.nonapi.io.github.classgraph")
@@ -348,6 +350,8 @@ subprojects {
             relocate("org.slf4j", "$relocatePath.org.slf4j")
             relocate("org.apache.logging.slf4j", "$relocatePath.org.apache.logging.slf4j")
         }
+
+        transformers.add(ServiceFileTransformer())
     }
 
     gradle.projectsEvaluated {

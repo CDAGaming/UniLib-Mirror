@@ -1,24 +1,22 @@
 # UniLib Changes
 
-## v1.0.5 (01/14/2025)
+## v1.0.6 (04/21/2025)
 
 _A Detailed Changelog from the last release is
-available [here](https://gitlab.com/CDAGaming/UniLib/-/compare/release%2Fv1.0.4...release%2Fv1.0.5)_
+available [here](https://gitlab.com/CDAGaming/UniLib/-/compare/release%2Fv1.0.5...release%2Fv1.0.6)_
 
 See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for more info regarding the mod.
 
 ### Changes
 
 * (Backend) Updated Build Dependencies (Please see the appropriate repositories for changes)
-    * UniCore (`1.2.6` -> `1.2.8`)
-    * Gradle (`8.11` -> `8.12`)
-    * Unimined (`1.3.9` -> `1.3.11`)
-
-### Fixes
-
-* (Backend) Fixed `ModUtils#getMinecraftInstance` failing from MC 1.2.5 to b1.1_02, if not using `MinecraftApplet`
-* (Backend) Fixed `CoreUtils#MOD_COUNT_SUPPLIER` throwing a `ClassNotFound` exception on MC 1.6.4 and below with Fabric
-* (Backend) Fixed an incorrect `fabric_loader_range`, causing `0.12.x` Fabric Loader issues even when compatible
+    * Gradle (`8.12` -> `8.13`)
+    * Unimined (`1.3.12` -> `1.3.14`)
+    * JVMDowngrader (`1.2.1` -> `1.2.2`)
+    * Spotless (`6.25.0` -> `7.0.2`)
+    * Shadow (`8.2.5` -> `8.3.6`)
+    * ImageIO-WebP
+* Added support for WebP Images for `ImageUtils` APIs
 
 ___
 

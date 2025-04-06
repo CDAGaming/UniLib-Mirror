@@ -66,6 +66,10 @@ public class ImageUtils {
      * Format: textureName;[[textureInputType, textureObj], [textureIndex, imageData], textureData]
      */
     private static final Map<String, Tuple<Pair<InputType, Object>, Pair<Integer, List<ImageFrame>>, List<ResourceLocation>>> cachedImages = StringUtils.newConcurrentHashMap();
+    /**
+     * Whether ImageIO has been initialized
+     */
+    private static boolean hasInitializedImageIO = false;
 
     static {
         CoreUtils.getThreadFactory().newThread(
@@ -117,6 +121,10 @@ public class ImageUtils {
                                                 }
                                             }
                                         } else {
+                                            if (!hasInitializedImageIO) {
+                                                ImageIO.scanForPlugins();
+                                                hasInitializedImageIO = true;
+                                            }
                                             bufferData.getSecond().add(new ImageFrame(ImageIO.read(streamData)));
                                         }
                                         cachedImages.get(request.getFirst()).setSecond(bufferData);
