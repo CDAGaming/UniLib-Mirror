@@ -25,6 +25,7 @@
 package com.gitlab.cdagaming.unilib.impl;
 
 import com.gitlab.cdagaming.unilib.core.CoreUtils;
+import io.github.cdagaming.unicore.utils.FileUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import io.github.cdagaming.unicore.utils.TimeUtils;
 import org.w3c.dom.NamedNodeMap;
@@ -44,6 +45,7 @@ import java.io.InputStream;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 /**
  * Image Conversion Layers and Utilities used to translate other Image Types
@@ -157,6 +159,78 @@ public class ImageFrame {
      * @return The resulting array of Image Frames, if successful
      * @throws IOException If an error occurs during operation
      */
+    public static ImageFrame[] readWebp(final InputStream stream) throws IOException {
+        final ArrayList<ImageFrame> frames = new ArrayList<>(2);
+
+        final ImageReader reader = ImageIO.getImageReadersByFormatName("webp").next();
+        reader.setInput(ImageIO.createImageInputStream(stream));
+
+        int width = -1;
+        int height = -1;
+
+        Color backgroundColor = null;
+
+        BufferedImage master = null;
+        Graphics2D graphics = null;
+
+        boolean hasBackground = false;
+
+        final int frameCount = reader.getNumImages(true); // Force reading of all frames
+
+        final Class<?> animFrameClass = FileUtils.findClass("com.twelvemonkeys.imageio.plugins.webp.AnimationFrame");
+        final List<?> frameData = (List<?>) StringUtils.getField(FileUtils.findClass("com.twelvemonkeys.imageio.plugins.webp.WebPImageReader"), reader, "frames");
+
+        for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
+            final BufferedImage image = reader.read(frameIndex);
+            final Object frameInfo = (frameData != null && !frameData.isEmpty() && frameIndex < frameData.size()) ? frameData.get(frameIndex) : null;
+
+            if (width == -1 || height == -1) {
+                width = image.getWidth();
+                height = image.getHeight();
+            }
+
+            final int delay = frameInfo != null ? (int) StringUtils.getField(animFrameClass, frameInfo, "duration") / 10 : 0;
+            final String disposal = "";
+
+            if (master == null) {
+                master = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+                graphics = master.createGraphics();
+
+                graphics.setColor(backgroundColor);
+                graphics.fillRect(0, 0, master.getWidth(), master.getHeight());
+
+                hasBackground = image.getWidth() == width && image.getHeight() == height;
+
+                graphics.drawImage(image, 0, 0, null);
+            } else {
+                // WebP reader sometimes provides delta frames, (only the pixels that changed since the last frame)
+                // so instead of overwriting the image every frame, we draw delta frames on top of the previous frame
+                // to keep a complete image.
+                if (frameInfo != null) {
+                    final Rectangle bounds = (Rectangle) StringUtils.getField(animFrameClass, frameInfo, "bounds");
+                    graphics.drawImage(image, bounds.x, bounds.y, null);
+                } else {
+                    graphics.drawImage(image, 0, 0, null);
+                }
+            }
+
+            final BufferedImage copy = deepCopy(master);
+            frames.add(new ImageFrame(copy, delay, disposal, copy.getWidth(), copy.getHeight()));
+        }
+        if (graphics != null)
+            graphics.dispose();
+        reader.dispose();
+
+        return frames.toArray(new ImageFrame[0]);
+    }
+
+    /**
+     * Reads an array of Image Frames from an InputStream
+     *
+     * @param stream The stream of data to be interpreted
+     * @return The resulting array of Image Frames, if successful
+     * @throws IOException If an error occurs during operation
+     */
     public static ImageFrame[] readGif(final InputStream stream) throws IOException {
         final ArrayList<ImageFrame> frames = new ArrayList<>(2);
 
@@ -212,6 +286,8 @@ public class ImageFrame {
         }
 
         BufferedImage master = null;
+        Graphics2D graphics = null;
+
         boolean hasBackground = false;
 
         for (int frameIndex = 0; ; frameIndex++) {
@@ -232,17 +308,18 @@ public class ImageFrame {
             final NodeList children = root.getChildNodes();
 
             final int delay = Integer.parseInt(gce.getAttribute("delayTime"));
-
             final String disposal = gce.getAttribute("disposalMethod");
 
             if (master == null) {
                 master = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-                master.createGraphics().setColor(backgroundColor);
-                master.createGraphics().fillRect(0, 0, master.getWidth(), master.getHeight());
+                graphics = master.createGraphics();
+
+                graphics.setColor(backgroundColor);
+                graphics.fillRect(0, 0, master.getWidth(), master.getHeight());
 
                 hasBackground = image.getWidth() == width && image.getHeight() == height;
 
-                master.createGraphics().drawImage(image, 0, 0, null);
+                graphics.drawImage(image, 0, 0, null);
             } else {
                 int x = 0;
                 int y = 0;
@@ -271,19 +348,19 @@ public class ImageFrame {
                         master = deepCopy(from);
                     }
                 } else if (disposal.equals("restoreToBackgroundColor") && backgroundColor != null && (!hasBackground || frameIndex > 1)) {
-                    master.createGraphics().fillRect(lastX, lastY, frames.get(frameIndex - 1).getWidth(), frames.get(frameIndex - 1).getHeight());
+                    graphics.fillRect(lastX, lastY, frames.get(frameIndex - 1).getWidth(), frames.get(frameIndex - 1).getHeight());
                 }
-                master.createGraphics().drawImage(image, x, y, null);
+                graphics.drawImage(image, x, y, null);
 
                 lastX = x;
                 lastY = y;
             }
 
             final BufferedImage copy = deepCopy(master);
-            frames.add(new ImageFrame(copy, delay, disposal, image.getWidth(), image.getHeight()));
-
-            master.flush();
+            frames.add(new ImageFrame(copy, delay, disposal, copy.getWidth(), copy.getHeight()));
         }
+        if (graphics != null)
+            graphics.dispose();
         reader.dispose();
 
         return frames.toArray(new ImageFrame[0]);

@@ -78,6 +78,7 @@ public class ImageUtils {
                         while (!CoreUtils.IS_CLOSING) {
                             final Pair<String, Pair<InputType, Object>> request = urlRequests.take();
                             boolean isGif = request.getFirst().endsWith(".gif");
+                            boolean isWebp = request.getFirst().endsWith(".webp");
 
                             final Pair<Integer, List<ImageFrame>> bufferData = cachedImages.get(request.getFirst()).getSecond();
                             if (bufferData != null) {
@@ -99,10 +100,12 @@ public class ImageUtils {
                                                     (originData instanceof byte[] byteData ? byteData : StringUtils.getBytes(originData.toString()));
                                             streamData = dataSet != null ? new ByteArrayInputStream(dataSet) : null;
                                             isGif = base64Data.getSecond().contains("gif");
+                                            isWebp = base64Data.getSecond().contains("webp");
                                             break;
                                         case Url:
                                             streamData = UrlUtils.getURLStream(originData instanceof URL url ? url : URI.create(originData.toString()).toURL());
                                             isGif = originData.toString().endsWith(".gif");
+                                            isWebp = originData.toString().endsWith(".webp");
                                             break;
                                         default:
                                             streamData = null;
@@ -117,6 +120,16 @@ public class ImageUtils {
 
                                         if (isGif) {
                                             final ImageFrame[] frames = ImageFrame.readGif(streamData);
+
+                                            for (ImageFrame frame : frames) {
+                                                try {
+                                                    bufferData.getSecond().add(frame);
+                                                } catch (Throwable ex) {
+                                                    CoreUtils.LOG.debugError(ex);
+                                                }
+                                            }
+                                        } else if (isWebp) {
+                                            final ImageFrame[] frames = ImageFrame.readWebp(streamData);
 
                                             for (ImageFrame frame : frames) {
                                                 try {
@@ -247,7 +260,10 @@ public class ImageUtils {
         if (bufferData == null || bufferData.getSecond() == null || bufferData.getSecond().isEmpty()) {
             return ResourceUtils.getEmptyResource();
         } else if (textureName != null) {
-            final boolean shouldRepeat = textureName.endsWith(".gif") || stream.getSecond().toString().contains("gif");
+            final boolean isGif = textureName.endsWith(".gif") || stream.getSecond().toString().contains("gif");
+            final boolean isWebp = textureName.endsWith(".webp") || stream.getSecond().toString().contains("webp");
+
+            final boolean shouldRepeat = isGif || isWebp;
             final boolean doesContinue = bufferData.getFirst() < bufferData.getSecond().size() - 1;
 
             final List<ResourceLocation> resources = cachedImages.get(textureName).getThird();
