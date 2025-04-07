@@ -110,6 +110,11 @@ public class ImageUtils {
                                     }
 
                                     if (streamData != null) {
+                                        if (!hasInitializedImageIO) {
+                                            ImageIO.scanForPlugins();
+                                            hasInitializedImageIO = true;
+                                        }
+
                                         if (isGif) {
                                             final ImageFrame[] frames = ImageFrame.readGif(streamData);
 
@@ -121,10 +126,6 @@ public class ImageUtils {
                                                 }
                                             }
                                         } else {
-                                            if (!hasInitializedImageIO) {
-                                                ImageIO.scanForPlugins();
-                                                hasInitializedImageIO = true;
-                                            }
                                             bufferData.getSecond().add(new ImageFrame(ImageIO.read(streamData)));
                                         }
                                         cachedImages.get(request.getFirst()).setSecond(bufferData);
