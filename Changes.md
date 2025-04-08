@@ -21,9 +21,9 @@ See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for mor
 ### Fixes
 
 * Fixed an issue with `ImageUtils#getTextureFromUrl` caching sometimes causing texture flickering
-* Fixed a potential NPE error when initially rendering the background of an `ExtendedScreen` on MC 1.16.1 and above
+* Fixed a potential NPE error when initially rendering the background of an `ExtendedScreen` on MC 1.16 and above
 * Fixed missing deferred tooltip support on MC 1.19.3 and above
-* Fixed incorrect `BufferedImage->NativeImage` conversion for `ImageUtils` APIs on certain MC versions
+* Fixed incorrect `BufferedImage->NativeImage` conversion for `ImageUtils` APIs on MC 1.21.2 and above
 
 ___
 
