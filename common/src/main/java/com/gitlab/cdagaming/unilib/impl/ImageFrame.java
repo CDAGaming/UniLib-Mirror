@@ -172,14 +172,12 @@ public class ImageFrame {
         Color backgroundColor = null;
 
         BufferedImage master = null;
-        Graphics2D graphics = null;
-
         boolean hasBackground = false;
 
         final int frameCount = reader.getNumImages(true); // Force reading of all frames
 
-        final Class<?> animFrameClass = FileUtils.findClass("com.twelvemonkeys.imageio.plugins.webp.AnimationFrame");
-        final List<?> frameData = (List<?>) StringUtils.getField(FileUtils.findClass("com.twelvemonkeys.imageio.plugins.webp.WebPImageReader"), reader, "frames");
+        final Class<?> animFrameClass = FileUtils.findClass(true, "com.twelvemonkeys.imageio.plugins.webp.AnimationFrame");
+        final List<?> frameData = (List<?>) StringUtils.getField(FileUtils.findClass(true, "com.twelvemonkeys.imageio.plugins.webp.WebPImageReader"), reader, "frames");
 
         for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
             final BufferedImage image = reader.read(frameIndex);
@@ -195,31 +193,32 @@ public class ImageFrame {
 
             if (master == null) {
                 master = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-                graphics = master.createGraphics();
 
-                graphics.setColor(backgroundColor);
-                graphics.fillRect(0, 0, master.getWidth(), master.getHeight());
+                master.createGraphics().setColor(backgroundColor);
+                master.createGraphics().fillRect(0, 0, master.getWidth(), master.getHeight());
 
                 hasBackground = image.getWidth() == width && image.getHeight() == height;
 
-                graphics.drawImage(image, 0, 0, null);
+                master.createGraphics().drawImage(image, 0, 0, null);
             } else {
                 // WebP reader sometimes provides delta frames, (only the pixels that changed since the last frame)
                 // so instead of overwriting the image every frame, we draw delta frames on top of the previous frame
                 // to keep a complete image.
+                master = deepCopy(frames.get(frameIndex - 1).getImage());
+
                 if (frameInfo != null) {
                     final Rectangle bounds = (Rectangle) StringUtils.getField(animFrameClass, frameInfo, "bounds");
-                    graphics.drawImage(image, bounds.x, bounds.y, null);
+                    master.createGraphics().drawImage(image, bounds.x, bounds.y, null);
                 } else {
-                    graphics.drawImage(image, 0, 0, null);
+                    master.createGraphics().drawImage(image, 0, 0, null);
                 }
             }
 
             final BufferedImage copy = deepCopy(master);
             frames.add(new ImageFrame(copy, delay, disposal, copy.getWidth(), copy.getHeight()));
+
+            master.flush();
         }
-        if (graphics != null)
-            graphics.dispose();
         reader.dispose();
 
         return frames.toArray(new ImageFrame[0]);
@@ -287,8 +286,6 @@ public class ImageFrame {
         }
 
         BufferedImage master = null;
-        Graphics2D graphics = null;
-
         boolean hasBackground = false;
 
         for (int frameIndex = 0; ; frameIndex++) {
@@ -313,14 +310,13 @@ public class ImageFrame {
 
             if (master == null) {
                 master = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-                graphics = master.createGraphics();
 
-                graphics.setColor(backgroundColor);
-                graphics.fillRect(0, 0, master.getWidth(), master.getHeight());
+                master.createGraphics().setColor(backgroundColor);
+                master.createGraphics().fillRect(0, 0, master.getWidth(), master.getHeight());
 
                 hasBackground = image.getWidth() == width && image.getHeight() == height;
 
-                graphics.drawImage(image, 0, 0, null);
+                master.createGraphics().drawImage(image, 0, 0, null);
             } else {
                 int x = 0;
                 int y = 0;
@@ -349,9 +345,9 @@ public class ImageFrame {
                         master = deepCopy(from);
                     }
                 } else if (disposal.equals("restoreToBackgroundColor") && backgroundColor != null && (!hasBackground || frameIndex > 1)) {
-                    graphics.fillRect(lastX, lastY, frames.get(frameIndex - 1).getWidth(), frames.get(frameIndex - 1).getHeight());
+                    master.createGraphics().fillRect(lastX, lastY, frames.get(frameIndex - 1).getWidth(), frames.get(frameIndex - 1).getHeight());
                 }
-                graphics.drawImage(image, x, y, null);
+                master.createGraphics().drawImage(image, x, y, null);
 
                 lastX = x;
                 lastY = y;
@@ -359,9 +355,9 @@ public class ImageFrame {
 
             final BufferedImage copy = deepCopy(master);
             frames.add(new ImageFrame(copy, delay, disposal, copy.getWidth(), copy.getHeight()));
+
+            master.flush();
         }
-        if (graphics != null)
-            graphics.dispose();
         reader.dispose();
 
         return frames.toArray(new ImageFrame[0]);

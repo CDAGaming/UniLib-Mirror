@@ -242,7 +242,7 @@ public class ImageUtils {
      * @return The Resulting Texture Data
      */
     public static ResourceLocation getTextureFromUrl(final Minecraft instance, final String textureName, final Pair<InputType, Object> stream) {
-        if (!cachedImages.containsKey(textureName) || !cachedImages.get(textureName).getFirst().equals(stream)) {
+        if (!cachedImages.containsKey(textureName)) {
             // Setup Initial data if not present (Or reset if the stream has changed)
             //
             // Note that the ResourceLocation needs to be
