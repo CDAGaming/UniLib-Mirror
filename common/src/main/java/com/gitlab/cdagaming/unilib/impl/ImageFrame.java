@@ -53,6 +53,7 @@ import java.util.List;
  *
  * @author CDAGaming
  */
+@SuppressWarnings("DuplicatedCode")
 public class ImageFrame {
     /**
      * The delay between image transitions
