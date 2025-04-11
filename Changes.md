@@ -16,7 +16,7 @@ See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for mor
     * Spotless (`6.25.0` -> `7.0.2`)
     * Shadow (`8.2.5` -> `8.3.6`)
     * ImageIO-WebP
-* Added support for WebP Images for `ImageUtils` APIs
+* Added support for WebP (Static and Animated) Images for `ImageUtils` APIs
 
 ### Fixes
 
@@ -24,6 +24,7 @@ See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for mor
 * Fixed a potential NPE error when initially rendering the background of an `ExtendedScreen` on MC 1.16 and above
 * Fixed missing deferred tooltip support on MC 1.19.3 and above
 * Fixed incorrect `BufferedImage->NativeImage` conversion for `ImageUtils` APIs on MC 1.21.2 and above
+* Fixed an NPE with `ScrollableListControl` entry initialization
 
 ___
 
