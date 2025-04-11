@@ -129,9 +129,37 @@ public class ScrollableListControl extends EntryListPane<ScrollableListControl.S
             // Reset the scrollbar to prevent OOB issues
             scrollBy(Integer.MIN_VALUE);
 
+            if (isLoaded()) {
+                syncEntries();
+            }
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void refreshContentHeight() {
+        super.refreshContentHeight();
+        syncEntries();
+    }
+
+    /**
+     * Setup Mappings between the entries original name, and it's entry variant
+     */
+    public void syncEntries() {
+        clearEntries();
+
+        for (String item : StringUtils.newArrayList(itemList)) {
+            final StringEntry dataEntry = new StringEntry(item);
+            addEntry(dataEntry);
+            if (item.equals(currentValue)) {
+                setSelected(dataEntry);
+            }
+        }
+
+        if (getSelected() != null) {
+            centerScrollOn(getSelected());
+        }
     }
 
     /**
