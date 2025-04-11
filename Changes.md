@@ -15,6 +15,7 @@ See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for mor
     * JVMDowngrader (`1.2.1` -> `1.2.2`)
     * Spotless (`6.25.0` -> `7.0.2`)
     * Shadow (`8.2.5` -> `8.3.6`)
+    * Fabric Loader (`0.16.9` -> `0.16.13`)
     * ImageIO-WebP
 * Added support for WebP (Static and Animated) Images for `ImageUtils` APIs
 
