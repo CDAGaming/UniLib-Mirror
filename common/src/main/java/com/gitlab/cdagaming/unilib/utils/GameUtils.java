@@ -27,6 +27,7 @@ package com.gitlab.cdagaming.unilib.utils;
 import com.gitlab.cdagaming.unilib.ModUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiScreenLoading;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.Session;
 import net.minecraft.world.World;
@@ -148,7 +149,7 @@ public class GameUtils {
      */
     public static boolean isFocused(final Minecraft client) {
         final GuiScreen screen = getCurrentScreen(client);
-        return screen != null && (screen.isFocused() || WorldUtils.getPlayer(client) != null);
+        return screen != null && ((screen.getFocused() != null && screen.getFocused().canFocus()) || WorldUtils.getPlayer(client) != null);
     }
 
     /**
@@ -169,7 +170,8 @@ public class GameUtils {
      * @return {@link Boolean#TRUE} if condition is satisfied
      */
     public static boolean isLoaded(final Minecraft client) {
-        return getCurrentScreen(client) != null || WorldUtils.getPlayer(client) != null;
+        final GuiScreen screen = getCurrentScreen(client);
+        return (screen != null && !(screen instanceof GuiScreenLoading)) || WorldUtils.getPlayer(client) != null;
     }
 
     /**
