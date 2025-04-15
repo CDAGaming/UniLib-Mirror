@@ -26,6 +26,7 @@ package com.gitlab.cdagaming.unilib.utils.gui.controls;
 
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ScrollPane;
+import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
@@ -313,22 +314,24 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
     /**
      * Render the header element to the screen, if able
      *
+     * @param arg    The Matrix Stack, used for Rendering
      * @param client The current game instance
      * @param posX   The Event X Coordinate
      * @param posY   The Event Y Coordinate
      */
-    protected void renderHeader(final Minecraft client, final int posX, final int posY) {
+    protected void renderHeader(final PoseStack arg, final Minecraft client, final int posX, final int posY) {
         // N/A
     }
 
     /**
      * Render additional decorations to the screen
      *
+     * @param arg    The Matrix Stack, used for Rendering
      * @param client The current game instance
      * @param posX   The Event X Coordinate
      * @param posY   The Event Y Coordinate
      */
-    protected void renderDecorations(final Minecraft client, final int posX, final int posY) {
+    protected void renderDecorations(final PoseStack arg, final Minecraft client, final int posX, final int posY) {
         // N/A
     }
 
@@ -341,7 +344,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
     @Override
     public void postRender() {
         super.postRender();
-        renderDecorations(getGameInstance(), getMouseX(), getMouseY());
+        renderDecorations(getCurrentMatrix(), getGameInstance(), getMouseX(), getMouseY());
     }
 
     @Override
@@ -351,9 +354,9 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
         if (renderHeader) {
             final int posX = getRowLeft();
             final int posY = getScreenY() + getPadding() - (int) getAmountScrolled();
-            renderHeader(getGameInstance(), posX, posY);
+            renderHeader(getCurrentMatrix(), getGameInstance(), posX, posY);
         }
-        renderListItems(getGameInstance(), getMouseX(), getMouseY(), getPartialTicks());
+        renderListItems(getCurrentMatrix(), getGameInstance(), getMouseX(), getMouseY(), getPartialTicks());
     }
 
     /**
@@ -551,12 +554,13 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
     /**
      * Render the List Items for this widget
      *
+     * @param arg          The Matrix Stack, used for Rendering
      * @param client       The current game instance
      * @param mouseX       The Event Mouse X Coordinate
      * @param mouseY       The Event Mouse Y Coordinate
      * @param partialTicks The Rendering Tick Rate
      */
-    protected void renderListItems(final Minecraft client, final int mouseX, final int mouseY, final float partialTicks) {
+    protected void renderListItems(final PoseStack arg, final Minecraft client, final int mouseX, final int mouseY, final float partialTicks) {
         final int rowLeft = getRowLeft();
         final int rowWidth = getRowWidth();
         final int rowHeight = itemHeight - getPadding();
@@ -565,7 +569,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
             final int rowTop = getRowTop(index);
             final int rowBottom = getRowBottom(index);
             if (rowBottom >= getScreenY() && rowTop <= getBottom()) {
-                renderItem(client, mouseX, mouseY, partialTicks, index, rowLeft, rowTop, rowWidth, rowHeight);
+                renderItem(arg, client, mouseX, mouseY, partialTicks, index, rowLeft, rowTop, rowWidth, rowHeight);
             }
         }
     }
@@ -573,6 +577,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
     /**
      * Render the specified item for this widget
      *
+     * @param arg          The Matrix Stack, used for Rendering
      * @param client       The current game instance
      * @param mouseX       The Event Mouse X Coordinate
      * @param mouseY       The Event Mouse Y Coordinate
@@ -583,14 +588,14 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
      * @param entryWidth   The width of the entry
      * @param entryHeight  The height of the entry
      */
-    protected void renderItem(final Minecraft client, final int mouseX, final int mouseY, final float partialTicks, final int index, final int xPos, final int yPos, final int entryWidth, final int entryHeight) {
+    protected void renderItem(final PoseStack arg, final Minecraft client, final int mouseX, final int mouseY, final float partialTicks, final int index, final int xPos, final int yPos, final int entryWidth, final int entryHeight) {
         final E entry = getEntry(index);
-        entry.renderBack(client, index, yPos, xPos, entryWidth, entryHeight, mouseX, mouseY, Objects.equals(getHovered(), entry), partialTicks);
+        entry.renderBack(arg, client, index, yPos, xPos, entryWidth, entryHeight, mouseX, mouseY, Objects.equals(getHovered(), entry), partialTicks);
         if (isSelectedItem(index)) {
             final int outerColor = isFocused() ? -1 : -8355712;
             renderSelection(client, yPos, entryWidth, entryHeight, outerColor, -16777216);
         }
-        entry.render(client, index, yPos, xPos, entryWidth, entryHeight, mouseX, mouseY, Objects.equals(getHovered(), entry), partialTicks);
+        entry.render(arg, client, index, yPos, xPos, entryWidth, entryHeight, mouseX, mouseY, Objects.equals(getHovered(), entry), partialTicks);
     }
 
     /**
@@ -749,6 +754,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
         /**
          * Render the entry content to the screen
          *
+         * @param arg          The Matrix Stack, used for Rendering
          * @param client       The current game index
          * @param index        The index to interpret
          * @param yPos         The starting Y position for the entry
@@ -760,7 +766,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
          * @param hovered      Whether the entry is being hovered over
          * @param partialTicks The Rendering Tick Rate
          */
-        public abstract void render(final Minecraft client,
+        public abstract void render(final PoseStack arg, final Minecraft client,
                                     final int index,
                                     final int yPos, final int xPos,
                                     final int entryWidth, final int entryHeight,
@@ -771,6 +777,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
         /**
          * Render the entry background content to the screen
          *
+         * @param arg          The Matrix Stack, used for Rendering
          * @param client       The current game index
          * @param index        The index to interpret
          * @param yPos         The starting Y position for the entry
@@ -782,7 +789,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
          * @param hovered      Whether the entry is being hovered over
          * @param partialTicks The Rendering Tick Rate
          */
-        public void renderBack(final Minecraft client,
+        public void renderBack(final PoseStack arg, final Minecraft client,
                                final int index,
                                final int yPos, final int xPos,
                                final int entryWidth, final int entryHeight,

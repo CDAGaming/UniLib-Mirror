@@ -31,6 +31,7 @@ import com.gitlab.cdagaming.unilib.utils.WorldUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.controls.ExtendedTextControl;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
+import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.cdagaming.unicore.impl.Tuple;
 import io.github.cdagaming.unicore.utils.MathUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
@@ -81,6 +82,10 @@ public class ExtendedScreen extends Screen {
      * Similar to buttonList, a list of compatible ScrollLists in this Screen
      */
     private final List<AbstractSelectionList<?>> extendedLists = StringUtils.newArrayList();
+    /**
+     * Current Stored MatrixStack for this Instance
+     */
+    private PoseStack currentMatrix;
     /**
      * The Screen Title, if any
      */
@@ -901,19 +906,23 @@ public class ExtendedScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(int tint) {
+    public void renderBackground(@Nonnull PoseStack matrixStack, int tint) {
+        currentMatrix = matrixStack;
         renderCriticalData();
     }
 
     /**
      * Renders this Screen, including controls and post-Hover Events
      *
+     * @param matrixStack  The Matrix Stack, used for Rendering
      * @param mouseX       The Event Mouse X Coordinate
      * @param mouseY       The Event Mouse Y Coordinate
      * @param partialTicks The Rendering Tick Rate
      */
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
+    public void render(@Nonnull PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        currentMatrix = matrixStack;
+
         // Ensures initialization events have run first, preventing an NPE
         if (isLoaded()) {
             lastMouseX = mouseX;
@@ -931,13 +940,13 @@ public class ExtendedScreen extends Screen {
                     getBottom()
             );
 
-            renderBackground();
+            renderBackground(matrixStack);
 
             for (AbstractSelectionList<?> listControl : getLists()) {
-                listControl.render(mouseX, mouseY, partialTicks);
+                listControl.render(matrixStack, mouseX, mouseY, partialTicks);
             }
 
-            super.render(mouseX, mouseY, partialTicks);
+            super.render(matrixStack, mouseX, mouseY, partialTicks);
 
             renderExtra();
 
@@ -945,7 +954,7 @@ public class ExtendedScreen extends Screen {
 
             for (GuiEventListener extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
-                    extendedScreen.render(mouseX, mouseY, partialTicks);
+                    extendedScreen.render(matrixStack, mouseX, mouseY, partialTicks);
                 }
             }
 
@@ -1215,7 +1224,7 @@ public class ExtendedScreen extends Screen {
      */
     public void drawMultiLineString(final List<String> textToInput, final int posX, final int posY, final int maxWidth, final int maxHeight, final int maxTextWidth, final boolean isCentered, final boolean isTooltip, final ScreenConstants.TooltipData colorInfo) {
         RenderUtils.drawMultiLineString(
-                getGameInstance(),
+                getGameInstance(), getCurrentMatrix(),
                 textToInput,
                 posX, posY,
                 maxWidth, maxHeight,
@@ -1305,6 +1314,7 @@ public class ExtendedScreen extends Screen {
                                       final float maxX, final float maxY,
                                       final int color) {
         RenderUtils.renderScrollingString(
+                getCurrentMatrix(),
                 getGameInstance(), getFontRenderer(),
                 message, centerX,
                 minX, minY,
@@ -1330,6 +1340,7 @@ public class ExtendedScreen extends Screen {
                                       final int maxX, final int maxY,
                                       final int color) {
         RenderUtils.renderScrollingString(
+                getCurrentMatrix(),
                 getGameInstance(), getFontRenderer(),
                 message, centerX,
                 minX, minY,
@@ -1391,7 +1402,7 @@ public class ExtendedScreen extends Screen {
      * @param color The color to render the text in
      */
     public void renderCenteredString(final String text, final float xPos, final float yPos, final int color) {
-        RenderUtils.renderCenteredString(getFontRenderer(), text, xPos, yPos, color);
+        RenderUtils.renderCenteredString(getCurrentMatrix(), getFontRenderer(), text, xPos, yPos, color);
     }
 
     /**
@@ -1403,7 +1414,7 @@ public class ExtendedScreen extends Screen {
      * @param color The color to render the text in
      */
     public void renderCenteredString(final String text, final int xPos, final int yPos, final int color) {
-        RenderUtils.renderCenteredString(getFontRenderer(), text, xPos, yPos, color);
+        RenderUtils.renderCenteredString(getCurrentMatrix(), getFontRenderer(), text, xPos, yPos, color);
     }
 
     /**
@@ -1437,7 +1448,7 @@ public class ExtendedScreen extends Screen {
      * @param color The color to render the text in
      */
     public void renderString(final String text, final float xPos, final float yPos, final int color) {
-        RenderUtils.renderString(getFontRenderer(), text, xPos, yPos, color);
+        RenderUtils.renderString(getCurrentMatrix(), getFontRenderer(), text, xPos, yPos, color);
     }
 
     /**
@@ -1750,6 +1761,15 @@ public class ExtendedScreen extends Screen {
      */
     public int getTop() {
         return getScreenY();
+    }
+
+    /**
+     * Retrieve the Current Stored MatrixStack for this Instance
+     *
+     * @return The Current Stored MatrixStack for this Instance
+     */
+    public PoseStack getCurrentMatrix() {
+        return currentMatrix;
     }
 
     /**

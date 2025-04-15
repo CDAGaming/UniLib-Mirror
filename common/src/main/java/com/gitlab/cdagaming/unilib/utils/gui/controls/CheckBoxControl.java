@@ -27,6 +27,7 @@ package com.gitlab.cdagaming.unilib.utils.gui.controls;
 import com.gitlab.cdagaming.unilib.ModUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 
 import javax.annotation.Nonnull;
@@ -158,16 +159,17 @@ public class CheckBoxControl extends ExtendedButtonControl {
      * Draws this button to the screen.
      */
     @Override
-    public void render(int mouseX, int mouseY, float partial) {
+    public void render(@Nonnull PoseStack matrixStack, int mouseX, int mouseY, float partial) {
         final Minecraft mc = ModUtils.getMinecraft();
         if (mc != null && isControlVisible()) {
             setHoveringOver(isOverScreen() && RenderUtils.isMouseOver(mouseX, mouseY, this));
 
-            renderBg(mc, mouseX, mouseY);
+            renderBg(matrixStack, mc, mouseX, mouseY);
             final int color = !isControlEnabled() ? 10526880 : 14737632;
 
             if (isChecked())
                 RenderUtils.renderCenteredString(
+                        matrixStack,
                         mc.font,
                         "x",
                         getControlPosX() + (getBoxWidth() / 2) + 1,
@@ -176,7 +178,8 @@ public class CheckBoxControl extends ExtendedButtonControl {
                 );
 
             final int left = getControlPosX() + getBoxWidth() + 2;
-            RenderUtils.renderScrollingString(mc,
+            RenderUtils.renderScrollingString(matrixStack,
+                    mc,
                     mc.font, getControlMessage(),
                     left + (RenderUtils.getStringWidth(mc.font, getControlMessage()) / 2),
                     left, getTop(), getRight() - 2, getBottom(),
@@ -190,7 +193,7 @@ public class CheckBoxControl extends ExtendedButtonControl {
      * Equivalent of MouseListener.mouseDragged(MouseEvent e).
      */
     @Override
-    protected void renderBg(@Nonnull Minecraft mc, int mouseX, int mouseY) {
+    protected void renderBg(@Nonnull PoseStack matrixStack, @Nonnull Minecraft mc, int mouseX, int mouseY) {
         if (isControlVisible()) {
             final int hoverState = getYImage(isHoveringOrFocusingOver());
 

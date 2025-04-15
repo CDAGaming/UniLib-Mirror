@@ -28,6 +28,7 @@ import com.gitlab.cdagaming.unilib.ModUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
@@ -70,7 +71,7 @@ public class ExtendedButtonControl extends Button implements DynamicWidget {
      * @param optionalArgs The optional Arguments, if any, to associate with this control
      */
     public ExtendedButtonControl(final int buttonId, final int x, final int y, final int widthIn, final int heightIn, final String buttonText, final String... optionalArgs) {
-        super(x, y, widthIn, heightIn, buttonText, (button) -> {
+        super(x, y, widthIn, heightIn, new TextComponent(buttonText), (button) -> {
         });
 
         this.optionalArgs = optionalArgs;
@@ -199,12 +200,12 @@ public class ExtendedButtonControl extends Button implements DynamicWidget {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
+    public void render(@Nonnull PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         final Minecraft mc = ModUtils.getMinecraft();
         if (mc != null && isControlVisible()) {
             setHoveringOver(isOverScreen() && RenderUtils.isMouseOver(mouseX, mouseY, this));
 
-            renderBg(mc, mouseX, mouseY);
+            renderBg(matrixStack, mc, mouseX, mouseY);
             final int color;
 
             if (!isControlEnabled()) {
@@ -215,7 +216,8 @@ public class ExtendedButtonControl extends Button implements DynamicWidget {
                 color = 14737632;
             }
 
-            RenderUtils.renderScrollingString(mc,
+            RenderUtils.renderScrollingString(matrixStack,
+                    mc,
                     mc.font, getControlMessage(),
                     getLeft() + 2, getTop(),
                     getRight() - 2, getBottom(),
@@ -229,7 +231,7 @@ public class ExtendedButtonControl extends Button implements DynamicWidget {
      * Equivalent of MouseListener.mouseDragged(MouseEvent e).
      */
     @Override
-    protected void renderBg(@Nonnull Minecraft mc, int mouseX, int mouseY) {
+    protected void renderBg(@Nonnull PoseStack matrixStack, @Nonnull Minecraft mc, int mouseX, int mouseY) {
         if (isControlVisible()) {
             final int hoverState = getYImage(isHoveringOrFocusingOver());
             final int hoverValue = 46 + hoverState * 20;
@@ -363,7 +365,7 @@ public class ExtendedButtonControl extends Button implements DynamicWidget {
      * @return The control's current raw display message
      */
     public Component getControlRawMessage() {
-        return new TextComponent(this.getMessage());
+        return this.getMessage();
     }
 
     /**
@@ -372,7 +374,7 @@ public class ExtendedButtonControl extends Button implements DynamicWidget {
      * @param newMessage The new raw display message for this control
      */
     public void setControlRawMessage(final Component newMessage) {
-        this.setMessage(newMessage.getString());
+        this.setMessage(newMessage);
     }
 
     /**

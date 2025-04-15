@@ -20,9 +20,6 @@
       "com.gitlab.cdagaming.unilib.fabric.UniLibFabric"
     ]
   },
-  "custom": {
-    "modmenu:clientsideOnly": true
-  },
   "depends": {
     "fabricloader": "${loader_version_range}",
     "minecraft": "${game_version_range}",
