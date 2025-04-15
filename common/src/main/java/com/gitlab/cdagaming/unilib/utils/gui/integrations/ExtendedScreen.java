@@ -38,7 +38,7 @@ import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractSelectionList;
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -278,7 +278,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
      * @param enable   the new enable state
      */
     public static void enableRepeatEvents(final Minecraft instance, final boolean enable) {
-        instance.keyboardHandler.setSendRepeatsToGui(enable);
+        // N/A
     }
 
     /**
@@ -390,7 +390,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
      * @return The added control with attached class type
      */
     @Nonnull
-    public <T extends GuiEventListener & Widget & NarratableEntry> T addControl(@Nonnull T buttonIn) {
+    public <T extends GuiEventListener & Renderable & NarratableEntry> T addControl(@Nonnull T buttonIn) {
         if (!canModifyControls()) {
             throw new IllegalStateException("Can't add control to control list");
         }
@@ -400,7 +400,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
         }
         if (!children().contains(buttonIn) && buttonIn instanceof ExtendedScreen) {
             super.addWidget(buttonIn);
-        } else if (buttonIn instanceof Widget) {
+        } else if (buttonIn instanceof Renderable) {
             addRenderableWidget(buttonIn);
         }
         if (!extendedControls.contains(buttonIn)) {
@@ -422,7 +422,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
             throw new IllegalStateException("Can't add control to control list");
         }
 
-        if (buttonIn instanceof Widget) {
+        if (buttonIn instanceof Renderable) {
             addRenderableWidget(buttonIn);
         }
         if (!extendedLists.contains(buttonIn)) {
@@ -893,7 +893,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
 
             for (GuiEventListener extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
-                    extendedScreen.render(matrixStack, mouseX, mouseY, partialTicks);
+                    extendedScreen.renderWithTooltip(matrixStack, mouseX, mouseY, partialTicks);
                 }
             }
 
