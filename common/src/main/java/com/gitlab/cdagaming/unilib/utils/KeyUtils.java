@@ -372,7 +372,7 @@ public class KeyUtils {
             }
         }
 
-        if (getInstance().window != null) {
+        if (getInstance().getWindow() != null) {
             final boolean isLwjgl2 = protocol <= 340;
             final int unknownKeyCode = isLwjgl2 ? -1 : 0;
             final String unknownKeyName = (isLwjgl2 ? KeyConverter.fromGlfw : KeyConverter.toGlfw).get(unknownKeyCode).name();
@@ -387,7 +387,7 @@ public class KeyUtils {
 
                         if (!getKeyName(currentBind).equals(unknownKeyName) && !isValidClearCode(currentBind)) {
                             // Only process the key if it is not an unknown or invalid key
-                            if (GLFW.glfwGetKey(getInstance().window.getWindow(), currentBind) == GLFW.GLFW_PRESS && !(GameUtils.getCurrentScreen(getInstance()) instanceof ControlsScreen)) {
+                            if (GLFW.glfwGetKey(getInstance().getWindow().getWindow(), currentBind) == GLFW.GLFW_PRESS && !(GameUtils.getCurrentScreen(getInstance()) instanceof ControlsScreen)) {
                                 try {
                                     keyData.runEvent().run();
                                 } catch (Throwable ex) {
