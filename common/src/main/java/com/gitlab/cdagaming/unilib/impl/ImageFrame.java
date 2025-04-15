@@ -25,10 +25,10 @@
 package com.gitlab.cdagaming.unilib.impl;
 
 import com.gitlab.cdagaming.unilib.core.CoreUtils;
+import com.mojang.blaze3d.platform.NativeImage;
 import io.github.cdagaming.unicore.utils.FileUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import io.github.cdagaming.unicore.utils.TimeUtils;
-import net.minecraft.client.renderer.texture.NativeImage;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
