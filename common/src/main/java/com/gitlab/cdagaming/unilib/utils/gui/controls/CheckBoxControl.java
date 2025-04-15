@@ -167,6 +167,7 @@ public class CheckBoxControl extends ExtendedButtonControl {
             renderBg(matrixStack, mc, mouseX, mouseY);
             final int color = !isControlEnabled() ? 10526880 : 14737632;
 
+            matrixStack.depthTreeUp();
             if (isChecked())
                 RenderUtils.renderCenteredString(
                         matrixStack,
@@ -185,6 +186,7 @@ public class CheckBoxControl extends ExtendedButtonControl {
                     left, getTop(), getRight() - 2, getBottom(),
                     color
             );
+            matrixStack.depthTreeBack();
         }
     }
 

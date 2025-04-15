@@ -44,12 +44,12 @@ public class ModUtils {
     /**
      * The Detected Minecraft Version
      */
-    public static final String MCVersion = SharedConstants.getCurrentVersion().getName();
+    public static final String MCVersion = SharedConstants.getCurrentVersion().name();
 
     /**
      * The Detected Minecraft Protocol Version
      */
-    public static final int MCProtocolID = SharedConstants.getCurrentVersion().getProtocolVersion();
+    public static final int MCProtocolID = SharedConstants.getCurrentVersion().protocolVersion();
 
     /**
      * The Detected Brand Information within Minecraft

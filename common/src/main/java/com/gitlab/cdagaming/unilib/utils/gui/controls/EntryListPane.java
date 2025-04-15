@@ -667,13 +667,17 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
      * @param entryHeight  The height of the entry
      */
     protected void renderItem(final GuiGraphics arg, final Minecraft client, final int mouseX, final int mouseY, final float partialTicks, final int index, final int xPos, final int yPos, final int entryWidth, final int entryHeight) {
+        arg.depthTreePushCheckpoint();
         final E entry = getEntry(index);
         entry.renderBack(arg, client, index, yPos, xPos, entryWidth, entryHeight, mouseX, mouseY, Objects.equals(getHovered(), entry), partialTicks);
+        arg.depthTreeUp();
         if (isSelectedItem(index)) {
             final int outerColor = isFocused() ? -1 : -8355712;
             renderSelection(client, yPos, entryWidth, entryHeight, outerColor, -16777216);
         }
+        arg.depthTreeUp();
         entry.render(arg, client, index, yPos, xPos, entryWidth, entryHeight, mouseX, mouseY, Objects.equals(getHovered(), entry), partialTicks);
+        arg.depthTreeBackToCheckpoint();
     }
 
     /**
