@@ -24,10 +24,9 @@
 
 package com.gitlab.cdagaming.unilib.core;
 
-import com.gitlab.cdagaming.unilib.core.integrations.logging.ApacheLogger;
-import com.gitlab.cdagaming.unilib.core.integrations.logging.LegacyLogger;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.github.cdagaming.unicore.integrations.logging.LoggingImpl;
+import io.github.cdagaming.unicore.integrations.logging.SLF4JLogger;
 import io.github.cdagaming.unicore.utils.*;
 
 import java.io.File;
@@ -92,7 +91,7 @@ public class CoreUtils {
     /**
      * The Application's Instance of {@link LoggingImpl} for Logging Information
      */
-    public static final LoggingImpl LOG = IS_LEGACY_SOFT ? new LegacyLogger(MOD_ID) : new ApacheLogger(MOD_ID);
+    public static final LoggingImpl LOG = new SLF4JLogger(MOD_ID);
     /**
      * If this Application is in the Hard Floor of Legacy Mode
      * <p>This variable becomes true only on versions at or before 1.5.2 (Or when critical APIs are missing)
