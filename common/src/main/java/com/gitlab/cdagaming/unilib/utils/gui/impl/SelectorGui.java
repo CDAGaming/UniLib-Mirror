@@ -65,7 +65,7 @@ public class SelectorGui extends ExtendedScreen {
      */
     public SelectorGui(String mainTitle, List<String> list, String currentValue, String attributeName, boolean allowContinuing, boolean allowDynamicEditing, BiConsumer<String, String> onUpdatedCallback, BiConsumer<String, GuiScreen> onAdjustDynamicEntry) {
         super(mainTitle);
-        itemList = originalList = StringUtils.newArrayList(list);
+        itemList = originalList = list == null ? StringUtils.newArrayList() : StringUtils.newArrayList(list);
         originalValue = currentValue;
         this.attributeName = attributeName;
         this.allowContinuing = allowContinuing;
@@ -87,7 +87,7 @@ public class SelectorGui extends ExtendedScreen {
      * @param onAdjustDynamicEntry The callback to trigger when adjusting a dynamic entry
      */
     public SelectorGui(String mainTitle, Set<String> list, String currentValue, String attributeName, boolean allowContinuing, boolean allowDynamicEditing, BiConsumer<String, String> onUpdatedCallback, BiConsumer<String, GuiScreen> onAdjustDynamicEntry) {
-        this(mainTitle, StringUtils.newArrayList(list), currentValue, attributeName, allowContinuing, allowDynamicEditing, onUpdatedCallback, onAdjustDynamicEntry);
+        this(mainTitle, list == null ? null : StringUtils.newArrayList(list), currentValue, attributeName, allowContinuing, allowDynamicEditing, onUpdatedCallback, onAdjustDynamicEntry);
     }
 
     /**
@@ -122,13 +122,9 @@ public class SelectorGui extends ExtendedScreen {
 
     @Override
     public void initializeUi() {
-        if (getItemList() != null && !getItemList().isEmpty()) {
-            appendListControl();
-            appendControls();
-            super.initializeUi();
-        } else {
-            openScreen(new MessageGui(CoreUtils.NAME, "This list is empty and cannot be displayed!\\n\\nPlease try again..."), getParent());
-        }
+        appendListControl();
+        appendControls();
+        super.initializeUi();
     }
 
     protected String getOriginalValue() {

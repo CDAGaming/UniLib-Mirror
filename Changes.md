@@ -9,7 +9,8 @@ See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for mor
 
 ### Changes
 
-* TBD
+* Removed `MessageGui` for a null-list in `SelectorGui`, now accepted behavior
+    * Some parity changes were made so this matched `ScrollableListControl` behaviors
 
 ### Fixes
 
