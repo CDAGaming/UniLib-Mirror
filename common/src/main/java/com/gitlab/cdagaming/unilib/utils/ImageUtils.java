@@ -302,18 +302,6 @@ public class ImageUtils {
     }
 
     /**
-     * Detects whether the specified Texture lacks critical information
-     *
-     * @param location The texture to parse
-     * @return Whether the specified Texture lacks critical information
-     * @deprecated Use {@link ResourceUtils#isValidResource(ResourceLocation)} instead
-     */
-    @Deprecated(forRemoval = true, since = "v1.0.3")
-    public static boolean isTextureNull(final ResourceLocation location) {
-        return !ResourceUtils.isValidResource(location);
-    }
-
-    /**
      * A Mapping storing the available Input Types for External Image Parsing
      *
      * <p>
