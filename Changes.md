@@ -11,7 +11,8 @@ See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for mor
 
 * (Backend) Updated Build Dependencies (Please see the appropriate repositories for changes)
     * Spotless (`7.0.2` -> `7.0.3`)
-    * UniCore (`1.2.8` -> `1.3.1`)
+    * UniCore (`1.2.8` -> `1.3.2`)
+    * Lenni Reflect (`1.4.0` -> `1.4.1`)
 * Removed `MessageGui` for a null-list in `SelectorGui`, now accepted behavior
     * Some parity changes were made so this matched `ScrollableListControl` behaviors
 

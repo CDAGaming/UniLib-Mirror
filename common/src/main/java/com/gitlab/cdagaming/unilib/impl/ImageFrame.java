@@ -176,8 +176,8 @@ public class ImageFrame {
 
         final int frameCount = reader.getNumImages(true); // Force reading of all frames
 
-        final Class<?> animFrameClass = FileUtils.findClass(true, "com.twelvemonkeys.imageio.plugins.webp.AnimationFrame");
-        final List<?> frameData = (List<?>) StringUtils.getField(FileUtils.findClass(true, "com.twelvemonkeys.imageio.plugins.webp.WebPImageReader"), reader, "frames");
+        final Class<?> animFrameClass = FileUtils.findClass("com.twelvemonkeys.imageio.plugins.webp.AnimationFrame");
+        final List<?> frameData = (List<?>) StringUtils.getField(FileUtils.findClass("com.twelvemonkeys.imageio.plugins.webp.WebPImageReader"), reader, "frames");
 
         for (int frameIndex = 0; frameIndex < frameCount; frameIndex++) {
             final BufferedImage image = reader.read(frameIndex);
