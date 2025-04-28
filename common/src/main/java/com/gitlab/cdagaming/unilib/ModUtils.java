@@ -74,6 +74,12 @@ public class ModUtils {
     );
 
     /**
+     * Whether the Resource Reload Listener can be used
+     * <p>Certain Mod Loaders do not allow registering this way and use other means.
+     */
+    public static boolean CAN_USE_RELOAD_LISTENER = true;
+
+    /**
      * Consumer Event for running events on the Main Game Thread
      */
     private static final BiConsumer<Minecraft, Runnable> MAIN_THREAD_EXECUTOR = Minecraft::addScheduledTask;
@@ -130,6 +136,7 @@ public class ModUtils {
      * @param listener The Listener to register
      */
     public static void registerReloadListener(final String id, final IResourceManagerReloadListener listener) {
+        if (!CAN_USE_RELOAD_LISTENER) return;
         RELOAD_LISTENER_HOOK.accept(id, listener);
     }
 
