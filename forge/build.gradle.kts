@@ -83,7 +83,7 @@ tasks.processResources {
         expand(replaceProperties)
     }
 
-    filesMatching("mappings-${project.name}.srg") {
+    filesMatching("mappings.srg") {
         filter { line ->
             @Suppress("NULL_FOR_NONNULL_TYPE")
             if (line.startsWith("CL:")) line.replace("/", ".") else null
@@ -96,7 +96,7 @@ tasks.named<ExportMappingsTask>("exportMappings") {
     export {
         setTargetNamespaces(listOf(target))
         setSourceNamespace("official")
-        location = file("$projectDir/src/main/resources/mappings-${project.name}.srg")
+        location = file("$projectDir/src/main/resources/mappings.srg")
         setType("SRG")
     }
 }

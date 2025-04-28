@@ -86,7 +86,7 @@ tasks.processResources {
         expand(replaceProperties)
     }
 
-    filesMatching("mappings-fabric.srg") {
+    filesMatching("mappings.srg") {
         filter { line ->
             @Suppress("NULL_FOR_NONNULL_TYPE")
             if (line.startsWith("CL:")) line.replace("/", ".") else null
@@ -99,7 +99,7 @@ tasks.named<ExportMappingsTask>("exportMappings") {
     export {
         setTargetNamespaces(listOf(target))
         setSourceNamespace(if (isJarMod) "official" else "intermediary")
-        location = file("$projectDir/src/main/resources/mappings-fabric.srg")
+        location = file("$projectDir/src/main/resources/mappings.srg")
         setType("SRG")
     }
 }

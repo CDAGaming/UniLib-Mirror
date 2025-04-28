@@ -26,7 +26,6 @@ package com.gitlab.cdagaming.unilib.fabric;
 
 import com.gitlab.cdagaming.unilib.UniLib;
 import com.gitlab.cdagaming.unilib.core.CoreUtils;
-import io.github.cdagaming.unicore.utils.MappingUtils;
 import io.github.cdagaming.unicore.utils.OSUtils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.impl.FabricLoaderImpl;
@@ -42,7 +41,6 @@ public class UniLibFabric implements ClientModInitializer {
         if (OSUtils.JAVA_SPEC < 1.8f) {
             throw new UnsupportedOperationException("Incompatible JVM!!! @MOD_NAME@ requires Java 8 or above to work properly!");
         }
-        MappingUtils.setFilePath("/mappings-fabric.srg");
         CoreUtils.MOD_COUNT_SUPPLIER = () -> FabricLoaderImpl.INSTANCE.getAllMods().size();
 
         UniLib.assertLoaded();
