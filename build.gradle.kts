@@ -156,8 +156,7 @@ subprojects {
         maven("https://maven.lenni0451.net/releases/")
         maven("https://maven.lenni0451.net/snapshots/")
         // OSS Mavens
-        maven("https://s01.oss.sonatype.org/content/repositories/releases")
-        maven("https://s01.oss.sonatype.org/content/repositories/snapshots")
+        maven("https://central.sonatype.com/repository/maven-snapshots/")
         // HypherionMC Mavens
         maven("https://maven.firstdark.dev/releases")
         maven("https://maven.firstdark.dev/snapshots")
