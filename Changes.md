@@ -16,6 +16,13 @@ See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for mor
 * Removed `MessageGui` for a null-list in `SelectorGui`, now accepted behavior
     * Some parity changes were made so this matched `ScrollableListControl` behaviors
 
+### Fixes
+
+* Fixed issues related to `MappingUtils` when early-loading UniLib
+    * This primarily occurs in cases where mod load order isn't certain
+* Fixed a mod crash in Neoforge `21.4.84-beta` and above
+    * Minimum version of Neoforge required for MC 1.21.4 was bumped to `84-beta` or above
+
 ___
 
 ### More Information
