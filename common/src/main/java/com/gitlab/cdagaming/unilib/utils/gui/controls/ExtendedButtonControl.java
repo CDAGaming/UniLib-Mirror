@@ -28,7 +28,7 @@ import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.ButtonElement;
 
 import javax.annotation.Nonnull;
 
@@ -37,7 +37,7 @@ import javax.annotation.Nonnull;
  *
  * @author CDAGaming
  */
-public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
+public class ExtendedButtonControl extends ButtonElement implements DynamicWidget {
     /**
      * Optional Arguments used for functions within the Mod, if any
      */
@@ -215,7 +215,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
             }
 
             RenderUtils.renderScrollingString(mc,
-                    mc.fontRenderer, getControlMessage(),
+                    mc.font, getControlMessage(),
                     getLeft() + 2, getTop(),
                     getRight() - 2, getBottom(),
                     color

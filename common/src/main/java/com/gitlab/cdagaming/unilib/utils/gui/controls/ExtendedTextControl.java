@@ -29,7 +29,7 @@ import com.gitlab.cdagaming.unilib.utils.gui.integrations.GuiTextField;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
 import io.github.cdagaming.unicore.impl.Pair;
 import io.github.cdagaming.unicore.utils.StringUtils;
-import net.minecraft.client.render.FontRenderer;
+import net.minecraft.client.render.Font;
 
 /**
  * Extended Gui Widget for a Text Field
@@ -61,7 +61,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
      * @param widthIn         The Width for this Control
      * @param heightIn        The Height for this Control
      */
-    public ExtendedTextControl(final int componentId, final FontRenderer fontRendererObj, final int x, final int y, final int widthIn, final int heightIn) {
+    public ExtendedTextControl(final int componentId, final Font fontRendererObj, final int x, final int y, final int widthIn, final int heightIn) {
         super(fontRendererObj, x, y, widthIn, heightIn, "");
         setControlMaxLength(DEFAULT_TEXT_LIMIT);
     }
@@ -75,7 +75,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
      * @param widthIn         The Width for this Control
      * @param heightIn        The Height for this Control
      */
-    public ExtendedTextControl(final FontRenderer fontRendererObj, final int x, final int y, final int widthIn, final int heightIn) {
+    public ExtendedTextControl(final Font fontRendererObj, final int x, final int y, final int widthIn, final int heightIn) {
         this(ExtendedScreen.getNextIndex(), fontRendererObj, x, y, widthIn, heightIn);
     }
 
@@ -89,7 +89,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
      * @param heightIn        The Height for this Control
      * @param keyEvent        The event to run when characters are typed in this control
      */
-    public ExtendedTextControl(final FontRenderer fontRendererObj, final int x, final int y, final int widthIn, final int heightIn, final Runnable keyEvent) {
+    public ExtendedTextControl(final Font fontRendererObj, final int x, final int y, final int widthIn, final int heightIn, final Runnable keyEvent) {
         this(fontRendererObj, x, y, widthIn, heightIn);
         setOnKeyTyped(keyEvent);
     }

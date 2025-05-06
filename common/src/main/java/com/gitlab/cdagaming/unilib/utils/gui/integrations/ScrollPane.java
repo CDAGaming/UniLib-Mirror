@@ -349,10 +349,10 @@ public class ScrollPane extends ExtendedScreen {
 
     // remove in 1.13+
     @Override
-    public void mouseMovedOrButtonReleased(int mouseX, int mouseY, int mouseButton) {
+    public void mouseReleased(int mouseX, int mouseY, int mouseButton) {
         setScrolling(false);
         if (isLoaded()) {
-            super.mouseMovedOrButtonReleased(mouseX, mouseY, mouseButton);
+            super.mouseReleased(mouseX, mouseY, mouseButton);
         }
     }
 

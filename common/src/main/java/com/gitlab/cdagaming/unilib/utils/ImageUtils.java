@@ -278,7 +278,7 @@ public class ImageUtils {
             }
             try {
                 final String cachedTexture = Integer.toString(
-                        instance.renderEngine.allocateAndSetupTexture(bufferData.getSecond().get(bufferData.getFirst()).getImage())
+                        instance.textureManager.loadBufferedTexture(bufferData.getSecond().get(bufferData.getFirst()).getImage()).id()
                 );
                 if (bufferData.getSecond().get(bufferData.getFirst()).shouldRenderNext()) {
                     if (doesContinue) {
