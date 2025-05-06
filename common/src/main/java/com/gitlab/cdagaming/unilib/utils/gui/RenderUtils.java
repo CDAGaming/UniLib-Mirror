@@ -42,9 +42,9 @@ import io.github.cdagaming.unicore.utils.MathUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import io.github.cdagaming.unicore.utils.TimeUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.Screen;
 import net.minecraft.client.render.EntityRenderDispatcher;
-import net.minecraft.client.render.FontRenderer;
+import net.minecraft.client.render.Font;
 import net.minecraft.client.render.Lighting;
 import net.minecraft.client.render.block.model.BlockModel;
 import net.minecraft.client.render.item.model.ItemModel;
@@ -72,7 +72,7 @@ public class RenderUtils {
      */
     private static final ScissorStack scissorStack = new ScissorStack();
     /**
-     * The Block List for any ItemStacks that have failed to render in {@link RenderUtils#drawItemStack(Minecraft, FontRenderer, int, int, ItemStack, float)}
+     * The Block List for any ItemStacks that have failed to render in {@link RenderUtils#drawItemStack(Minecraft, Font, int, int, ItemStack, float)}
      */
     private static final List<ItemStack> BLOCKED_RENDER_ITEMS = StringUtils.newArrayList();
     /**
@@ -217,8 +217,8 @@ public class RenderUtils {
      *
      * @return The Default/Global Font Renderer
      */
-    public static FontRenderer getDefaultFontRenderer() {
-        return ModUtils.getMinecraft().fontRenderer;
+    public static Font getDefaultFontRenderer() {
+        return ModUtils.getMinecraft().font;
     }
 
     /**
@@ -227,16 +227,16 @@ public class RenderUtils {
      * @param client       The current game instance
      * @param targetScreen The target Gui Screen to display
      */
-    public static void openScreen(@Nonnull final Minecraft client, final GuiScreen targetScreen) {
-        client.displayGuiScreen(new GuiScreen() {
+    public static void openScreen(@Nonnull final Minecraft client, final Screen targetScreen) {
+        client.displayScreen(new Screen() {
             @Override
             public void init() {
                 // N/A
             }
 
             @Override
-            public void drawScreen(int i, int j, float par3) {
-                client.displayGuiScreen(targetScreen);
+            public void render(int i, int j, float par3) {
+                client.displayScreen(targetScreen);
             }
         });
     }
@@ -249,7 +249,7 @@ public class RenderUtils {
      * @param parentScreen The parent screen instance to set, if possible
      * @param setParent    Whether to allow modifying the parent screen instance
      */
-    public static void openScreen(@Nonnull final Minecraft client, final ExtendedScreen targetScreen, final GuiScreen parentScreen, final boolean setParent) {
+    public static void openScreen(@Nonnull final Minecraft client, final ExtendedScreen targetScreen, final Screen parentScreen, final boolean setParent) {
         if (setParent) {
             targetScreen.setParent(parentScreen);
         }
@@ -263,7 +263,7 @@ public class RenderUtils {
      * @param targetScreen The target Gui Screen to display
      * @param parentScreen The parent screen instance to set, if possible
      */
-    public static void openScreen(@Nonnull final Minecraft client, final ExtendedScreen targetScreen, final GuiScreen parentScreen) {
+    public static void openScreen(@Nonnull final Minecraft client, final ExtendedScreen targetScreen, final Screen parentScreen) {
         openScreen(client, targetScreen, parentScreen, targetScreen.getParent() == null);
     }
 
@@ -277,7 +277,7 @@ public class RenderUtils {
      * @param stack        The {@link ItemStack} instance to interpret
      * @param scale        The Scale to render the Object at
      */
-    public static void drawItemStack(@Nonnull final Minecraft client, final FontRenderer fontRenderer, final int x, final int y, final ItemStack stack, final float scale) {
+    public static void drawItemStack(@Nonnull final Minecraft client, final Font fontRenderer, final int x, final int y, final ItemStack stack, final float scale) {
         if (BLOCKED_RENDER_ITEMS.contains(stack)) return;
         try {
             GL11.glPushMatrix();
@@ -291,8 +291,8 @@ public class RenderUtils {
             final int yPos = Math.round(y / scale);
             BlockModel.setRenderBlocks(EntityRenderDispatcher.instance.itemRenderer.renderBlocksInstance);
             final ItemModel itemModel = ItemModelDispatcher.getInstance().getDispatch(stack.getItem());
-            itemModel.renderItemIntoGui(Tessellator.instance, fontRenderer, client.renderEngine, stack, xPos, yPos, 1.0f);
-            itemModel.renderItemOverlayIntoGUI(Tessellator.instance, fontRenderer, client.renderEngine, stack, xPos, yPos, 1.0f);
+            itemModel.renderItemIntoGui(Tessellator.instance, fontRenderer, client.textureManager, stack, xPos, yPos, 1.0f);
+            itemModel.renderItemOverlayIntoGUI(Tessellator.instance, fontRenderer, client.textureManager, stack, xPos, yPos, 1.0f);
 
             Lighting.disable();
             GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -410,7 +410,7 @@ public class RenderUtils {
                 if (data.getFirst()) {
                     GL11.glBindTexture(GL11.GL_TEXTURE_2D, data.getSecond());
                 } else {
-                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mc.renderEngine.getTexture(texLocation));
+                    mc.textureManager.loadTexture(texLocation).bind();
                 }
             } else {
                 return;
@@ -469,7 +469,7 @@ public class RenderUtils {
                 if (data.getFirst()) {
                     GL11.glBindTexture(GL11.GL_TEXTURE_2D, data.getSecond());
                 } else {
-                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mc.renderEngine.getTexture(texLocation));
+                    mc.textureManager.loadTexture(texLocation).bind();
                 }
             } else {
                 return;
@@ -859,7 +859,7 @@ public class RenderUtils {
     private static void applyScissor(@Nonnull final Minecraft mc, final ScreenRectangle rectangle) {
         if (rectangle != null) {
             final int scale = computeGuiScale(mc);
-            final int displayHeight = mc.resolution.height;
+            final int displayHeight = mc.gameWindow.getHeightPixels();
             final int renderWidth = Math.max(0, rectangle.width() * scale);
             final int renderHeight = Math.max(0, rectangle.height() * scale);
             GL11.glEnable(GL11.GL_SCISSOR_TEST);
@@ -889,7 +889,7 @@ public class RenderUtils {
             k = 1000;
         }
 
-        while (scaleFactor < k && mc.resolution.width / (scaleFactor + 1) >= 320 && mc.resolution.height / (scaleFactor + 1) >= 240) {
+        while (scaleFactor < k && mc.gameWindow.getWidthPixels() / (scaleFactor + 1) >= 320 && mc.gameWindow.getHeightPixels() / (scaleFactor + 1) >= 240) {
             ++scaleFactor;
         }
         return scaleFactor;
@@ -973,7 +973,7 @@ public class RenderUtils {
                                            final int posX, final int posY,
                                            final int maxWidth, final int maxHeight,
                                            final int maxTextWidth,
-                                           final FontRenderer fontRenderer,
+                                           final Font fontRenderer,
                                            final boolean isCentered,
                                            final boolean isTooltip,
                                            final ScreenConstants.TooltipData colorInfo) {
@@ -1192,7 +1192,7 @@ public class RenderUtils {
      * @param yPos         The Y position to render the text at
      * @param color        The color to render the text in
      */
-    public static void renderCenteredString(final FontRenderer fontRenderer, final String text, final float xPos, final float yPos, final int color) {
+    public static void renderCenteredString(final Font fontRenderer, final String text, final float xPos, final float yPos, final int color) {
         renderString(fontRenderer, text, xPos - (getStringWidth(fontRenderer, text) / 2f), yPos, color);
     }
 
@@ -1205,7 +1205,7 @@ public class RenderUtils {
      * @param yPos         The Y position to render the text at
      * @param color        The color to render the text in
      */
-    public static void renderCenteredString(final FontRenderer fontRenderer, final String text, final int xPos, final int yPos, final int color) {
+    public static void renderCenteredString(final Font fontRenderer, final String text, final int xPos, final int yPos, final int color) {
         renderString(fontRenderer, text, xPos - (getStringWidth(fontRenderer, text) / 2), yPos, color);
     }
 
@@ -1218,7 +1218,7 @@ public class RenderUtils {
      * @param yPos         The Y position to render the text at
      * @param color        The color to render the text in
      */
-    public static void renderString(final FontRenderer fontRenderer, final String text, final float xPos, final float yPos, final int color) {
+    public static void renderString(final Font fontRenderer, final String text, final float xPos, final float yPos, final int color) {
         renderString(fontRenderer, text, Math.round(xPos), Math.round(yPos), color);
     }
 
@@ -1231,7 +1231,7 @@ public class RenderUtils {
      * @param yPos         The Y position to render the text at
      * @param color        The color to render the text in
      */
-    public static void renderString(final FontRenderer fontRenderer, final String text, final int xPos, final int yPos, final int color) {
+    public static void renderString(final Font fontRenderer, final String text, final int xPos, final int yPos, final int color) {
         fontRenderer.drawStringWithShadow(text, xPos, yPos, color);
     }
 
@@ -1242,7 +1242,7 @@ public class RenderUtils {
      * @param string       The string to interpret
      * @return the string's width from the font renderer
      */
-    public static int getStringWidth(final FontRenderer fontRenderer, final String string) {
+    public static int getStringWidth(final Font fontRenderer, final String string) {
         return fontRenderer.getStringWidth(string);
     }
 
@@ -1253,7 +1253,7 @@ public class RenderUtils {
      * @param string       The character to interpret
      * @return the character's width from the font renderer
      */
-    private static int getCharWidth(final FontRenderer fontRenderer, final char string) {
+    private static int getCharWidth(final Font fontRenderer, final char string) {
         return getStringWidth(fontRenderer, String.valueOf(string));
     }
 
@@ -1263,7 +1263,7 @@ public class RenderUtils {
      * @param fontRenderer The Font Renderer Instance
      * @return The Current Font Height for this Screen
      */
-    public static int getFontHeight(final FontRenderer fontRenderer) {
+    public static int getFontHeight(final Font fontRenderer) {
         return 8;
     }
 
@@ -1281,7 +1281,7 @@ public class RenderUtils {
      * @param color        The color to render the text in
      */
     public static void renderScrollingString(@Nonnull final Minecraft mc,
-                                             final FontRenderer fontRenderer,
+                                             final Font fontRenderer,
                                              final String message,
                                              final float centerX,
                                              final float minX, final float minY,
@@ -1319,7 +1319,7 @@ public class RenderUtils {
      * @param color        The color to render the text in
      */
     public static void renderScrollingString(@Nonnull final Minecraft mc,
-                                             final FontRenderer fontRenderer,
+                                             final Font fontRenderer,
                                              final String message,
                                              final int centerX,
                                              final int minX, final int minY,
@@ -1356,7 +1356,7 @@ public class RenderUtils {
      * @param color        The color to render the text in
      */
     public static void renderScrollingString(@Nonnull final Minecraft mc,
-                                             final FontRenderer fontRenderer,
+                                             final Font fontRenderer,
                                              final String message,
                                              final float minX, final float minY,
                                              final float maxX, final float maxY,
@@ -1377,7 +1377,7 @@ public class RenderUtils {
      * @param color        The color to render the text in
      */
     public static void renderScrollingString(@Nonnull final Minecraft mc,
-                                             final FontRenderer fontRenderer,
+                                             final Font fontRenderer,
                                              final String message,
                                              final int minX, final int minY,
                                              final int maxX, final int maxY,
@@ -1417,7 +1417,7 @@ public class RenderUtils {
      * @param wrapWidth    The target width per line, to wrap the input around
      * @return The converted and wrapped version of the original input
      */
-    public static List<String> listFormattedStringToWidth(final FontRenderer fontRenderer, final String stringInput, final int wrapWidth) {
+    public static List<String> listFormattedStringToWidth(final Font fontRenderer, final String stringInput, final int wrapWidth) {
         return StringUtils.splitTextByNewLine(wrapFormattedStringToWidth(fontRenderer, stringInput, wrapWidth), true);
     }
 
@@ -1430,7 +1430,7 @@ public class RenderUtils {
      * @param wrapWidth    The target width per line, to wrap the input around
      * @return The converted and wrapped version of the original input
      */
-    private static String wrapFormattedStringToWidth(final FontRenderer fontRenderer, final String stringInput, final int wrapWidth) {
+    private static String wrapFormattedStringToWidth(final Font fontRenderer, final String stringInput, final int wrapWidth) {
         final int stringSizeToWidth = sizeStringToWidth(fontRenderer, stringInput, wrapWidth);
 
         if (stringInput.length() <= stringSizeToWidth) {
@@ -1452,7 +1452,7 @@ public class RenderUtils {
      * @param wrapWidth    The target width to wrap within
      * @return The expected wrapped width the String should be
      */
-    private static int sizeStringToWidth(final FontRenderer fontRenderer, final String stringEntry, final int wrapWidth) {
+    private static int sizeStringToWidth(final Font fontRenderer, final String stringEntry, final int wrapWidth) {
         final int stringLength = stringEntry.length();
         int charWidth = 0;
         int currentLine = 0;
@@ -1496,11 +1496,11 @@ public class RenderUtils {
         return currentLine != stringLength && currentIndex != -1 && currentIndex < currentLine ? currentIndex : currentLine;
     }
 
-    public static String trimStringToWidth(final FontRenderer fontRenderer, final String text, final int width) {
+    public static String trimStringToWidth(final Font fontRenderer, final String text, final int width) {
         return trimStringToWidth(fontRenderer, text, width, false);
     }
 
-    public static String trimStringToWidth(final FontRenderer fontRenderer, final String text, final int width, final boolean reverse) {
+    public static String trimStringToWidth(final Font fontRenderer, final String text, final int width, final boolean reverse) {
         StringBuilder stringbuilder = new StringBuilder();
         int i = 0;
         int j = reverse ? text.length() - 1 : 0;
