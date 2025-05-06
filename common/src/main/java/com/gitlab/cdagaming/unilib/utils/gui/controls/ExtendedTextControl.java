@@ -46,6 +46,11 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
     private Runnable onKeyEvent;
 
     /**
+     * The visibility for this control
+     */
+    private boolean visible = true;
+
+    /**
      * Initialization Event for this Control, assigning defined arguments
      *
      * @param componentId     The ID for the control to Identify as
@@ -92,7 +97,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
     public int getControlWidth() {
         return StringUtils.getValidInteger(StringUtils.getField(
                 GuiTextField.class, this,
-                "width", "field_73811_d", "field_1119", "d"
+                "width", "field_22077_f", "d"
         )).getSecond();
     }
 
@@ -101,7 +106,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
         StringUtils.updateField(
                 GuiTextField.class, this,
                 width,
-                "width", "field_73811_d", "field_1119", "d"
+                "width", "field_22077_f", "d"
         );
     }
 
@@ -109,7 +114,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
     public int getControlHeight() {
         return StringUtils.getValidInteger(StringUtils.getField(
                 GuiTextField.class, this,
-                "height", "field_73812_e", "field_1120", "e"
+                "height", "field_22076_g", "e"
         )).getSecond();
     }
 
@@ -118,7 +123,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
         StringUtils.updateField(
                 GuiTextField.class, this,
                 height,
-                "height", "field_73812_e", "field_1120", "e"
+                "height", "field_22076_g", "e"
         );
     }
 
@@ -141,7 +146,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
     public int getControlPosX() {
         return StringUtils.getValidInteger(StringUtils.getField(
                 GuiTextField.class, this,
-                "xPos", "field_73813_b", "field_1117", "b"
+                "xPos", "field_22079_d", "b"
         )).getSecond();
     }
 
@@ -150,7 +155,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
         StringUtils.updateField(
                 GuiTextField.class, this,
                 posX,
-                "xPos", "field_73813_b", "field_1117", "b"
+                "xPos", "field_22079_d", "b"
         );
     }
 
@@ -158,7 +163,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
     public int getControlPosY() {
         return StringUtils.getValidInteger(StringUtils.getField(
                 GuiTextField.class, this,
-                "yPos", "field_73814_c", "field_1118", "c"
+                "yPos", "field_22078_e", "c"
         )).getSecond();
     }
 
@@ -167,7 +172,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
         StringUtils.updateField(
                 GuiTextField.class, this,
                 posY,
-                "yPos", "field_73814_c", "field_1118", "c"
+                "yPos", "field_22078_e", "c"
         );
     }
 
@@ -197,7 +202,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
     public boolean isControlEnabled() {
         return StringUtils.getValidBoolean(StringUtils.getField(
                 GuiTextField.class, this,
-                "isEnabled", "field_73819_m", "field_1127", "m"
+                "isEnabled", "field_50043_m", "m"
         )).getSecond();
     }
 
@@ -209,7 +214,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
     public void setControlEnabled(final boolean isEnabled) {
         StringUtils.updateField(GuiTextField.class, this,
                 isEnabled,
-                "isEnabled", "field_73819_m", "field_1127", "m"
+                "isEnabled", "field_50043_m", "m"
         );
     }
 
@@ -219,7 +224,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
      * @return Whether the control is currently visible
      */
     public boolean isControlVisible() {
-        return this.getVisible();
+        return this.visible;
     }
 
     /**
@@ -228,7 +233,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
      * @param isVisible The new visibility state for this control
      */
     public void setControlVisible(final boolean isVisible) {
-        this.setVisible(isVisible);
+        this.visible = isVisible;
     }
 
     /**
@@ -237,7 +242,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
      * @return The control's maximum text contents
      */
     public int getControlMaxLength() {
-        return this.getMaxStringLength();
+        return this.func_50040_g();
     }
 
     /**
@@ -255,7 +260,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
      * @return The control's focus status
      */
     public boolean isControlFocused() {
-        return this.isFocused();
+        return this.func_50025_j();
     }
 
     /**
@@ -264,7 +269,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
      * @param focused the new focus state for the control
      */
     public void setControlFocused(final boolean focused) {
-        this.setFocused(focused);
+        this.func_50033_b(focused);
     }
 
     /**
@@ -293,8 +298,8 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
      * @return Whether the event completed successfully
      */
     @Override
-    public boolean textboxKeyTyped(char typedChar, int keyCode) {
-        final boolean returnValue = super.textboxKeyTyped(typedChar, keyCode);
+    public boolean func_50037_a(char typedChar, int keyCode) {
+        final boolean returnValue = super.func_50037_a(typedChar, keyCode);
         if (returnValue) {
             onKeyTyped();
         }

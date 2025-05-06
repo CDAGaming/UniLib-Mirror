@@ -22,36 +22,28 @@
  * SOFTWARE.
  */
 
-package com.gitlab.cdagaming.unilib.forge;
-
-import com.gitlab.cdagaming.unilib.UniLib;
-import com.gitlab.cdagaming.unilib.core.CoreUtils;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.Mod;
-import io.github.cdagaming.unicore.utils.OSUtils;
+import com.gitlab.cdagaming.unilib.modloader.UniLibML;
+import net.minecraft.src.BaseMod;
 
 /**
- * The Primary Application Class and Utilities
+ * The Base Mod Class to begin Triggering Events
  *
  * @author CDAGaming
  */
-@Mod(modid = "@MOD_ID@", name = "@MOD_NAME@", version = "@VERSION_ID@", acceptedMinecraftVersions = "*")
-public class UniLibForge {
-    /**
-     * Begins Scheduling Ticks on Class Initialization
-     */
-    public UniLibForge() {
-        if (OSUtils.JAVA_SPEC < 1.8f) {
-            throw new UnsupportedOperationException("Incompatible JVM!!! @MOD_NAME@ requires Java 8 or above to work properly!");
-        }
+public class mod_UniLib extends BaseMod {
+    @Override
+    public String getName() {
+        return "@MOD_NAME@";
+    }
 
-        if (FMLCommonHandler.instance().getSide().isClient()) {
-            CoreUtils.MOD_COUNT_SUPPLIER = () -> Loader.instance().getModList().size();
+    @Override
+    public String getVersion() {
+        return "v@VERSION_ID@";
+    }
 
-            UniLib.assertLoaded();
-        } else {
-            CoreUtils.LOG.info("Disabling @MOD_NAME@, as it is client side only.");
-        }
+    @Override
+    public void load() {
+        // Initialize a New Instance of the Mod, triggering Ticking
+        new UniLibML();
     }
 }

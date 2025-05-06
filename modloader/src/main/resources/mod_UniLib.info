@@ -1,0 +1,17 @@
+[
+{
+  "modid" : "mod_${mod_name}",
+  "name" : "${mod_name}",
+  "version" : "${version}",
+  "url" : "https://minecraft.curseforge.com/projects/craftpresence",
+  "credits" : "",
+  "authors": [
+    "CDAGaming"
+  ],
+  "description": "A common set of Utilities, designed for over 50 versions of Minecraft!",
+  "logoFile" : "/assets/unilib/textures/logo.png",
+  "updateUrl" : "https://gitlab.com/CDAGaming/VersionLibrary/raw/master/UniLib/update.json",
+  "parent" : "",
+  "screenshots": []
+}
+]

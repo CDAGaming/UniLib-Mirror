@@ -25,9 +25,11 @@
 package com.gitlab.cdagaming.unilib;
 
 import com.gitlab.cdagaming.unilib.core.CoreUtils;
+import io.github.cdagaming.unicore.utils.StringUtils;
 import io.github.cdagaming.unicore.utils.TranslationUtils;
-import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.Minecraft;
+import net.minecraft.src.ThreadClientSleep;
+import net.minecraft.src.UnexpectedThrowable;
 
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
@@ -51,7 +53,7 @@ public class ModUtils {
     /**
      * The Detected Brand Information within Minecraft
      */
-    public static final String BRAND = CoreUtils.findGameBrand(ClientBrandRetriever.getClientModName());
+    public static final String BRAND = CoreUtils.findGameBrand("vanilla");
 
     /**
      * The Main Game's Instance of {@link TranslationUtils} for Localization and Translating Data Strings
@@ -61,12 +63,16 @@ public class ModUtils {
     /**
      * Getter for the Game Client Instance
      */
-    private static final Supplier<Minecraft> INSTANCE_GETTER = Minecraft::getMinecraft;
+    private static final Supplier<Minecraft> INSTANCE_GETTER = ModUtils::getMinecraftInstance;
 
     /**
      * Consumer Event for running events on the Main Game Thread
      */
     private static final BiConsumer<Minecraft, Runnable> MAIN_THREAD_EXECUTOR = (mc, event) -> event.run();
+    /**
+     * The local Game Client Instance
+     */
+    private static Minecraft localInstance;
 
     /**
      * Retrieve the Game Client Instance Supplier
@@ -128,5 +134,40 @@ public class ModUtils {
      */
     public static void executeOnMainThread(final Runnable event) {
         MAIN_THREAD_EXECUTOR.accept(getMinecraft(), event);
+    }
+
+    private static void ThrowException(Throwable e) {
+        ThrowException("Exception occurred in ModLoader", e);
+    }
+
+    public static void ThrowException(String message, Throwable e) {
+        Minecraft game = getMinecraftInstance();
+        if (game != null) {
+            game.displayUnexpectedThrowable(new UnexpectedThrowable(message, e));
+        } else {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Minecraft getMinecraftInstance() {
+        if (localInstance == null) {
+            try {
+                ThreadGroup group = Thread.currentThread().getThreadGroup();
+                int count = group.activeCount();
+                Thread[] threads = new Thread[count];
+                group.enumerate(threads);
+
+                for (Thread thread : threads) {
+                    if (thread != null && thread.getName().equals("Timer hack thread")) {
+                        localInstance = (Minecraft) StringUtils.getField(ThreadClientSleep.class, thread, "mc", "field_1588_a", "field_2825", "a");
+                        break;
+                    }
+                }
+            } catch (Exception var4) {
+                ThrowException(var4);
+            }
+        }
+
+        return localInstance;
     }
 }

@@ -26,10 +26,7 @@ package com.gitlab.cdagaming.unilib.utils;
 
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.World;
-import net.minecraft.src.WorldInfo;
+import net.minecraft.src.*;
 
 /**
  * Game-Related Utilities used to Parse World Data
@@ -78,7 +75,7 @@ public class WorldUtils {
         String result = "";
         if (entity != null) {
             result = StringUtils.getOrDefault(
-                    entity.getEntityName()
+                    EntityList.getEntityString(entity)
             );
         }
 
