@@ -13,6 +13,7 @@ See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for mor
     * Spotless (`7.0.2` -> `7.0.3`)
     * UniCore (`1.2.8` -> `1.3.2`)
     * Lenni Reflect (`1.4.0` -> `1.5.0`)
+    * Fabric Loader (`0.16.13` -> `0.16.14`)
 * Removed `MessageGui` for a null-list in `SelectorGui`, now accepted behavior
     * Some parity changes were made so this matched `ScrollableListControl` behaviors
 
