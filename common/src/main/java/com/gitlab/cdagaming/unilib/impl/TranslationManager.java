@@ -24,14 +24,12 @@
 
 package com.gitlab.cdagaming.unilib.impl;
 
-import com.gitlab.cdagaming.unilib.utils.ResourceUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import io.github.cdagaming.unicore.utils.TranslationUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.Resource;
+import net.minecraft.util.StringTranslate;
 
-import java.io.InputStream;
-import java.util.List;
+import java.util.Properties;
 
 /**
  * Utilities for Hooking a {@link TranslationUtils} instance to the Game Resource Manager
@@ -52,17 +50,18 @@ public record TranslationManager(Minecraft client,
         this.client = client;
         this.instance = instance;
 
-        instance().setResourceSupplier((data, langPath) -> {
-            final String modId = data.getModId();
-            final List<InputStream> results = StringUtils.newArrayList();
-            try {
-                final List<Resource> resources = client().getResourceManager().getAllResources(ResourceUtils.getResource(modId, langPath));
-                for (Resource resource : resources) {
-                    results.add(resource.getInputStream());
-                }
-            } catch (Exception ignored) {
-            }
-            return results;
+        instance().setOnLanguageSync((entries) -> {
+            StringTranslate stInstance = StringTranslate.getInstance();
+            Properties data = (Properties) StringUtils.getField(
+                    StringTranslate.class, stInstance,
+                    "translateTable", "field_74815_b", "field_618", "b"
+            );
+            data.putAll(entries);
+            StringUtils.updateField(
+                    StringTranslate.class, stInstance,
+                    data,
+                    "translateTable", "field_74815_b", "field_618", "b"
+            );
         });
     }
 

@@ -37,7 +37,6 @@ import io.github.cdagaming.unicore.utils.MathUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
-import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -461,12 +460,12 @@ public class ExtendedScreen extends GuiScreen {
                     startColor, endColor
             );
         } else {
-            final Tuple<Boolean, String, ResourceLocation> textureData = RenderUtils.getTextureData(
+            final Tuple<Boolean, String, String> textureData = RenderUtils.getTextureData(
                     getGameInstance(),
                     data.texLocation()
             );
             final boolean usingExternalTexture = textureData.getFirst();
-            final ResourceLocation texLocation = textureData.getThird();
+            final String texLocation = textureData.getThird();
 
             drawTexture(
                     left, right, top, bottom,
@@ -530,7 +529,7 @@ public class ExtendedScreen extends GuiScreen {
                             final double u, final double v,
                             final double textureWidth, final double textureHeight,
                             final Object startColorObj, final Object endColorObj,
-                            final ResourceLocation texLocation) {
+                            final String texLocation) {
         RenderUtils.drawTexture(getGameInstance(),
                 left, right, top, bottom,
                 zLevel, asFullTexture,
@@ -566,7 +565,7 @@ public class ExtendedScreen extends GuiScreen {
                             final boolean usingExternalTexture, final double offset,
                             final double u, final double v,
                             final Object startColorObj, final Object endColorObj,
-                            final ResourceLocation texLocation) {
+                            final String texLocation) {
         drawTexture(
                 left, right,
                 top, bottom,
@@ -601,7 +600,7 @@ public class ExtendedScreen extends GuiScreen {
                             final double offset,
                             final double u, final double v,
                             final Object startColorObj, final Object endColorObj,
-                            final ResourceLocation texLocation) {
+                            final String texLocation) {
         drawTexture(
                 left, right,
                 top, bottom,
@@ -633,7 +632,7 @@ public class ExtendedScreen extends GuiScreen {
                             final boolean usingExternalTexture, final double offset,
                             final double u, final double v,
                             final Object startColorObj, final Object endColorObj,
-                            final ResourceLocation texLocation) {
+                            final String texLocation) {
         drawTexture(
                 left, right,
                 top, bottom,
@@ -970,14 +969,14 @@ public class ExtendedScreen extends GuiScreen {
     }
 
     @Override
-    protected void mouseClickMove(int mouseX, int mouseY, int mouseButton, long timeSinceLastClick) {
+    protected void method_4259(int mouseX, int mouseY, int mouseButton, long timeSinceLastClick) {
         if (isLoaded()) {
             for (Gui extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
-                    extendedScreen.mouseClickMove(mouseX, mouseY, mouseButton, timeSinceLastClick);
+                    extendedScreen.method_4259(mouseX, mouseY, mouseButton, timeSinceLastClick);
                 }
             }
-            super.mouseClickMove(mouseX, mouseY, mouseButton, timeSinceLastClick);
+            super.method_4259(mouseX, mouseY, mouseButton, timeSinceLastClick);
         }
     }
 
