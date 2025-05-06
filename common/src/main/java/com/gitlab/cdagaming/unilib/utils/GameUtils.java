@@ -90,7 +90,7 @@ public class GameUtils {
      * @return the Game Session Username
      */
     public static String getUsername(final Minecraft client) {
-        return getSession(client).username;
+        return getSession(client).playerName;
     }
 
     /**
