@@ -26,11 +26,11 @@ package com.gitlab.cdagaming.unilib;
 
 import com.gitlab.cdagaming.unilib.core.CoreUtils;
 import io.github.cdagaming.unicore.utils.TranslationUtils;
+import net.minecraft.SharedConstants;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.Minecraft;
-import net.minecraft.realms.RealmsSharedConstants;
-import net.minecraft.resources.IResourceManagerReloadListener;
-import net.minecraft.resources.SimpleReloadableResourceManager;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
+import net.minecraft.server.packs.resources.SimpleReloadableResourceManager;
 
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
@@ -44,12 +44,12 @@ public class ModUtils {
     /**
      * The Detected Minecraft Version
      */
-    public static final String MCVersion = RealmsSharedConstants.VERSION_STRING;
+    public static final String MCVersion = SharedConstants.getCurrentVersion().getName();
 
     /**
      * The Detected Minecraft Protocol Version
      */
-    public static final int MCProtocolID = RealmsSharedConstants.NETWORK_PROTOCOL_VERSION;
+    public static final int MCProtocolID = SharedConstants.getCurrentVersion().getProtocolVersion();
 
     /**
      * The Detected Brand Information within Minecraft
@@ -69,8 +69,8 @@ public class ModUtils {
     /**
      * Consumer Event for Resource Reload Listener Registration
      */
-    private static final BiConsumer<String, IResourceManagerReloadListener> RELOAD_LISTENER_HOOK = (
-            (id, listener) -> ((SimpleReloadableResourceManager) getMinecraft().getResourceManager()).addReloadListener(listener)
+    private static final BiConsumer<String, ResourceManagerReloadListener> RELOAD_LISTENER_HOOK = (
+            (id, listener) -> ((SimpleReloadableResourceManager) getMinecraft().getResourceManager()).registerReloadListener(listener)
     );
 
     /**
@@ -82,7 +82,7 @@ public class ModUtils {
     /**
      * Consumer Event for running events on the Main Game Thread
      */
-    private static final BiConsumer<Minecraft, Runnable> MAIN_THREAD_EXECUTOR = Minecraft::addScheduledTask;
+    private static final BiConsumer<Minecraft, Runnable> MAIN_THREAD_EXECUTOR = Minecraft::execute;
 
     /**
      * Retrieve the Game Client Instance Supplier
@@ -110,8 +110,8 @@ public class ModUtils {
      */
     public static String getLanguage(final String fallback) {
         final String result;
-        if (getMinecraft().gameSettings != null) {
-            result = getMinecraft().gameSettings.language;
+        if (getMinecraft().options != null) {
+            result = getMinecraft().options.languageCode;
         } else {
             result = fallback;
         }
@@ -135,7 +135,7 @@ public class ModUtils {
      * @param id       The ID for the listener
      * @param listener The Listener to register
      */
-    public static void registerReloadListener(final String id, final IResourceManagerReloadListener listener) {
+    public static void registerReloadListener(final String id, final ResourceManagerReloadListener listener) {
         if (!CAN_USE_RELOAD_LISTENER) return;
         RELOAD_LISTENER_HOOK.accept(id, listener);
     }
