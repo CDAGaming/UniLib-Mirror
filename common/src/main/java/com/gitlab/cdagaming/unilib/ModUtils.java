@@ -28,9 +28,9 @@ import com.gitlab.cdagaming.unilib.core.CoreUtils;
 import io.github.cdagaming.unicore.utils.TranslationUtils;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IResourceManagerReloadListener;
-import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.realms.RealmsSharedConstants;
+import net.minecraft.resources.IResourceManagerReloadListener;
+import net.minecraft.resources.SimpleReloadableResourceManager;
 
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
@@ -64,13 +64,13 @@ public class ModUtils {
     /**
      * Getter for the Game Client Instance
      */
-    private static final Supplier<Minecraft> INSTANCE_GETTER = Minecraft::getMinecraft;
+    private static final Supplier<Minecraft> INSTANCE_GETTER = Minecraft::getInstance;
 
     /**
      * Consumer Event for Resource Reload Listener Registration
      */
     private static final BiConsumer<String, IResourceManagerReloadListener> RELOAD_LISTENER_HOOK = (
-            (id, listener) -> ((SimpleReloadableResourceManager) getMinecraft().getResourceManager()).registerReloadListener(listener)
+            (id, listener) -> ((SimpleReloadableResourceManager) getMinecraft().getResourceManager()).addReloadListener(listener)
     );
 
     /**
