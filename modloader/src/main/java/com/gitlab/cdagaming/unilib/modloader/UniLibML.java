@@ -28,7 +28,10 @@ import com.gitlab.cdagaming.unilib.UniLib;
 import com.gitlab.cdagaming.unilib.core.CoreUtils;
 import io.github.cdagaming.unicore.utils.FileUtils;
 import io.github.cdagaming.unicore.utils.OSUtils;
+import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.src.ModLoader;
+
+import java.util.List;
 
 /**
  * The Primary Application Class and Utilities
@@ -45,7 +48,7 @@ public class UniLibML {
         }
 
         if (isClient()) {
-            CoreUtils.MOD_COUNT_SUPPLIER = () -> ModLoader.getLoadedMods().size();
+            CoreUtils.MOD_COUNT_SUPPLIER = () -> ((List<?>) StringUtils.getField(ModLoader.class, null, "modList")).size();
 
             UniLib.assertLoaded();
         } else {

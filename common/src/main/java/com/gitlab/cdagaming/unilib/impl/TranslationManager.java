@@ -51,7 +51,7 @@ public record TranslationManager(Minecraft client,
         this.instance = instance;
 
         instance().setOnLanguageSync((entries) -> {
-            StringTranslate stInstance = StringTranslate.getInstance();
+            StringTranslate stInstance = StringTranslate.func_20162_a();
             Properties data = (Properties) StringUtils.getField(
                     StringTranslate.class, stInstance,
                     "translateTable", "field_20164_b", "b"
