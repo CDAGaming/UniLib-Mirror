@@ -26,8 +26,8 @@ package com.gitlab.cdagaming.unilib.utils;
 
 import com.gitlab.cdagaming.unilib.ModUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.core.entity.player.EntityPlayer;
+import net.minecraft.client.gui.Screen;
+import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.player.Session;
 import net.minecraft.core.world.World;
 
@@ -60,7 +60,7 @@ public class GameUtils {
      *
      * @return the Game Player Instance
      */
-    public static EntityPlayer getPlayer() {
+    public static Player getPlayer() {
         return WorldUtils.getPlayer(getMinecraft());
     }
 
@@ -127,7 +127,7 @@ public class GameUtils {
      * @param client the game client instance
      * @return the game's current screen instance
      */
-    public static GuiScreen getCurrentScreen(final Minecraft client) {
+    public static Screen getCurrentScreen(final Minecraft client) {
         return client != null ? client.currentScreen : null;
     }
 
@@ -136,7 +136,7 @@ public class GameUtils {
      *
      * @return the game's current screen instance
      */
-    public static GuiScreen getCurrentScreen() {
+    public static Screen getCurrentScreen() {
         return getCurrentScreen(getMinecraft());
     }
 

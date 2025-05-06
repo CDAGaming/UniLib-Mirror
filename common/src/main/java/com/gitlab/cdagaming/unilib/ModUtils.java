@@ -60,7 +60,7 @@ public class ModUtils {
     /**
      * Getter for the Game Client Instance
      */
-    private static final Supplier<Minecraft> INSTANCE_GETTER = () -> Minecraft.getMinecraft(Minecraft.class);
+    private static final Supplier<Minecraft> INSTANCE_GETTER = Minecraft::getMinecraft;
 
     /**
      * Consumer Event for running events on the Main Game Thread

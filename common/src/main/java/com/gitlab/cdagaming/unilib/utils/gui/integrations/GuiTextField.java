@@ -26,8 +26,7 @@ package com.gitlab.cdagaming.unilib.utils.gui.integrations;
 
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.render.FontRenderer;
+import net.minecraft.client.render.Font;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -35,7 +34,7 @@ import java.awt.*;
 
 public class GuiTextField extends Gui {
     private static final String allowedChars = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}~⌂ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜø£Ø×ƒáíóúñÑªº¿®¬½¼¡«»";
-    private final FontRenderer fontRenderer;
+    private final Font fontRenderer;
     private final int xPos;
     private final int yPos;
     private final int width;
@@ -51,7 +50,7 @@ public class GuiTextField extends Gui {
     public int selectionEnd = 0;
     private boolean isTextSelected;
 
-    public GuiTextField(FontRenderer fontRenderer, int x, int y, int w, int h, String s) {
+    public GuiTextField(Font fontRenderer, int x, int y, int w, int h, String s) {
         this.fontRenderer = fontRenderer;
         this.xPos = x;
         this.yPos = y;

@@ -28,7 +28,7 @@ import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.EntityDispatcher;
-import net.minecraft.core.entity.player.EntityPlayer;
+import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.weather.Weather;
 import net.minecraft.core.world.weather.WeatherRain;
@@ -48,7 +48,7 @@ public class WorldUtils {
      * @return the Game World Instance
      */
     public static World getWorld(final Minecraft client) {
-        return client != null ? client.theWorld : null;
+        return client != null ? client.currentWorld : null;
     }
 
     /**
@@ -67,7 +67,7 @@ public class WorldUtils {
      * @param client the game client instance
      * @return the Game Player Instance
      */
-    public static EntityPlayer getPlayer(final Minecraft client) {
+    public static Player getPlayer(final Minecraft client) {
         return client != null ? client.thePlayer : null;
     }
 
@@ -82,7 +82,7 @@ public class WorldUtils {
         String result = "";
         if (entity != null) {
             result = StringUtils.getOrDefault(
-                    EntityDispatcher.getEntityString(entity)
+                    EntityDispatcher.nameKeyForClass(entity.getClass())
             );
         }
 
