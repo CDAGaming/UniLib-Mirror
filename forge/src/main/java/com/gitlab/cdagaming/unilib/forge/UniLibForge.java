@@ -26,16 +26,17 @@ package com.gitlab.cdagaming.unilib.forge;
 
 import com.gitlab.cdagaming.unilib.UniLib;
 import com.gitlab.cdagaming.unilib.core.CoreUtils;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.Mod;
 import io.github.cdagaming.unicore.utils.OSUtils;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.Mod;
 
 /**
  * The Primary Application Class and Utilities
  *
  * @author CDAGaming
  */
-@Mod(modid = "@MOD_ID@", name = "@MOD_NAME@", version = "@VERSION_ID@", clientSideOnly = true, canBeDeactivated = true, updateJSON = "https://raw.githubusercontent.com/CDAGaming/VersionLibrary/master/UniLib/update.json", acceptedMinecraftVersions = "*")
+@Mod(modid = "@MOD_ID@", name = "@MOD_NAME@", version = "@VERSION_ID@", canBeDeactivated = true, acceptedMinecraftVersions = "*")
 public class UniLibForge {
     /**
      * Begins Scheduling Ticks on Class Initialization
@@ -44,8 +45,13 @@ public class UniLibForge {
         if (OSUtils.JAVA_SPEC < 1.8f) {
             throw new UnsupportedOperationException("Incompatible JVM!!! @MOD_NAME@ requires Java 8 or above to work properly!");
         }
-        CoreUtils.MOD_COUNT_SUPPLIER = () -> Loader.instance().getModList().size();
 
-        UniLib.assertLoaded();
+        if (FMLCommonHandler.instance().getSide().isClient()) {
+            CoreUtils.MOD_COUNT_SUPPLIER = () -> Loader.instance().getModList().size();
+
+            UniLib.assertLoaded();
+        } else {
+            CoreUtils.LOG.info("Disabling @MOD_NAME@, as it is client side only.");
+        }
     }
 }
