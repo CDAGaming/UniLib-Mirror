@@ -1,13 +1,13 @@
 [
   {
-    "modid": "${mod_id}",
+    "modid": "mod_${mod_name}",
     "name": "${mod_name}",
     "description": "A common set of Utilities, designed for over 50 versions of Minecraft!",
     "version": "${version}",
     "mcversion": "${game_version_range}",
     "url": "https://www.curseforge.com/minecraft/mc-mods/unilib",
-    "updateJSON": "https://raw.githubusercontent.com/CDAGaming/VersionLibrary/master/UniLib/update.json",
-    "authorList": [
+    "updateUrl": "https://raw.githubusercontent.com/CDAGaming/VersionLibrary/master/UniLib/update.json",
+    "authors": [
       "CDAGaming"
     ],
     "credits": "",
