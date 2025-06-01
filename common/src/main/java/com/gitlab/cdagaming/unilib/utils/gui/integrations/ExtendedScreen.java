@@ -36,7 +36,7 @@ import io.github.cdagaming.unicore.impl.Tuple;
 import io.github.cdagaming.unicore.utils.MathUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.client.gui.*;
+import net.minecraft.client.gui.*;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -109,11 +109,11 @@ public class ExtendedScreen extends GuiScreen {
     /**
      * The Last Ticked Mouse X Coordinate
      */
-    private int lastMouseX = 0;
+    private float lastMouseX = 0;
     /**
      * The Last Ticked Mouse Y Coordinate
      */
-    private int lastMouseY = 0;
+    private float lastMouseY = 0;
     /**
      * The Last Partial Tick Delta
      */
@@ -354,25 +354,6 @@ public class ExtendedScreen extends GuiScreen {
     }
 
     /**
-     * Event to trigger upon Window Resize
-     *
-     * @param mcIn The Minecraft Instance
-     * @param w    The New Screen Width
-     * @param h    The New Screen Height
-     */
-    @Override
-    public void setWorldAndResolution(@Nonnull Minecraft mcIn, int w, int h) {
-        if (isLoaded()) {
-            for (Gui extendedControl : getControls()) {
-                if (extendedControl instanceof ExtendedScreen extendedScreen) {
-                    extendedScreen.setWorldAndResolution(mcIn, w, h);
-                }
-            }
-        }
-        super.setWorldAndResolution(mcIn, w, h);
-    }
-
-    /**
      * Adds a Compatible Control to this Screen with specified type
      *
      * @param buttonIn The Control to add to this Screen
@@ -388,7 +369,10 @@ public class ExtendedScreen extends GuiScreen {
         if (buttonIn instanceof DynamicWidget widget && !extendedWidgets.contains(buttonIn)) {
             addWidget(widget);
         }
-        if (buttonIn instanceof GuiButton button && !controlList.contains(buttonIn)) {
+        if (buttonIn instanceof GuiElement button && !controlList.contains(buttonIn)) {
+            if (buttonIn instanceof GuiSlot slot && !extendedLists.contains(slot)) {
+                extendedLists.add(slot);
+            }
             controlList.add(button);
         }
         if (!extendedControls.contains(buttonIn)) {
@@ -406,14 +390,7 @@ public class ExtendedScreen extends GuiScreen {
      */
     @Nonnull
     public <T extends GuiSlot> T addList(@Nonnull T buttonIn) {
-        if (!canModifyControls()) {
-            throw new IllegalStateException("Can't add control to control list");
-        }
-
-        if (!extendedLists.contains(buttonIn)) {
-            extendedLists.add(buttonIn);
-        }
-        return buttonIn;
+        return addControl(buttonIn);
     }
 
     /**
@@ -846,7 +823,7 @@ public class ExtendedScreen extends GuiScreen {
      * @param partialTicks The Rendering Tick Rate
      */
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+    public void drawScreen(float mouseX, float mouseY, float partialTicks) {
         // Ensures initialization events have run first, preventing an NPE
         if (isLoaded()) {
             preRender();
@@ -860,10 +837,6 @@ public class ExtendedScreen extends GuiScreen {
             );
 
             drawDefaultBackground();
-
-            for (GuiSlot listControl : getLists()) {
-                listControl.drawScreen(mouseX, mouseY, partialTicks);
-            }
 
             super.drawScreen(mouseX, mouseY, partialTicks);
 
@@ -932,7 +905,7 @@ public class ExtendedScreen extends GuiScreen {
      * @param mouseY The Event Mouse Y Coordinate
      * @param wheelY The Event Mouse Wheel Delta
      */
-    public void mouseScrolled(int mouseX, int mouseY, int wheelY) {
+    public void mouseScrolled(float mouseX, float mouseY, int wheelY) {
         if (isLoaded()) {
             for (Gui extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
@@ -990,7 +963,7 @@ public class ExtendedScreen extends GuiScreen {
      * @param mouseButton The Event Mouse Button Clicked
      */
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+    protected void mouseClicked(float mouseX, float mouseY, int mouseButton) {
         if (isLoaded()) {
             for (Gui extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedTextControl textField) {
@@ -1004,7 +977,7 @@ public class ExtendedScreen extends GuiScreen {
         }
     }
 
-    protected void method_4259(int mouseX, int mouseY, int mouseButton, long timeSinceLastClick) {
+    protected void method_4259(float mouseX, float mouseY, int mouseButton, long timeSinceLastClick) {
         if (isLoaded()) {
             for (Gui extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
@@ -1015,7 +988,7 @@ public class ExtendedScreen extends GuiScreen {
     }
 
     @Override
-    protected void mouseMovedOrUp(int mouseX, int mouseY, int state) {
+    protected void mouseMovedOrUp(float mouseX, float mouseY, int state) {
         if (isLoaded()) {
             for (Gui extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
@@ -1251,7 +1224,7 @@ public class ExtendedScreen extends GuiScreen {
      * @param textToInput The Specified Multi-Line String, split by lines into a list
      */
     public void drawMultiLineString(final List<String> textToInput) {
-        drawMultiLineString(textToInput, getMouseX(), getMouseY());
+        drawMultiLineString(textToInput, (int) getMouseX(), (int) getMouseY());
     }
 
     /**
@@ -1474,7 +1447,7 @@ public class ExtendedScreen extends GuiScreen {
      *
      * @return The Mouse's X Coordinate Position
      */
-    public int getMouseX() {
+    public float getMouseX() {
         return lastMouseX;
     }
 
@@ -1483,7 +1456,7 @@ public class ExtendedScreen extends GuiScreen {
      *
      * @return The Mouse's Y Coordinate Position
      */
-    public int getMouseY() {
+    public float getMouseY() {
         return lastMouseY;
     }
 

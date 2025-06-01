@@ -27,8 +27,9 @@ package com.gitlab.cdagaming.unilib.utils.gui.controls;
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
+import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiButton;
 
 import javax.annotation.Nonnull;
 
@@ -199,7 +200,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
     }
 
     @Override
-    public void drawButton(@Nonnull Minecraft mc, int mouseX, int mouseY) {
+    public void drawElement(@Nonnull Minecraft mc, float mouseX, float mouseY, float partialTicks) {
         if (isControlVisible()) {
             setHoveringOver(isOverScreen() && RenderUtils.isMouseOver(mouseX, mouseY, this));
 
@@ -228,7 +229,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * Equivalent of MouseListener.mouseDragged(MouseEvent e).
      */
     @Override
-    protected void mouseDragged(@Nonnull Minecraft mc, int mouseX, int mouseY) {
+    protected void mouseDragged(@Nonnull Minecraft mc, float mouseX, float mouseY) {
         if (isControlVisible()) {
             final int hoverState = getHoverState(isHoveringOrFocusingOver());
             final int hoverValue = 46 + hoverState * 20;
@@ -250,7 +251,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * Equivalent of MouseListener.mousePressed(MouseEvent e).
      */
     @Override
-    public boolean mousePressed(@Nonnull Minecraft arg, int mouseX, int mouseY) {
+    public boolean mousePressed(@Nonnull Minecraft arg, float mouseX, float mouseY) {
         return isOverScreen() && isControlEnabled() && isControlVisible() && isHoveringOver();
     }
 
@@ -261,7 +262,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
 
     @Override
     public void setControlWidth(final int width) {
-        this.width = width;
+        StringUtils.updateField(GuiButton.class, this, width, "width");
     }
 
     @Override
@@ -271,7 +272,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
 
     @Override
     public void setControlHeight(final int height) {
-        this.height = height;
+        StringUtils.updateField(GuiButton.class, this, height, "height");
     }
 
     @Override
@@ -281,7 +282,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
 
     @Override
     public void setControlPosX(final int posX) {
-        this.xPosition = posX;
+        StringUtils.updateField(GuiButton.class, this, posX, "xPosition");
     }
 
     @Override
@@ -291,7 +292,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
 
     @Override
     public void setControlPosY(final int posY) {
-        this.yPosition = posY;
+        StringUtils.updateField(GuiButton.class, this, posY, "yPosition");
     }
 
     /**
