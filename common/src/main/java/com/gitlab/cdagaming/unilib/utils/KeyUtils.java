@@ -30,10 +30,10 @@ import com.gitlab.cdagaming.unilib.core.impl.KeyConverter;
 import io.github.cdagaming.unicore.impl.Pair;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.client.KeyBinding;
-import net.minecraft.src.client.gui.GuiControls;
-import net.minecraft.src.client.gui.GuiControls2;
-import net.minecraft.src.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiControls;
+import net.minecraft.client.gui.GuiControls2;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.util.KeyBinding;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;

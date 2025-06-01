@@ -42,12 +42,12 @@ import io.github.cdagaming.unicore.utils.MathUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import io.github.cdagaming.unicore.utils.TimeUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.client.gui.FontRenderer;
-import net.minecraft.src.client.gui.GuiScreen;
-import net.minecraft.src.client.renderer.RenderHelper;
-import net.minecraft.src.client.renderer.Tessellator;
-import net.minecraft.src.client.renderer.entity.RenderItem;
-import net.minecraft.src.game.item.ItemStack;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.world.RenderHelper;
+import net.minecraft.client.renderer.world.Tessellator;
+import net.minecraft.common.item.ItemStack;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
@@ -236,7 +236,7 @@ public class RenderUtils {
             }
 
             @Override
-            public void drawScreen(int i, int j, float par3) {
+            public void drawScreen(float i, float j, float par3) {
                 client.displayGuiScreen(targetScreen);
             }
         });
