@@ -52,9 +52,9 @@ public class ScrollPane extends ExtendedScreen {
     private int padding;
     private float amountScrolled = 0.0F;
     // remove in 1.13+
-    private int mousePrevX = 0;
+    private float mousePrevX = 0;
     // remove in 1.13+
-    private int mousePrevY = 0;
+    private float mousePrevY = 0;
 
     /**
      * Initialization Event for this Control, assigning defined arguments
@@ -337,7 +337,7 @@ public class ScrollPane extends ExtendedScreen {
 
     // remove in 1.13+
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+    protected void mouseClicked(float mouseX, float mouseY, int mouseButton) {
         if (isLoaded()) {
             checkScrollbarClick(mouseX, mouseY, mouseButton);
             mousePrevX = mouseX;
@@ -349,7 +349,7 @@ public class ScrollPane extends ExtendedScreen {
 
     // remove in 1.13+
     @Override
-    protected void method_4259(int mouseX, int mouseY, int mouseButton, long timeSinceLastClick) {
+    protected void method_4259(float mouseX, float mouseY, int mouseButton, long timeSinceLastClick) {
         if (isLoaded()) {
             mouseDragged(mouseX, mouseY, mouseButton, mouseX - mousePrevX, mouseY - mousePrevY);
             mousePrevX = mouseX;
@@ -359,7 +359,7 @@ public class ScrollPane extends ExtendedScreen {
         }
     }
 
-    public void mouseDragged(int mouseX, int mouseY, int button, int deltaX, int deltaY) {
+    public void mouseDragged(float mouseX, float mouseY, int button, float deltaX, float deltaY) {
         if (isValidMouseClick(button) && needsScrollbar() && isScrolling()) {
             if (mouseY < getTop()) {
                 setScroll(0.0F);
@@ -375,7 +375,7 @@ public class ScrollPane extends ExtendedScreen {
     }
 
     @Override
-    public void mouseScrolled(int mouseX, int mouseY, int wheelY) {
+    public void mouseScrolled(float mouseX, float mouseY, int wheelY) {
         scrollBy(-wheelY * getHeightPerScroll());
     }
 

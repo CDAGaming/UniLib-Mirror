@@ -219,7 +219,7 @@ public class SliderControl extends ExtendedButtonControl {
      * Equivalent of MouseListener.mouseDragged(MouseEvent e).
      */
     @Override
-    protected void mouseDragged(@Nonnull Minecraft mc, int mouseX, int mouseY) {
+    protected void mouseDragged(@Nonnull Minecraft mc, float mouseX, float mouseY) {
         if (isControlVisible()) {
             super.mouseDragged(mc, mouseX, mouseY);
 
@@ -245,7 +245,7 @@ public class SliderControl extends ExtendedButtonControl {
      * Equivalent of MouseListener.mousePressed(MouseEvent e).
      */
     @Override
-    public boolean mousePressed(@Nonnull Minecraft mc, int mouseX, int mouseY) {
+    public boolean mousePressed(@Nonnull Minecraft mc, float mouseX, float mouseY) {
         if (super.mousePressed(mc, mouseX, mouseY)) {
             setValueFromMouse(mouseX);
             dragging = true;
@@ -338,7 +338,7 @@ public class SliderControl extends ExtendedButtonControl {
      * Equivalent of MouseListener.mouseReleased(MouseEvent e).
      */
     @Override
-    public void mouseReleased(int mouseX, int mouseY) {
+    public void mouseReleased(float mouseX, float mouseY) {
         dragging = false;
     }
 

@@ -59,7 +59,7 @@ public class ScreenConstants {
     /**
      * The Default Widget Background Resources
      */
-    private static final Function<Integer, String> DEFAULT_BUTTON_BACKGROUND_SUPPLIER = (protocol) -> "minecraft:" + (CoreUtils.isLegacyHard(protocol) ? "/gui/gui.png" : "textures/gui/widgets.png");
+    private static final Function<Integer, String> DEFAULT_BUTTON_BACKGROUND_SUPPLIER = (protocol) -> "minecraft:/textures/gui/gui.png";
     /**
      * The Default Widget Background Resources
      */
@@ -67,7 +67,7 @@ public class ScreenConstants {
     /**
      * The Default Screen Background Resources
      */
-    private static final Function<Integer, String> DEFAULT_GUI_BACKGROUND_SUPPLIER = (protocol) -> "minecraft:" + (CoreUtils.isLegacyHard(protocol) ? (CoreUtils.isLegacyAlpha(protocol) ? "/dirt.png" : "/gui/background.png") : "textures/gui/options_background.png");
+    private static final Function<Integer, String> DEFAULT_GUI_BACKGROUND_SUPPLIER = (protocol) -> "minecraft:/textures/gui/background.png";
     /**
      * The Default Screen Background Resources
      */
