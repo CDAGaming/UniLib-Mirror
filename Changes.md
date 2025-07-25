@@ -1,28 +1,32 @@
 # UniLib Changes
 
-## v1.1.0 (05/08/2025)
+## v1.1.1 (07/29/2025)
 
 _A Detailed Changelog from the last release is
-available [here](https://gitlab.com/CDAGaming/UniLib/-/compare/release%2Fv1.0.6...release%2Fv1.1.0)_
+available [here](https://gitlab.com/CDAGaming/UniLib/-/compare/release%2Fv1.1.0...release%2Fv1.1.1)_
 
 See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for more info regarding the mod.
 
 ### Changes
 
 * (Backend) Updated Build Dependencies (Please see the appropriate repositories for changes)
-    * Spotless (`7.0.2` -> `7.0.3`)
-    * UniCore (`1.2.8` -> `1.3.2`)
-    * Lenni Reflect (`1.4.0` -> `1.5.0`)
-    * Fabric Loader (`0.16.13` -> `0.16.14`)
-* Removed `MessageGui` for a null-list in `SelectorGui`, now accepted behavior
-    * Some parity changes were made so this matched `ScrollableListControl` behaviors
+    * Spotless (`7.0.3` -> `7.2.1`)
+    * UniCore (`1.3.2` -> `1.3.3`)
+    * Shadow (`8.3.6` -> `8.3.8`)
+    * Gradle (`8.13` -> `8.14.3`)
+    * Classgraph (`4.8.179` -> `4.8.181`)
+    * ModPublisher (`2.1.6` -> `2.1.7`)
+    * Unimined (`1.3.14` -> `1.3.15`)
+    * JVMDowngrader (`1.2.2` -> `1.3.3`)
+    * ASM (`9.7.1` -> `9.8`)
+* Removed Quilt and FlintMC Support due to end-of-life conditions
+    * Quilt users can continue to be supported via the existing Fabric Port
 
 ### Fixes
 
-* Fixed issues related to `MappingUtils` when early-loading UniLib
-    * This primarily occurs in cases where mod load order isn't certain
-* Fixed a mod crash in Neoforge `21.4.84-beta` and above
-    * Minimum version of Neoforge required for MC 1.21.4 was bumped to `84-beta` or above
+* Fixed an AW crash related to `RenderUtils` APIs on Neoforge 1.21.6 and above
+* Fixed a potential crash with translation listener events on Neoforge `21.6.6-beta` and above
+    * The minimum neoforge requirement on `1.21.6` has been bumped due to this fix
 
 ___
 
