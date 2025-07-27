@@ -15,7 +15,7 @@ plugins {
     id("xyz.wagyourtail.jvmdowngrader") version "1.3.3"
     id("com.diffplug.gradle.spotless") version "7.2.1" apply false
     id("com.gradleup.shadow") version "8.3.8" apply false
-    id("com.hypherionmc.modutils.modpublisher") version "2.1.7" apply false
+    id("com.hypherionmc.modutils.modpublisher") version "2.1.6" apply false
     `maven-publish`
 }
 
