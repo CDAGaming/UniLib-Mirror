@@ -29,7 +29,6 @@ import com.gitlab.cdagaming.unilib.core.impl.screen.ScreenConstants;
 import com.gitlab.cdagaming.unilib.utils.GameUtils;
 import com.gitlab.cdagaming.unilib.utils.WorldUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
-import com.gitlab.cdagaming.unilib.utils.gui.controls.ExtendedTextControl;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
 import io.github.cdagaming.unicore.impl.Tuple;
 import io.github.cdagaming.unicore.utils.MathUtils;
@@ -869,7 +868,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
     }
 
     @Override
-    public void renderBackground(@Nonnull GuiGraphics matrixStack) {
+    public void renderBackground(@Nonnull GuiGraphics matrixStack, int mouseX, int mouseY, float partialTicks) {
         currentMatrix = matrixStack;
         renderCriticalData();
     }
@@ -902,8 +901,6 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
                     getRight(),
                     getBottom()
             );
-
-            renderBackground(matrixStack);
 
             super.render(matrixStack, mouseX, mouseY, partialTicks);
 
@@ -973,23 +970,23 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
      * Event to trigger upon Mouse Input
      */
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double deltaX, double deltaY) {
         if (isLoaded()) {
-            setMouseScroll((int) delta);
+            setMouseScroll((int) deltaY);
             for (AbstractSelectionList<?> listControl : getLists()) {
-                if (listControl.mouseScrolled(mouseX, mouseY, delta)) {
+                if (listControl.mouseScrolled(mouseX, mouseY, deltaX, deltaY)) {
                     return true;
                 }
             }
 
             for (GuiEventListener extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
-                    if (extendedScreen.mouseScrolled(mouseX, mouseY, delta)) {
+                    if (extendedScreen.mouseScrolled(mouseX, mouseY, deltaX, deltaY)) {
                         return true;
                     }
                 }
             }
-            return super.mouseScrolled(mouseX, mouseY, delta);
+            return super.mouseScrolled(mouseX, mouseY, deltaX, deltaY);
         }
         return false;
     }
@@ -1025,9 +1022,6 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
     public void tick() {
         if (isLoaded()) {
             for (GuiEventListener extendedControl : getControls()) {
-                if (extendedControl instanceof ExtendedTextControl textField) {
-                    textField.tick();
-                }
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
                     extendedScreen.tick();
                 }
