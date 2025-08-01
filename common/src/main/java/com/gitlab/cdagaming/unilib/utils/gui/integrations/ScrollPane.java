@@ -304,11 +304,11 @@ public class ScrollPane extends ExtendedScreen {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton, boolean doubleClick) {
         if (isLoaded()) {
             checkScrollbarClick(mouseX, mouseY, mouseButton);
 
-            return super.mouseClicked(mouseX, mouseY, mouseButton);
+            return super.mouseClicked(mouseX, mouseY, mouseButton, doubleClick);
         }
         return false;
     }

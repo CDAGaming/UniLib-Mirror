@@ -247,7 +247,7 @@ public class SliderControl extends ExtendedButtonControl {
      * Equivalent of MouseListener.mousePressed(MouseEvent e).
      */
     @Override
-    public void onClick(double mouseX, double mouseY) {
+    public void onClick(double mouseX, double mouseY, boolean doubleClick) {
         if (super.isMouseOver(mouseX, mouseY)) {
             setValueFromMouse(mouseX);
         }

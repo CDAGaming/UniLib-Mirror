@@ -217,7 +217,7 @@ public class ScrollableListControl extends EntryListPane<ScrollableListControl.S
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        public boolean mouseClicked(double mouseX, double mouseY, int button, boolean doubleClick) {
             if (isValidMouseClick(button)) {
                 this.onPressed();
                 return true;

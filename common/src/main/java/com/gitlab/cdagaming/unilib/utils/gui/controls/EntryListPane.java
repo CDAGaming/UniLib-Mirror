@@ -453,7 +453,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton, boolean doubleClick) {
         if (!isValidMouseClick(mouseButton)) {
             return false;
         } else {
@@ -463,7 +463,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
             } else {
                 final E entry = getEntryAtPosition(mouseX, mouseY);
                 if (entry != null) {
-                    if (entry.mouseClicked(mouseX, mouseY, mouseButton)) {
+                    if (entry.mouseClicked(mouseX, mouseY, mouseButton, doubleClick)) {
                         final E focused = getFocused();
                         if (focused != entry && focused instanceof ContainerEventHandler containerEventHandler) {
                             containerEventHandler.setFocused(null);
@@ -917,13 +917,14 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
         /**
          * Event to trigger upon the mouse being clicked
          *
-         * @param mouseX The Event Mouse X Coordinate
-         * @param mouseY The Event Mouse Y Coordinate
-         * @param button The Event Mouse Button Clicked
+         * @param mouseX      The Event Mouse X Coordinate
+         * @param mouseY      The Event Mouse Y Coordinate
+         * @param button      The Event Mouse Button Clicked
+         * @param doubleClick Whether the mouse event was a double click
          * @return The Event Result
          */
         @Override
-        public boolean mouseClicked(final double mouseX, final double mouseY, final int button) {
+        public boolean mouseClicked(final double mouseX, final double mouseY, final int button, final boolean doubleClick) {
             return true;
         }
     }

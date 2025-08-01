@@ -892,7 +892,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
 
             for (GuiEventListener extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
-                    extendedScreen.renderWithTooltip(matrixStack, mouseX, mouseY, partialTicks);
+                    extendedScreen.renderWithTooltipAndSubtitles(matrixStack, mouseX, mouseY, partialTicks);
                 }
             }
 

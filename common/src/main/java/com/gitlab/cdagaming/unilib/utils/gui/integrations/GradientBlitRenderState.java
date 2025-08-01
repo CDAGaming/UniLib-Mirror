@@ -95,10 +95,10 @@ public record GradientBlitRenderState(RenderPipeline pipeline, TextureSetup text
     }
 
     @Override
-    public void buildVertices(@NotNull VertexConsumer vertexConsumer, float z) {
-        vertexConsumer.addVertexWith2DPose(pose(), (float) x0(), (float) y0(), z).setUv(u0(), v0()).setColor(col1());
-        vertexConsumer.addVertexWith2DPose(pose(), (float) x0(), (float) y1(), z).setUv(u0(), v1()).setColor(col2());
-        vertexConsumer.addVertexWith2DPose(pose(), (float) x1(), (float) y1(), z).setUv(u1(), v1()).setColor(col2());
-        vertexConsumer.addVertexWith2DPose(pose(), (float) x1(), (float) y0(), z).setUv(u1(), v0()).setColor(col1());
+    public void buildVertices(@NotNull VertexConsumer vertexConsumer) {
+        vertexConsumer.addVertexWith2DPose(pose(), (float) x0(), (float) y0()).setUv(u0(), v0()).setColor(col1());
+        vertexConsumer.addVertexWith2DPose(pose(), (float) x0(), (float) y1()).setUv(u0(), v1()).setColor(col2());
+        vertexConsumer.addVertexWith2DPose(pose(), (float) x1(), (float) y1()).setUv(u1(), v1()).setColor(col2());
+        vertexConsumer.addVertexWith2DPose(pose(), (float) x1(), (float) y0()).setUv(u1(), v0()).setColor(col1());
     }
 }
