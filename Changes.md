@@ -16,7 +16,6 @@ See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for mor
     * Gradle (`8.13` -> `8.14.3`)
     * Classgraph (`4.8.179` -> `4.8.181`)
     * Unimined (`1.3.14` -> `1.3.15`)
-    * JVMDowngrader (`1.2.2` -> `1.3.3`)
     * ASM (`9.7.1` -> `9.8`)
 * Removed Quilt and FlintMC Support due to end-of-life conditions
     * Quilt users can continue to be supported via the existing Fabric Port
