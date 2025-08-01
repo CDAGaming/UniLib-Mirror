@@ -26,7 +26,14 @@ package com.gitlab.cdagaming.unilib.utils;
 
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.*;
+import net.minecraft.core.entity.Entity;
+import net.minecraft.core.entity.EntityDispatcher;
+import net.minecraft.core.entity.player.EntityPlayer;
+import net.minecraft.core.world.World;
+import net.minecraft.core.world.weather.Weather;
+import net.minecraft.core.world.weather.WeatherRain;
+import net.minecraft.core.world.weather.WeatherSnow;
+import net.minecraft.core.world.weather.WeatherStorm;
 
 /**
  * Game-Related Utilities used to Parse World Data
@@ -51,7 +58,7 @@ public class WorldUtils {
      * @return the Entity World Instance
      */
     public static World getWorld(final Entity entity) {
-        return entity != null ? entity.worldObj : null;
+        return entity != null ? entity.world : null;
     }
 
     /**
@@ -75,7 +82,7 @@ public class WorldUtils {
         String result = "";
         if (entity != null) {
             result = StringUtils.getOrDefault(
-                    EntityList.getEntityString(entity)
+                    EntityDispatcher.getEntityString(entity)
             );
         }
 
@@ -104,10 +111,10 @@ public class WorldUtils {
     public static String getWeather(final World world) {
         String name = "clear";
         if (world != null) {
-            final WorldInfo info = world.getWorldInfo();
-            if (info.getThundering()) {
+            final Weather info = world.getCurrentWeather();
+            if (info instanceof WeatherStorm) {
                 name = "thunder";
-            } else if (info.getRaining()) {
+            } else if (info instanceof WeatherRain || info instanceof WeatherSnow) {
                 name = "rain";
             } else {
                 name = "clear";
