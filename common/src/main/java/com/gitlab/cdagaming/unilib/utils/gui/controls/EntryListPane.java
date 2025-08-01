@@ -29,11 +29,14 @@ import com.gitlab.cdagaming.unilib.utils.gui.integrations.ScrollPane;
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ComponentPath;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.narration.NarrationSupplier;
+import net.minecraft.client.gui.navigation.FocusNavigationEvent;
+import net.minecraft.client.gui.navigation.ScreenDirection;
 import net.minecraft.network.chat.Component;
 
 import javax.annotation.Nonnull;
@@ -81,10 +84,6 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
      */
     @Nullable
     private E hovered;
-    /**
-     * Whether we are focused on this widget
-     */
-    private boolean inFocus;
 
     /**
      * Initialization Event for this Control, assigning defined arguments
@@ -160,18 +159,23 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
         return (E) super.getFocused();
     }
 
+    @Nullable
     @Override
-    public boolean changeFocus(final boolean focused) {
-        if (!inFocus && getItemCount() == 0) {
-            return false;
-        } else {
-            inFocus = !inFocus;
-            if (inFocus && getSelected() == null && getItemCount() > 0) {
-                moveSelection(1);
-            } else if (inFocus && getSelected() != null) {
-                moveSelection(0);
+    public ComponentPath nextFocusPath(@Nonnull FocusNavigationEvent arg) {
+        if (getItemCount() == 0) {
+            return null;
+        } else if (isFocused() && arg instanceof FocusNavigationEvent.ArrowNavigation lv) {
+            final E nextEntry = nextEntry(lv.direction());
+            return nextEntry != null ? ComponentPath.path(this, ComponentPath.leaf(nextEntry)) : null;
+        } else if (!isFocused()) {
+            E selected = getSelected();
+            if (selected == null) {
+                selected = nextEntry(arg.getVerticalDirectionForInitialFocus());
             }
-            return inFocus;
+
+            return selected == null ? null : ComponentPath.path(this, ComponentPath.leaf(selected));
+        } else {
+            return null;
         }
     }
 
@@ -492,6 +496,9 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
         if (index >= 0) {
             final E entry = getEntry(index);
             setSelected(entry);
+            if (getGameInstance().getLastInputType().isKeyboard()) {
+                ensureVisible(entry);
+            }
         }
     }
 
@@ -500,19 +507,18 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
         return itemHeight / 2;
     }
 
-    @Override
-    public boolean keyPressed(int keyCode, int mouseX, int mouseY) {
-        if (super.keyPressed(keyCode, mouseX, mouseY)) {
-            return true;
-        } else if (keyCode == getKeyByVersion(208, 264)) {
-            moveSelection(1); // Down Arrow
-            return true;
-        } else if (keyCode == getKeyByVersion(200, 265)) {
-            moveSelection(-1); // Up Arrow
-            return true;
-        } else {
-            return false;
-        }
+    /**
+     * Convert the {@link ScreenDirection} to its primitive index
+     *
+     * @param direction The direction to interpret
+     * @return the processed index to interpret
+     */
+    private int directionToInt(final ScreenDirection direction) {
+        return switch (direction) {
+            case RIGHT, LEFT -> 0;
+            case UP -> -1;
+            case DOWN -> 1;
+        };
     }
 
     /**
@@ -530,12 +536,35 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
      * Retrieve the next entry in the specified direction
      *
      * @param direction The direction to travel
+     * @return the next entry, or null
+     */
+    @Nullable
+    protected E nextEntry(final ScreenDirection direction) {
+        return nextEntry(directionToInt(direction));
+    }
+
+    /**
+     * Retrieve the next entry in the specified direction
+     *
+     * @param direction The direction to travel
      * @param predicate The condition to interpret the entry with
      * @return the next entry, or null
      */
     @Nullable
     protected E nextEntry(final int direction, final Predicate<E> predicate) {
         return nextEntry(direction, predicate, getSelected());
+    }
+
+    /**
+     * Retrieve the next entry in the specified direction
+     *
+     * @param direction The direction to travel
+     * @param predicate The condition to interpret the entry with
+     * @return the next entry, or null
+     */
+    @Nullable
+    protected E nextEntry(final ScreenDirection direction, final Predicate<E> predicate) {
+        return nextEntry(directionToInt(direction), predicate);
     }
 
     /**
@@ -567,6 +596,19 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
     }
 
     /**
+     * Retrieve the next entry in the specified direction
+     *
+     * @param direction The direction to travel
+     * @param predicate The condition to interpret the entry with
+     * @param entry     The entry to interpret, if any
+     * @return the next entry, or null
+     */
+    @Nullable
+    protected E nextEntry(final ScreenDirection direction, final Predicate<E> predicate, final @Nullable E entry) {
+        return nextEntry(directionToInt(direction), predicate, entry);
+    }
+
+    /**
      * Move the current selection in the specified direction
      *
      * @param direction The direction to travel
@@ -577,6 +619,15 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
             setFocused(entry);
             ensureVisible(entry);
         }
+    }
+
+    /**
+     * Move the current selection in the specified direction
+     *
+     * @param direction The direction to travel
+     */
+    protected void moveSelection(final ScreenDirection direction) {
+        moveSelection(directionToInt(direction));
     }
 
     /**
@@ -699,15 +750,6 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
         return getRowTop(index) + itemHeight;
     }
 
-    /**
-     * Retrieve whether we are focused on this widget
-     *
-     * @return {@link Boolean#TRUE} if condition is satisfied
-     */
-    protected boolean isFocused() {
-        return getParent() != null && getParent().getFocused() == this;
-    }
-
     @Nonnull
     @Override
     public NarrationPriority narrationPriority() {
@@ -793,12 +835,8 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
         EntryListPane<E> list;
 
         @Override
-        public boolean changeFocus(boolean focused) {
-            return setFocused(focused);
-        }
-
-        public boolean setFocused(boolean focused) {
-            return false;
+        public void setFocused(boolean focused) {
+            // N/A
         }
 
         public boolean isFocused() {
