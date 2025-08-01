@@ -45,7 +45,7 @@ public class ClientExtensions {
         ModUtils.CAN_USE_RELOAD_LISTENER = false;
     }
 
-    @EventBusSubscriber(modid = "@MOD_ID@", bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = "@MOD_ID@", value = Dist.CLIENT)
     public class EventHandler {
         @SubscribeEvent
         public static void registerReloadManager(AddClientReloadListenersEvent event) {
