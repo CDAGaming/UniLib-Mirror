@@ -148,19 +148,6 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
     private boolean canModifyControls;
 
     /**
-     * Restore Renderables, if any, for screen re-initialization
-     */
-    private final List<Renderable> restoreRenderables = StringUtils.newArrayList();
-    /**
-     * Restore Children, if any, for screen re-initialization
-     */
-    private final List<GuiEventListener> restoreChildren = StringUtils.newArrayList();
-    /**
-     * Restore Narratables, if any, for screen re-initialization
-     */
-    private final List<NarratableEntry> restoreNarratables = StringUtils.newArrayList();
-
-    /**
      * Initialization Event for this Control, assigning defined arguments
      *
      * @param parentScreen The Parent Screen for this Instance
@@ -321,22 +308,6 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
      */
     @Override
     public void init() {
-        // Restore Fixes -- MC 1.19.3 and below
-        if (!restoreRenderables.isEmpty()) {
-            renderables.clear();
-            renderables.addAll(restoreRenderables);
-            restoreRenderables.clear();
-        }
-        if (!restoreChildren.isEmpty()) {
-            children.clear();
-            children.addAll(restoreChildren);
-            restoreChildren.clear();
-        }
-        if (!restoreNarratables.isEmpty()) {
-            narratables.clear();
-            narratables.addAll(restoreNarratables);
-            restoreNarratables.clear();
-        }
         // Clear Data before Initialization
         super.init();
         clearData();
@@ -369,11 +340,6 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
      */
     public void initializeUi() {
         if (isUnloaded()) {
-            // Restore Fixes -- MC 1.19.3 and below
-            restoreRenderables.addAll(renderables);
-            restoreChildren.addAll(children);
-            restoreNarratables.addAll(narratables);
-
             init(getGameInstance(), getScreenWidth(), getScreenHeight());
             return;
         }
@@ -903,7 +869,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
     }
 
     @Override
-    public void renderBackground(@Nonnull PoseStack matrixStack, int tint) {
+    public void renderBackground(@Nonnull PoseStack matrixStack) {
         currentMatrix = matrixStack;
         renderCriticalData();
     }
