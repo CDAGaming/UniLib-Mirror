@@ -26,9 +26,9 @@ package com.gitlab.cdagaming.unilib.utils.gui.controls;
 
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
-import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
 import javax.annotation.Nonnull;
@@ -178,7 +178,7 @@ public class ScrollableListControl extends EntryListPane<ScrollableListControl.S
      * @param hovered      Whether the entry is being hovered over
      * @param partialTicks The Rendering Tick Rate
      */
-    public void renderSlotItem(@Nonnull final PoseStack matrices, final String originalName, final int xPos, final int yPos, final int widthIn, final int heightIn, final int mouseXIn, final int mouseYIn, final boolean hovered, final float partialTicks) {
+    public void renderSlotItem(@Nonnull final GuiGraphics matrices, final String originalName, final int xPos, final int yPos, final int widthIn, final int heightIn, final int mouseXIn, final int mouseYIn, final boolean hovered, final float partialTicks) {
         RenderUtils.renderScrollingString(matrices,
                 getGameInstance(),
                 getFontRenderer(),
@@ -212,7 +212,7 @@ public class ScrollableListControl extends EntryListPane<ScrollableListControl.S
         }
 
         @Override
-        public void render(@Nonnull final PoseStack matrices, Minecraft client, int index, int yPos, int xPos, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float partialTicks) {
+        public void render(@Nonnull final GuiGraphics matrices, Minecraft client, int index, int yPos, int xPos, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float partialTicks) {
             ScrollableListControl.this.renderSlotItem(matrices, name, xPos, yPos, entryWidth, entryHeight, mouseX, mouseY, hovered, partialTicks);
         }
 

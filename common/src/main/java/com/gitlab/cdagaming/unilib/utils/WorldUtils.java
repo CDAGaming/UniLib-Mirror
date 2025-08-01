@@ -54,7 +54,7 @@ public class WorldUtils {
      * @return the Entity World Instance
      */
     public static Level getWorld(final Entity entity) {
-        return entity != null ? entity.level : null;
+        return entity != null ? entity.level() : null;
     }
 
     /**

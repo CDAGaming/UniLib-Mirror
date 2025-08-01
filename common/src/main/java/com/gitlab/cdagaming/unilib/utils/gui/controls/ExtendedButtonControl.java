@@ -28,8 +28,8 @@ import com.gitlab.cdagaming.unilib.ModUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
@@ -199,7 +199,7 @@ public class ExtendedButtonControl extends Button implements DynamicWidget {
     }
 
     @Override
-    public void render(@Nonnull PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(@Nonnull GuiGraphics matrixStack, int mouseX, int mouseY, float partialTicks) {
         final Minecraft mc = ModUtils.getMinecraft();
         if (mc != null && isControlVisible()) {
             setHoveringOver(isOverScreen() && RenderUtils.isMouseOver(mouseX, mouseY, this));
@@ -254,7 +254,7 @@ public class ExtendedButtonControl extends Button implements DynamicWidget {
      * Fired when the mouse button is dragged.<p>
      * Equivalent of MouseListener.mouseDragged(MouseEvent e).
      */
-    protected void renderBg(@Nonnull PoseStack matrixStack, @Nonnull Minecraft mc, int mouseX, int mouseY) {
+    protected void renderBg(@Nonnull GuiGraphics matrixStack, @Nonnull Minecraft mc, int mouseX, int mouseY) {
         if (isControlVisible()) {
             final int hoverState = getYImage(isHoveringOrFocusingOver());
             final int hoverValue = 46 + hoverState * 20;

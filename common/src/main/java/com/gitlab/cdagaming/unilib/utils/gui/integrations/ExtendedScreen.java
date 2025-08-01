@@ -31,12 +31,12 @@ import com.gitlab.cdagaming.unilib.utils.WorldUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.controls.ExtendedTextControl;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
-import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.cdagaming.unicore.impl.Tuple;
 import io.github.cdagaming.unicore.utils.MathUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -87,7 +87,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
     /**
      * Current Stored MatrixStack for this Instance
      */
-    private PoseStack currentMatrix;
+    private GuiGraphics currentMatrix;
     /**
      * The Screen Title, if any
      */
@@ -869,7 +869,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
     }
 
     @Override
-    public void renderBackground(@Nonnull PoseStack matrixStack) {
+    public void renderBackground(@Nonnull GuiGraphics matrixStack) {
         currentMatrix = matrixStack;
         renderCriticalData();
     }
@@ -883,7 +883,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
      * @param partialTicks The Rendering Tick Rate
      */
     @Override
-    public void render(@Nonnull PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(@Nonnull GuiGraphics matrixStack, int mouseX, int mouseY, float partialTicks) {
         currentMatrix = matrixStack;
 
         // Ensures initialization events have run first, preventing an NPE
@@ -896,7 +896,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
             preRender();
 
             RenderUtils.enableScissor(
-                    getGameInstance(),
+                    matrixStack,
                     getLeft(),
                     getTop(),
                     getRight(),
@@ -909,7 +909,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
 
             renderExtra();
 
-            RenderUtils.disableScissor(getGameInstance());
+            RenderUtils.disableScissor(matrixStack);
 
             for (GuiEventListener extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
@@ -1737,7 +1737,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
      *
      * @return The Current Stored MatrixStack for this Instance
      */
-    public PoseStack getCurrentMatrix() {
+    public GuiGraphics getCurrentMatrix() {
         return currentMatrix;
     }
 
