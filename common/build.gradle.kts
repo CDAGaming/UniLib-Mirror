@@ -30,7 +30,6 @@ unimined.minecraft {
                 accessWidener(accessWidenerFile)
             }
             loader("fabric_loader_version"()!!)
-            customIntermediaries = true
         }
         if (isModern) {
             fabric(fabricData)
