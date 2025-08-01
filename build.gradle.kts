@@ -11,7 +11,7 @@ import java.util.*
 
 plugins {
     java
-    id("xyz.wagyourtail.unimined") version "1.4.1" apply false
+    id("xyz.wagyourtail.unimined") version "1.3.15" apply false
     id("xyz.wagyourtail.jvmdowngrader") version "1.3.3"
     id("com.diffplug.gradle.spotless") version "7.2.1" apply false
     id("com.gradleup.shadow") version "8.3.8" apply false
@@ -182,11 +182,36 @@ subprojects {
                     if (!isJarMod) {
                         searge()
                     }
-                    mcp(if (isJarMod) "legacy" else "stable", mcMappings)
+                    mcp(if (isJarMod) "legacy" else "stable", mcMappings) {
+                        if (!isJarMod) {
+                            clearOutputs()
+                            outputs("mcp", true) { listOf("intermediary") }
+                        }
+                    }
                 }
 
                 "forgeMCP" -> {
-                    forgeBuiltinMCP("forge_version"()!!)
+                    forgeBuiltinMCP("forge_version"()!!) {
+                        clearContains()
+                        clearOutputs()
+                        contains({ _, t ->
+                            !t.contains("MCP")
+                        }) {
+                            onlyExistingSrc()
+                            outputs("searge", false) { listOf("official") }
+                        }
+                        contains({ _, t ->
+                            t.contains("MCP")
+                        }) {
+                            outputs("mcp", true) { listOf("intermediary") }
+                            sourceNamespace("searge")
+                        }
+                    }
+                    officialMappingsFromJar {
+                        clearContains()
+                        clearOutputs()
+                        outputs("official", false) { listOf() }
+                    }
                 }
 
                 "retroMCP" -> {
@@ -198,11 +223,15 @@ subprojects {
                 }
 
                 "mojmap" -> {
-                    mojmap()
+                    mojmap {
+                        skipIfNotIn("intermediary")
+                    }
                 }
 
                 "parchment" -> {
-                    mojmap()
+                    mojmap {
+                        skipIfNotIn("intermediary")
+                    }
                     parchment(mcVersion, mcMappings)
                 }
 
@@ -221,15 +250,17 @@ subprojects {
 
             // ability to add custom mappings
             val target = if (!isModern) "mcp" else "mojmap"
-            stubs("searge", target) {
+            stub.withMappings("searge", target) {
                 c("ModLoader", "net/minecraft/src/ModLoader", "net/minecraft/src/ModLoader")
                 c("BaseMod", "net/minecraft/src/BaseMod", "net/minecraft/src/BaseMod")
                 // Fix: Fixed an inconsistent mapping in 1.16 and 1.16.1 between MCP and Mojmap
                 if (!isLegacy && (protocol == 735 || protocol == 736)) {
                     c(
                         "dng",
-                        "net/minecraft/client/gui/widget/Widget",
-                        "net/minecraft/client/gui/components/AbstractWidget"
+                        listOf(
+                            "net/minecraft/client/gui/widget/Widget",
+                            "net/minecraft/client/gui/components/AbstractWidget"
+                        )
                     ) {
                         m("e", "()I", "func_238483_d_", "getHeightRealms")
                     }
@@ -239,7 +270,11 @@ subprojects {
             if (isMCPJar) {
                 if (protocol <= 2) { // MC a1.1.2_01 and below
                     devNamespace("searge")
+                } else {
+                    devFallbackNamespace("searge")
                 }
+            } else if (usingIntermediary) {
+                devFallbackNamespace("intermediary")
             }
 
             if (shouldDowngrade) {
