@@ -35,7 +35,6 @@ import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.narration.NarrationSupplier;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -55,7 +54,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
     /**
      * The default translation for narration usage
      */
-    private static final Component USAGE_NARRATION = new TranslatableComponent("narration.selection.usage");
+    private static final Component USAGE_NARRATION = Component.translatable("narration.selection.usage");
     /**
      * The height of each item in the list
      */
@@ -775,7 +774,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
         if (list.size() > 1) {
             int i = list.indexOf(entry);
             if (i != -1) {
-                output.add(NarratedElementType.POSITION, new TranslatableComponent("narrator.position.list", i + 1, list.size()));
+                output.add(NarratedElementType.POSITION, Component.translatable("narrator.position.list", i + 1, list.size()));
             }
         }
     }

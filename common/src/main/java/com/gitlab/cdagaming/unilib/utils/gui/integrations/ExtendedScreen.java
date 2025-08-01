@@ -43,7 +43,7 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -168,7 +168,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
      * @param subTitle     The Screen subtitle, if any
      */
     public ExtendedScreen(final Screen parentScreen, final String title, final String subTitle) {
-        super(new TextComponent(""));
+        super(Component.literal(""));
         setGameInstance(ModUtils.getMinecraft());
         setParent(parentScreen);
         currentScreen = this;

@@ -56,9 +56,9 @@ public record TranslationManager(Minecraft client,
             final String modId = data.getModId();
             final List<InputStream> results = StringUtils.newArrayList();
             try {
-                final List<Resource> resources = client().getResourceManager().getResources(ResourceUtils.getResource(modId, langPath));
+                final List<Resource> resources = client().getResourceManager().getResourceStack(ResourceUtils.getResource(modId, langPath));
                 for (Resource resource : resources) {
-                    results.add(resource.getInputStream());
+                    results.add(resource.open());
                 }
             } catch (Exception ignored) {
             }
