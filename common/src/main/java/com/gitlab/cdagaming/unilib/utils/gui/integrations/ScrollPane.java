@@ -349,6 +349,15 @@ public class ScrollPane extends ExtendedScreen {
 
     // remove in 1.13+
     @Override
+    protected void mouseReleased(int mouseX, int mouseY, int mouseButton) {
+        setScrolling(false);
+        if (isLoaded()) {
+            super.mouseReleased(mouseX, mouseY, mouseButton);
+        }
+    }
+
+    // remove in 1.13+
+    @Override
     protected void mouseClickMove(int mouseX, int mouseY, int mouseButton, long timeSinceLastClick) {
         if (isLoaded()) {
             mouseDragged(mouseX, mouseY, mouseButton, mouseX - mousePrevX, mouseY - mousePrevY);
@@ -459,7 +468,19 @@ public class ScrollPane extends ExtendedScreen {
      * @param button The Event Mouse Button Clicked
      */
     public void checkScrollbarClick(double mouseX, double mouseY, int button) {
-        clickedScrollbar = needsScrollbar() && isValidMouseClick(button) && MathUtils.isWithinValue(mouseX, getScrollBarX(), getScrollBarX() + getScrollBarWidth(), true, false);
+        setScrolling(needsScrollbar() && isValidMouseClick(button) && isOverScrollbar(mouseX, mouseY));
+    }
+
+    /**
+     * Determine if the mouse is over the scrollbar
+     *
+     * @param mouseX The Event Mouse X Coordinate
+     * @param mouseY The Event Mouse Y Coordinate
+     * @return {@link Boolean#TRUE} if condition is satisfied
+     */
+    public boolean isOverScrollbar(double mouseX, double mouseY) {
+        return MathUtils.isWithinValue(mouseX, getScrollBarX(), getScrollBarX() + getScrollBarWidth(), true, false) &&
+                MathUtils.isWithinValue(mouseY, getTop(), getBottom(), true, false);
     }
 
     /**
@@ -469,6 +490,15 @@ public class ScrollPane extends ExtendedScreen {
      */
     public boolean isScrolling() {
         return clickedScrollbar;
+    }
+
+    /**
+     * Sets whether we are currently scrolling
+     *
+     * @param scrolling the new "is scrolling" value
+     */
+    public void setScrolling(final boolean scrolling) {
+        clickedScrollbar = scrolling;
     }
 
     /**
