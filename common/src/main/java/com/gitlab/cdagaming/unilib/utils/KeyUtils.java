@@ -528,12 +528,21 @@ public class KeyUtils {
         }
 
         /**
-         * Retrieve the category name for this KeyBind
+         * Retrieve the raw category name for this KeyBind
          *
-         * @return the KeyBind category name
+         * @return the raw KeyBind category name
+         */
+        public String rawCategoryName() {
+            return category();
+        }
+
+        /**
+         * Retrieve the formatted category name for this KeyBind
+         *
+         * @return the formatted KeyBind category name
          */
         public String categoryName() {
-            return categoryFormatter().apply(category());
+            return categoryFormatter().apply(rawCategoryName());
         }
 
         /**
