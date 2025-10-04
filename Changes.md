@@ -20,8 +20,8 @@ See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for mor
   * Added new APIs to `ScrollPane`: `setScrolling(bool)` and `isOverScrollbar(mouseX, mouseY)`
   * Added `rawCategoryName()` to `KeyUtils#KeyBindData` as an alias to `category()`
 * Added additional API calls for the `PREINIT` and `INIT` phases of Screen Initialization
-* Added `constructElements()` to `ExtendedScreen` as an alternative to using `initializeUi` for adding UI elements to the screen
-  * This method, alongside the prior note, allow for initializing controls in the correct phase
+* Added `constructElements()` and `appendElements()` to `ExtendedScreen` as an alternative to using `initializeUi` for adding UI elements to the screen
+  * These methods, alongside the prior note, allow for initializing controls in the correct phase
   * Previously, double-rendering would occur in the first tick on sub-screens
 
 ### Fixes

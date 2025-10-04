@@ -321,16 +321,26 @@ public class ExtendedScreen extends GuiScreen {
                 }
             }
 
+            appendElements();
             refreshContentHeight();
         }
     }
 
     /**
-     * Constructs any UI elements for this Screen
+     * Constructs any primary UI elements for this Screen
      * <p>
      * This ensures the correct phase and scroll compared to {@link ExtendedScreen#initializeUi()}
      */
     public void constructElements() {
+        // N/A
+    }
+
+    /**
+     * Constructs any additional UI elements for this Screen
+     * <p>
+     * This functions runs after all other elements are initialized in {@link ExtendedScreen#initializeUi()}
+     */
+    public void appendElements() {
         // N/A
     }
 
