@@ -290,7 +290,7 @@ public class ExtendedScreen extends GuiScreen {
      * Clear the Screen Data
      */
     public void clearData() {
-        if (currentPhase != Phase.PREINIT) {
+        if (!isUnloaded()) {
             currentPhase = Phase.PREINIT;
             setContentHeight(0);
 
@@ -307,12 +307,13 @@ public class ExtendedScreen extends GuiScreen {
      * Responsible for setting initial Data and creating controls
      */
     public void initializeUi() {
-        if (currentPhase == Phase.PREINIT) {
-            initGui();
+        if (isUnloaded()) {
+            setWorldAndResolution(getGameInstance(), getScreenWidth(), getScreenHeight());
             return;
         }
-        if (currentPhase == Phase.INIT) {
+        if (isInitializing()) {
             resetMouseScroll();
+            constructElements();
 
             for (Gui extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
@@ -322,6 +323,15 @@ public class ExtendedScreen extends GuiScreen {
 
             refreshContentHeight();
         }
+    }
+
+    /**
+     * Constructs any UI elements for this Screen
+     * <p>
+     * This ensures the correct phase and scroll compared to {@link ExtendedScreen#initializeUi()}
+     */
+    public void constructElements() {
+        // N/A
     }
 
     /**
@@ -1790,6 +1800,24 @@ public class ExtendedScreen extends GuiScreen {
      */
     public boolean isLoaded() {
         return currentPhase == Phase.READY;
+    }
+
+    /**
+     * Gets whether the Screen is initializing
+     *
+     * @return {@link Boolean#TRUE} if condition is satisfied
+     */
+    public boolean isInitializing() {
+        return currentPhase == Phase.INIT;
+    }
+
+    /**
+     * Gets whether the Screen is either unloaded or not initialized
+     *
+     * @return {@link Boolean#TRUE} if condition is satisfied
+     */
+    public boolean isUnloaded() {
+        return currentPhase == Phase.PREINIT;
     }
 
     /**

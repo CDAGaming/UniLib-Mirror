@@ -1,29 +1,32 @@
 # UniLib Changes
 
-## v1.1.1 (08/07/2025)
+## v1.2.0 (10/24/2025)
 
 _A Detailed Changelog from the last release is
-available [here](https://gitlab.com/CDAGaming/UniLib/-/compare/release%2Fv1.1.0...release%2Fv1.1.1)_
+available [here](https://gitlab.com/CDAGaming/UniLib/-/compare/release%2Fv1.1.1...release%2Fv1.2.0)_
 
 See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for more info regarding the mod.
 
 ### Changes
 
 * (Backend) Updated Build Dependencies (Please see the appropriate repositories for changes)
-    * Spotless (`7.0.3` -> `7.2.1`)
-    * UniCore (`1.3.2` -> `1.3.3`)
-    * Shadow (`8.3.6` -> `8.3.8`)
-    * Gradle (`8.13` -> `8.14.3`)
-    * Classgraph (`4.8.179` -> `4.8.181`)
-    * ASM (`9.7.1` -> `9.8`)
-* Removed Quilt and FlintMC Support due to end-of-life conditions
-    * Quilt users can continue to be supported via the existing Fabric Port
+    * Fabric Loader (`0.16.14` -> `0.17.2`)
+    * Spotless (`7.2.1` -> `8.0.0`)
+    * Shadow (`8.3.8` -> `9.2.2`)
+    * ModPublisher (`2.1.6` -> `2.1.8`)
+    * SpotBugs Annotations (`4.8.6` -> `4.9.6`)
+* Backported several API changes from the `-Staging` builds, for various MC versions:
+  * Implemented `mouseReleased` call in `ScrollPane`, allowing `clickedScrollbar` to become `false` when mouse is released
+  * Added new APIs to `ScrollPane`: `setScrolling(bool)` and `isOverScrollbar(mouseX, mouseY)`
+  * Added `rawCategoryName()` to `KeyUtils#KeyBindData` as an alias to `category()`
+* Added additional API calls for the `PREINIT` and `INIT` phases of Screen Initialization
+* Added `constructElements()` to `ExtendedScreen` as an alternative to using `initializeUi` for adding UI elements to the screen
+  * This method, alongside the prior note, allow for initializing controls in the correct phase
+  * Previously, double-rendering would occur in the first tick on sub-screens
 
 ### Fixes
 
-* Fixed an AW crash related to `RenderUtils` APIs on Neoforge 1.21.6 and above
-* Fixed a potential crash with translation listener events on Neoforge `21.6.6-beta` and above
-    * The minimum neoforge requirement on `1.21.6` has been bumped due to this fix
+* Fixed an incorrect initialization call in `ExtendedScreen#initializeUi`, causing a crash in certain scenarios
 
 ___
 
