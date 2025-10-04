@@ -179,12 +179,12 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
 
     @Override
     public void preDraw(ExtendedScreen screen) {
-        // N/A
+        isOverScreen = RenderUtils.isMouseOver(screen);
     }
 
     @Override
     public void draw(final ExtendedScreen screen) {
-        isOverScreen = RenderUtils.isMouseOver(screen);
+        // N/A
     }
 
     @Override

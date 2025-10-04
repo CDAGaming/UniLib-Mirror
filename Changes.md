@@ -27,6 +27,7 @@ See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for mor
 ### Fixes
 
 * Fixed an incorrect initialization call in `ExtendedScreen#initializeUi`, causing a crash in certain scenarios
+* Fixed UI element flicker and delay in hover tooltips on `ExtendedButtonControl` and its extensions
 
 ___
 

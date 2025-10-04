@@ -860,6 +860,11 @@ public class ExtendedScreen extends GuiScreen {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         // Ensures initialization events have run first, preventing an NPE
         if (isLoaded()) {
+            lastMouseX = mouseX;
+            lastMouseY = mouseY;
+            lastPartialTicks = partialTicks;
+            isOverScreen = RenderUtils.isMouseOver(mouseX, mouseY, this);
+
             preRender();
 
             RenderUtils.enableScissor(
@@ -879,11 +884,6 @@ public class ExtendedScreen extends GuiScreen {
             }
 
             super.drawScreen(mouseX, mouseY, partialTicks);
-
-            lastMouseX = mouseX;
-            lastMouseY = mouseY;
-            lastPartialTicks = partialTicks;
-            isOverScreen = RenderUtils.isMouseOver(mouseX, mouseY, this);
 
             for (Gui extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedTextControl textField) {
