@@ -1639,6 +1639,12 @@ public class ExtendedScreen extends GuiScreen {
                 setContentHeight(widgetHeight);
             }
         }
+
+        for (Gui extendedControl : getControls()) {
+            if (extendedControl instanceof ExtendedScreen extendedScreen) {
+                extendedScreen.refreshContentHeight();
+            }
+        }
     }
 
     /**
