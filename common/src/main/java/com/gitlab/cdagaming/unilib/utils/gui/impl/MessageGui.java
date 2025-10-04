@@ -60,7 +60,9 @@ public class MessageGui extends ExtendedScreen {
     }
 
     @Override
-    public void initializeUi() {
+    public void constructElements() {
+        super.constructElements();
+
         // Adding Back Button
         addControl(
                 new ExtendedButtonControl(
@@ -70,8 +72,6 @@ public class MessageGui extends ExtendedScreen {
                         () -> openScreen(getParent())
                 )
         );
-
-        super.initializeUi();
     }
 
     @Override

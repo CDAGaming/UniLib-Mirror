@@ -121,10 +121,10 @@ public class SelectorGui extends ExtendedScreen {
     }
 
     @Override
-    public void initializeUi() {
+    public void constructElements() {
+        super.constructElements();
         appendListControl();
         appendControls();
-        super.initializeUi();
     }
 
     protected String getOriginalValue() {

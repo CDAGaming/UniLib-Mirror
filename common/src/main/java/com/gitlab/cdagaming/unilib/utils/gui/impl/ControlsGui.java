@@ -83,7 +83,9 @@ public class ControlsGui extends ExtendedScreen {
     }
 
     @Override
-    public void initializeUi() {
+    public void constructElements() {
+        super.constructElements();
+
         // Adding Back Button
         addControl(
                 new ExtendedButtonControl(
@@ -105,8 +107,6 @@ public class ControlsGui extends ExtendedScreen {
                 )
         );
         setupScreenData();
-
-        super.initializeUi();
     }
 
     @Override

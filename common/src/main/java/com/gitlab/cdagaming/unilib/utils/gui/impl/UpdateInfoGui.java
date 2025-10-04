@@ -54,7 +54,9 @@ public class UpdateInfoGui extends ExtendedScreen {
     }
 
     @Override
-    public void initializeUi() {
+    public void constructElements() {
+        super.constructElements();
+
         checkButton = addControl(
                 new ExtendedButtonControl(
                         (getScreenWidth() / 2) - 90, (getScreenHeight() - 26),
@@ -98,8 +100,6 @@ public class UpdateInfoGui extends ExtendedScreen {
         ));
 
         updateNotes();
-
-        super.initializeUi();
     }
 
     @Override
