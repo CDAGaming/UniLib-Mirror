@@ -24,36 +24,27 @@
 
 package com.gitlab.cdagaming.unilib.forge;
 
-import com.gitlab.cdagaming.unilib.UniLib;
-import com.gitlab.cdagaming.unilib.core.CoreUtils;
-import io.github.cdagaming.unicore.utils.OSUtils;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.ExtensionPoint;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.network.FMLNetworkConstants;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * The Primary Application Class and Utilities
  *
  * @author CDAGaming
  */
-@Mod("@MOD_ID@")
-public class UniLibForge {
+public class ClientExtensions {
     /**
      * Begins Scheduling Ticks on Class Initialization
      */
-    public UniLibForge() {
-        if (OSUtils.JAVA_SPEC < 1.8f) {
-            throw new UnsupportedOperationException("Incompatible JVM!!! @MOD_NAME@ requires Java 8 or above to work properly!");
-        }
-
-        if (FMLEnvironment.dist.isClient()) {
-            ClientExtensions.Setup();
-
-            CoreUtils.MOD_COUNT_SUPPLIER = () -> ModList.get().getMods().size();
-
-            UniLib.assertLoaded();
-        } else {
-            CoreUtils.LOG.info("Disabling @MOD_NAME@, as it is client side only.");
+    public static void Setup() {
+        try {
+            // Workaround: Client-side only fix for Forge Clients
+            // - Reference => https://gitlab.com/CDAGaming/CraftPresence/-/issues/99
+            ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (a, b) -> true));
+        } catch (Throwable ignored) {
+            // before forge-1.13.2-25.0.103
         }
     }
 }

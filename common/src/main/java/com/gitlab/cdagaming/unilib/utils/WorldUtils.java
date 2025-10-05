@@ -79,7 +79,7 @@ public class WorldUtils {
         if (entity != null) {
             result = StringUtils.getOrDefault(
                     entity.getDisplayName().getFormattedText(),
-                    entity.getName()
+                    entity.getName().getFormattedText()
             );
         }
 

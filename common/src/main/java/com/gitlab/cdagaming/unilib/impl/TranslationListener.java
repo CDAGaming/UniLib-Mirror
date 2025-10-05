@@ -25,8 +25,8 @@
 package com.gitlab.cdagaming.unilib.impl;
 
 import io.github.cdagaming.unicore.utils.StringUtils;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourceManagerReloadListener;
+import net.minecraft.resources.IResourceManager;
+import net.minecraft.resources.IResourceManagerReloadListener;
 
 import java.util.Map;
 
