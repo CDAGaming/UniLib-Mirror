@@ -197,7 +197,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
     public boolean isControlEnabled() {
         return StringUtils.getValidBoolean(StringUtils.getField(
                 GuiTextField.class, this,
-                "isEnabled", "field_73819_m", "field_1127", "p"
+                "isEnabled", "field_73819_m", "field_1127", "m"
         )).getSecond();
     }
 

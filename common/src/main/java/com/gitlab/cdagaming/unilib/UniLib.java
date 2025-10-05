@@ -86,11 +86,6 @@ public class UniLib {
      */
     private static void init() {
         // Register Resource Reload Listeners
-        ModUtils.executeOnMainThread(() -> ModUtils.registerReloadListener(
-                CoreUtils.MOD_ID + ":translation_listener",
-                TranslationListener.INSTANCE
-        ));
-
         if (ModUtils.RAW_TRANSLATOR != null) {
             TranslationListener.INSTANCE.addModule("minecraft", new TranslationManager(
                     UniLib.instance,

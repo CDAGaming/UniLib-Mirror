@@ -25,8 +25,6 @@
 package com.gitlab.cdagaming.unilib.utils;
 
 import io.github.cdagaming.unicore.utils.StringUtils;
-import net.minecraft.util.ResourceLocation;
-
 /**
  * Image Utilities used to Parse texture resource data
  *
@@ -36,7 +34,7 @@ public class ResourceUtils {
     /**
      * Object representing an empty texture resource
      */
-    private static final ResourceLocation EMPTY_RESOURCE = parseResource("");
+    private static final String EMPTY_RESOURCE = parseResource("");
 
     /**
      * Retrieve a texture resource within the specified namespace and path
@@ -45,8 +43,8 @@ public class ResourceUtils {
      * @param path      the path to interpret
      * @return The found texture resource
      */
-    public static ResourceLocation getResource(final String namespace, final String path) {
-        return new ResourceLocation(namespace, path);
+    public static String getResource(final String namespace, final String path) {
+        return path;
     }
 
     /**
@@ -55,7 +53,7 @@ public class ResourceUtils {
      * @param path the path to interpret
      * @return The found texture resource
      */
-    public static ResourceLocation getResource(final String path) {
+    public static String getResource(final String path) {
         return getResource("minecraft", path);
     }
 
@@ -65,8 +63,8 @@ public class ResourceUtils {
      * @param path the path to interpret
      * @return The found texture resource
      */
-    public static ResourceLocation parseResource(final String path) {
-        return new ResourceLocation(path);
+    public static String parseResource(final String path) {
+        return path;
     }
 
     /**
@@ -74,7 +72,7 @@ public class ResourceUtils {
      *
      * @return an object representing an empty texture resource
      */
-    public static ResourceLocation getEmptyResource() {
+    public static String getEmptyResource() {
         return EMPTY_RESOURCE;
     }
 
@@ -84,8 +82,8 @@ public class ResourceUtils {
      * @param location The texture resource to interpret
      * @return the namespace of the resource
      */
-    public static String getNamespace(final ResourceLocation location) {
-        return location != null ? location.getResourceDomain() : "";
+    public static String getNamespace(final String location) {
+        return StringUtils.getOrDefault(location);
     }
 
     /**
@@ -94,8 +92,8 @@ public class ResourceUtils {
      * @param location The texture resource to interpret
      * @return the path of the resource
      */
-    public static String getPath(final ResourceLocation location) {
-        return location != null ? location.getResourcePath() : "";
+    public static String getPath(final String location) {
+        return StringUtils.getOrDefault(location);
     }
 
     /**
@@ -104,7 +102,7 @@ public class ResourceUtils {
      * @param location The texture resource to interpret
      * @return Whether the specified Texture contains valid information
      */
-    public static boolean isValidResource(final ResourceLocation location) {
+    public static boolean isValidResource(final String location) {
         return location != null && !StringUtils.isNullOrEmpty(getNamespace(location)) && !StringUtils.isNullOrEmpty(getPath(location));
     }
 }

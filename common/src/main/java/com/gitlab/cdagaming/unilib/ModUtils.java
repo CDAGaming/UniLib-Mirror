@@ -28,8 +28,6 @@ import com.gitlab.cdagaming.unilib.core.CoreUtils;
 import io.github.cdagaming.unicore.utils.TranslationUtils;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.ResourceManagerReloadListener;
-import net.minecraft.client.resources.SimpleReloadableResourceManager;
 
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
@@ -64,19 +62,6 @@ public class ModUtils {
      * Getter for the Game Client Instance
      */
     private static final Supplier<Minecraft> INSTANCE_GETTER = Minecraft::getMinecraft;
-
-    /**
-     * Consumer Event for Resource Reload Listener Registration
-     */
-    private static final BiConsumer<String, ResourceManagerReloadListener> RELOAD_LISTENER_HOOK = (
-            (id, listener) -> ((SimpleReloadableResourceManager) getMinecraft().getResourceManager()).registerReloadListener(listener)
-    );
-
-    /**
-     * Whether the Resource Reload Listener can be used
-     * <p>Certain Mod Loaders do not allow registering this way and use other means.
-     */
-    public static boolean CAN_USE_RELOAD_LISTENER = true;
 
     /**
      * Consumer Event for running events on the Main Game Thread
@@ -124,19 +109,6 @@ public class ModUtils {
      */
     public static String getLanguage() {
         return getLanguage(CoreUtils.getDefaultLanguage());
-    }
-
-    /**
-     * Register a Resource Reload Listener
-     * <p>
-     * Must be executed on the Main Thread to avoid issues
-     *
-     * @param id       The ID for the listener
-     * @param listener The Listener to register
-     */
-    public static void registerReloadListener(final String id, final ResourceManagerReloadListener listener) {
-        if (!CAN_USE_RELOAD_LISTENER) return;
-        RELOAD_LISTENER_HOOK.accept(id, listener);
     }
 
     /**
