@@ -139,9 +139,9 @@ public class ExtendedScreen extends GuiScreen {
     private boolean canModifyControls;
 
     /**
-     * Restore List, if any, for screen re-initialization
+     * Restore Buttons, if any, for screen re-initialization
      */
-    private final List<GuiButton> restoreList = StringUtils.newArrayList();
+    private final List<GuiButton> restoreButtons = StringUtils.newArrayList();
 
     /**
      * Initialization Event for this Control, assigning defined arguments
@@ -282,10 +282,10 @@ public class ExtendedScreen extends GuiScreen {
     @Override
     public void initGui() {
         // Restore Fixes -- MC 1.19.3 and below
-        if (!restoreList.isEmpty()) {
+        if (!restoreButtons.isEmpty()) {
             buttonList.clear();
-            buttonList.addAll(restoreList);
-            restoreList.clear();
+            buttonList.addAll(restoreButtons);
+            restoreButtons.clear();
         }
         // Clear Data before Initialization
         super.initGui();
@@ -320,7 +320,7 @@ public class ExtendedScreen extends GuiScreen {
     public void initializeUi() {
         if (isUnloaded()) {
             // Restore Fixes -- MC 1.19.3 and below
-            restoreList.addAll(buttonList);
+            restoreButtons.addAll(buttonList);
 
             setWorldAndResolution(getGameInstance(), getScreenWidth(), getScreenHeight());
             return;

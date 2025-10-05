@@ -19,6 +19,10 @@ See the Mod Description or [README](https://gitlab.com/CDAGaming/UniLib) for mor
   * Implemented `mouseReleased` call in `ScrollPane`, allowing `clickedScrollbar` to become `false` when mouse is released
   * Added new APIs to `ScrollPane`: `setScrolling(bool)` and `isOverScrollbar(mouseX, mouseY)`
   * Added `rawCategoryName()` to `KeyUtils#KeyBindData` as an alias to `category()`
+  * (MC 1.13.2 - MC 1.21.8) Added missing `SliderControl#dragging` variable
+  * (MC 1.21.9) Fixed `KeyUtils#getKeyMappings` using the wrong `category` reference
+  * (MC 1.14.4 - MC 1.21.8) Added missing `mouseReleased` call to `ExtendedScreen`
+  * (MC 1.13.2+) Add missing `mouseReleased` call to `ScrollPane`
 * Added additional API calls for the `PREINIT` and `INIT` phases of Screen Initialization
 * Added `constructElements()` and `appendElements()` to `ExtendedScreen` as an alternative to using `initializeUi` for adding UI elements to the screen
   * These methods, alongside the prior note, allow for initializing controls in the correct phase
