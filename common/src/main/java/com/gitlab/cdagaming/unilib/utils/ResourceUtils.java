@@ -25,7 +25,7 @@
 package com.gitlab.cdagaming.unilib.utils;
 
 import io.github.cdagaming.unicore.utils.StringUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Image Utilities used to Parse texture resource data

@@ -28,7 +28,8 @@ import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ScrollPane;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.IGuiEventListener;
+import net.minecraft.client.gui.components.events.ContainerEventHandler;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 
 import javax.annotation.Nullable;
 import java.util.AbstractList;
@@ -150,9 +151,9 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
     }
 
     @Override
-    public void focusChanged(final boolean focused) {
+    public boolean changeFocus(final boolean focused) {
         if (!inFocus && getItemCount() == 0) {
-            return;
+            return false;
         } else {
             inFocus = !inFocus;
             if (inFocus && getSelected() == null && getItemCount() > 0) {
@@ -160,13 +161,8 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
             } else if (inFocus && getSelected() != null) {
                 moveSelection(0);
             }
-            return;
+            return inFocus;
         }
-    }
-
-    @Override
-    public List<? extends IGuiEventListener> getChildren() {
-        return children();
     }
 
     /**
@@ -174,6 +170,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
      *
      * @return the current entry list
      */
+    @Override
     public final List<E> children() {
         return children;
     }
@@ -432,6 +429,10 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
                 final E entry = getEntryAtPosition(mouseX, mouseY);
                 if (entry != null) {
                     if (entry.mouseClicked(mouseX, mouseY, mouseButton)) {
+                        final E focused = getFocused();
+                        if (focused != entry && focused instanceof ContainerEventHandler containerEventHandler) {
+                            containerEventHandler.setFocused(null);
+                        }
                         setFocused(entry);
                         return true;
                     }
@@ -454,7 +455,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
     }
 
     @Override
-    protected void setFocused(@Nullable IGuiEventListener arg) {
+    public void setFocused(@Nullable GuiEventListener arg) {
         super.setFocused(arg);
         final int index = children().indexOf(arg);
         if (index >= 0) {
@@ -725,7 +726,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
      * @param <E> The entry type for the object
      * @author CDAGaming
      */
-    protected abstract static class Entry<E extends EntryListPane.Entry<E>> implements IGuiEventListener {
+    protected abstract static class Entry<E extends EntryListPane.Entry<E>> implements GuiEventListener {
         /**
          * The entry list reference
          */
@@ -733,12 +734,12 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
         EntryListPane<E> list;
 
         @Override
-        public void focusChanged(boolean focused) {
-            setFocused(focused);
+        public boolean changeFocus(boolean focused) {
+            return setFocused(focused);
         }
 
-        public void setFocused(boolean focused) {
-            // N/A
+        public boolean setFocused(boolean focused) {
+            return false;
         }
 
         public boolean isFocused() {
@@ -798,6 +799,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
          * @param mouseY The Mouse's Current Y Position
          * @return {@link Boolean#TRUE} if the Mouse Position is within the bounds of the object, and thus is over it
          */
+        @Override
         public boolean isMouseOver(final double mouseX, final double mouseY) {
             return Objects.equals(list.getEntryAtPosition(mouseX, mouseY), this);
         }

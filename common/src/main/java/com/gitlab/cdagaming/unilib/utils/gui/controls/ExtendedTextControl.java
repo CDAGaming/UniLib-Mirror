@@ -27,8 +27,8 @@ package com.gitlab.cdagaming.unilib.utils.gui.controls;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
 import io.github.cdagaming.unicore.utils.StringUtils;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.EditBox;
 
 import javax.annotation.Nonnull;
 
@@ -37,7 +37,7 @@ import javax.annotation.Nonnull;
  *
  * @author CDAGaming
  */
-public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
+public class ExtendedTextControl extends EditBox implements DynamicWidget {
     /**
      * The default character limit for all controls of this type
      */
@@ -57,8 +57,8 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
      * @param widthIn         The Width for this Control
      * @param heightIn        The Height for this Control
      */
-    public ExtendedTextControl(final int componentId, final FontRenderer fontRendererObj, final int x, final int y, final int widthIn, final int heightIn) {
-        super(componentId, fontRendererObj, x, y, widthIn, heightIn);
+    public ExtendedTextControl(final int componentId, final Font fontRendererObj, final int x, final int y, final int widthIn, final int heightIn) {
+        super(fontRendererObj, x, y, widthIn, heightIn, "");
         setControlMaxLength(DEFAULT_TEXT_LIMIT);
     }
 
@@ -71,7 +71,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
      * @param widthIn         The Width for this Control
      * @param heightIn        The Height for this Control
      */
-    public ExtendedTextControl(final FontRenderer fontRendererObj, final int x, final int y, final int widthIn, final int heightIn) {
+    public ExtendedTextControl(final Font fontRendererObj, final int x, final int y, final int widthIn, final int heightIn) {
         this(ExtendedScreen.getNextIndex(), fontRendererObj, x, y, widthIn, heightIn);
     }
 
@@ -85,7 +85,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
      * @param heightIn        The Height for this Control
      * @param keyEvent        The event to run when characters are typed in this control
      */
-    public ExtendedTextControl(final FontRenderer fontRendererObj, final int x, final int y, final int widthIn, final int heightIn, final Runnable keyEvent) {
+    public ExtendedTextControl(final Font fontRendererObj, final int x, final int y, final int widthIn, final int heightIn, final Runnable keyEvent) {
         this(fontRendererObj, x, y, widthIn, heightIn);
         setOnKeyTyped(keyEvent);
     }
@@ -151,7 +151,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
      * @return The control's current text contents
      */
     public String getControlMessage() {
-        return this.getText();
+        return this.getValue();
     }
 
     /**
@@ -160,7 +160,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
      * @param newMessage The new display message for this control
      */
     public void setControlMessage(final String newMessage) {
-        this.setText(StringUtils.getOrDefault(newMessage));
+        this.setValue(StringUtils.getOrDefault(newMessage));
     }
 
     /**
@@ -169,7 +169,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
      * @return Whether the control is currently active or enabled
      */
     public boolean isControlEnabled() {
-        return this.isEnabled;
+        return this.isEditable();
     }
 
     /**
@@ -178,7 +178,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
      * @param isEnabled The new enable state for this control
      */
     public void setControlEnabled(final boolean isEnabled) {
-        this.setEnabled(isEnabled);
+        this.setEditable(isEnabled);
     }
 
     /**
@@ -187,7 +187,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
      * @return Whether the control is currently visible
      */
     public boolean isControlVisible() {
-        return this.getVisible();
+        return this.isVisible();
     }
 
     /**
@@ -205,7 +205,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
      * @return The control's maximum text contents
      */
     public int getControlMaxLength() {
-        return this.getMaxStringLength();
+        return this.getMaxLength();
     }
 
     /**
@@ -214,7 +214,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
      * @param newLength The new maximum length for this control's message
      */
     public void setControlMaxLength(final int newLength) {
-        this.setMaxStringLength(newLength);
+        this.setMaxLength(newLength);
     }
 
     /**
@@ -232,7 +232,7 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
      * @param focused the new focus state for the control
      */
     public void setControlFocused(final boolean focused) {
-        this.setFocused(focused);
+        this.setFocus(focused);
     }
 
     /**
@@ -259,8 +259,8 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
      * @param textToWrite The text that's being written/replaced
      */
     @Override
-    public void writeText(@Nonnull String textToWrite) {
-        super.writeText(textToWrite);
+    public void insertText(@Nonnull String textToWrite) {
+        super.insertText(textToWrite);
         onKeyTyped();
     }
 
@@ -270,8 +270,8 @@ public class ExtendedTextControl extends GuiTextField implements DynamicWidget {
      * @param num The number of text that's being written/replaced
      */
     @Override
-    public void deleteFromCursor(int num) {
-        super.deleteFromCursor(num);
+    public void deleteChars(int num) {
+        super.deleteChars(num);
         onKeyTyped();
     }
 }

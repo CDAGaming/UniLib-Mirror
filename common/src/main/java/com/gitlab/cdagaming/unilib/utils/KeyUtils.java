@@ -27,12 +27,12 @@ package com.gitlab.cdagaming.unilib.utils;
 import com.gitlab.cdagaming.unilib.ModUtils;
 import com.gitlab.cdagaming.unilib.core.CoreUtils;
 import com.gitlab.cdagaming.unilib.core.impl.KeyConverter;
+import com.mojang.blaze3d.platform.InputConstants;
 import io.github.cdagaming.unicore.impl.Pair;
 import io.github.cdagaming.unicore.utils.StringUtils;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiControls;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.client.util.InputMappings;
+import net.minecraft.client.gui.screens.controls.ControlsScreen;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
@@ -148,8 +148,8 @@ public class KeyUtils {
      * @param currentKey The current key for this binding
      * @return the created KeyBind instance
      */
-    private KeyBinding createKey(final String id, final String name, final String category, final int defaultKey, final int currentKey) {
-        final KeyBinding result = new KeyBinding(name, defaultKey, category);
+    private KeyMapping createKey(final String id, final String name, final String category, final int defaultKey, final int currentKey) {
+        final KeyMapping result = new KeyMapping(name, defaultKey, category);
         keySyncQueue.put(id, currentKey);
         return result;
     }
@@ -173,7 +173,7 @@ public class KeyUtils {
      * @param callback          The event to execute upon an exception occurring during KeyBind events
      * @return the created and registered KeyBind instance
      */
-    public KeyBinding registerKey(final String id, final String name,
+    public KeyMapping registerKey(final String id, final String name,
                                   final Function<String, String> nameFormatter,
                                   final String category,
                                   final Function<String, String> categoryFormatter,
@@ -185,13 +185,13 @@ public class KeyUtils {
                                   final BiConsumer<Integer, Boolean> onBind,
                                   final Predicate<Integer> onOutdated,
                                   final BiFunction<Throwable, Pair<String, KeyBindData>, Boolean> callback) {
-        final KeyBinding keyBind = createKey(id, name, category, defaultKey, currentKey);
+        final KeyMapping keyBind = createKey(id, name, category, defaultKey, currentKey);
         final KeyBindData keyData = new KeyBindData(
                 keyBind,
                 nameFormatter,
-                keyBind::getKeyCategory,
+                keyBind::getCategory,
                 categoryFormatter,
-                () -> keyBind.getDefault().getKeyCode(),
+                () -> keyBind.getDefaultKey().getValue(),
                 detailsSupplier,
                 canCheckSupplier,
                 canSyncSupplier,
@@ -221,7 +221,7 @@ public class KeyUtils {
      * @param callback         The event to execute upon an exception occurring during KeyBind events
      * @return the created and registered KeyBind instance
      */
-    public KeyBinding registerKey(final String id, final String name,
+    public KeyMapping registerKey(final String id, final String name,
                                   final String category,
                                   final int defaultKey, final int currentKey,
                                   final Supplier<String> detailsSupplier,
@@ -259,7 +259,7 @@ public class KeyUtils {
      * @param callback         The event to execute upon an exception occurring during KeyBind events
      * @return the created and registered KeyBind instance
      */
-    public KeyBinding registerKey(final String id, final String name,
+    public KeyMapping registerKey(final String id, final String name,
                                   final String category,
                                   final int defaultKey, final int currentKey,
                                   final Supplier<Boolean> canCheckSupplier,
@@ -286,19 +286,19 @@ public class KeyUtils {
      * @param instance the KeyBind instance to modify
      * @param newKey   the new key for the specified KeyBinding
      */
-    private void setKey(final KeyBinding instance, final int newKey) {
+    private void setKey(final KeyMapping instance, final int newKey) {
         final boolean isLwjgl2 = protocol <= 340;
         final int unknownKeyCode = isLwjgl2 ? -1 : 0;
         final String unknownKeyName = (isLwjgl2 ? KeyConverter.fromGlfw : KeyConverter.toGlfw).get(unknownKeyCode).name();
 
-        final InputMappings.Input inputKey;
+        final InputConstants.Key inputKey;
         if (getKeyName(newKey).equals(unknownKeyName)) {
-            inputKey = InputMappings.INPUT_INVALID;
+            inputKey = InputConstants.UNKNOWN;
         } else {
-            inputKey = InputMappings.getInputByCode(newKey, GLFW.glfwGetKeyScancode(newKey));
+            inputKey = InputConstants.getKey(newKey, GLFW.glfwGetKeyScancode(newKey));
         }
-        instance.bind(inputKey);
-        KeyBinding.resetKeyBindingArrayAndHash();
+        instance.setKey(inputKey);
+        KeyMapping.resetMapping();
     }
 
     /**
@@ -352,18 +352,18 @@ public class KeyUtils {
         }
 
         if (!areKeysRegistered()) {
-            if (getInstance().gameSettings != null) {
+            if (getInstance().options != null) {
                 for (Map.Entry<String, KeyBindData> data : getRegistrationEntries()) {
                     final KeyBindData entry = data.getValue();
                     final String category = entry.category();
 
-                    final Map<String, Integer> categoryMap = KeyBinding.CATEGORY_ORDER;
+                    final Map<String, Integer> categoryMap = KeyMapping.CATEGORY_SORT_ORDER;
                     if (!categoryMap.containsKey(category)) {
                         final Optional<Integer> largest = categoryMap.values().stream().max(Integer::compareTo);
                         final int largestInt = largest.orElse(0);
                         categoryMap.put(category, largestInt + 1);
                     }
-                    getInstance().gameSettings.keyBindings = StringUtils.addToArray(getInstance().gameSettings.keyBindings, entry.binding());
+                    getInstance().options.keyMappings = StringUtils.addToArray(getInstance().options.keyMappings, entry.binding());
 
                     registrationQueue.remove(data.getKey());
                 }
@@ -372,7 +372,7 @@ public class KeyUtils {
             }
         }
 
-        if (getInstance().mainWindow != null) {
+        if (getInstance().window != null) {
             final boolean isLwjgl2 = protocol <= 340;
             final int unknownKeyCode = isLwjgl2 ? -1 : 0;
             final String unknownKeyName = (isLwjgl2 ? KeyConverter.fromGlfw : KeyConverter.toGlfw).get(unknownKeyCode).name();
@@ -387,7 +387,7 @@ public class KeyUtils {
 
                         if (!getKeyName(currentBind).equals(unknownKeyName) && !isValidClearCode(currentBind)) {
                             // Only process the key if it is not an unknown or invalid key
-                            if (GLFW.glfwGetKey(getInstance().mainWindow.getHandle(), currentBind) == GLFW.GLFW_PRESS && !(GameUtils.getCurrentScreen(getInstance()) instanceof GuiControls)) {
+                            if (GLFW.glfwGetKey(getInstance().window.getWindow(), currentBind) == GLFW.GLFW_PRESS && !(GameUtils.getCurrentScreen(getInstance()) instanceof ControlsScreen)) {
                                 try {
                                     keyData.runEvent().run();
                                 } catch (Throwable ex) {
@@ -518,7 +518,7 @@ public class KeyUtils {
      * @param vanillaPredicate   The event to determine whether the KeyBind is up-to-date (Ex: Vanilla==Config)
      * @param errorCallback      The event to execute upon an exception occurring during KeyBind events (Format: [exception,keyName,keyData] returns resetKey)
      */
-    public record KeyBindData(KeyBinding binding,
+    public record KeyBindData(KeyMapping binding,
                               Function<String, String> nameFormatter,
                               Supplier<String> categorySupplier,
                               Function<String, String> categoryFormatter,
@@ -589,7 +589,7 @@ public class KeyUtils {
          * @return the KeyBind description
          */
         public String description() {
-            return binding().getKeyDescription();
+            return binding().getName();
         }
 
         /**
@@ -607,7 +607,7 @@ public class KeyUtils {
          * @return the currently assigned key code
          */
         public int keyCode() {
-            return binding().keyCode.getKeyCode();
+            return binding().key.getValue();
         }
 
         /**

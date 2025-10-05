@@ -168,7 +168,7 @@ public class CheckBoxControl extends ExtendedButtonControl {
 
             if (isChecked())
                 RenderUtils.renderCenteredString(
-                        mc.fontRenderer,
+                        mc.font,
                         "x",
                         getControlPosX() + (getBoxWidth() / 2) + 1,
                         getControlPosY() + 1,
@@ -177,8 +177,8 @@ public class CheckBoxControl extends ExtendedButtonControl {
 
             final int left = getControlPosX() + getBoxWidth() + 2;
             RenderUtils.renderScrollingString(mc,
-                    mc.fontRenderer, getControlMessage(),
-                    left + (RenderUtils.getStringWidth(mc.fontRenderer, getControlMessage()) / 2),
+                    mc.font, getControlMessage(),
+                    left + (RenderUtils.getStringWidth(mc.font, getControlMessage()) / 2),
                     left, getTop(), getRight() - 2, getBottom(),
                     color
             );
@@ -192,7 +192,7 @@ public class CheckBoxControl extends ExtendedButtonControl {
     @Override
     protected void renderBg(@Nonnull Minecraft mc, int mouseX, int mouseY) {
         if (isControlVisible()) {
-            final int hoverState = getHoverState(isHoveringOrFocusingOver());
+            final int hoverState = getYImage(isHoveringOrFocusingOver());
 
             final String borderColor = hoverState == 2 ? "#FFFFFF" : "#000000";
             final String contentColor = "#2b2b2b";
