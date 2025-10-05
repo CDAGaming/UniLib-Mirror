@@ -25,13 +25,16 @@
 package com.gitlab.cdagaming.unilib.utils;
 
 import com.gitlab.cdagaming.unilib.core.CoreUtils;
+import io.github.cdagaming.unicore.integrations.logging.SLF4JLogger;
 import io.github.cdagaming.unicore.utils.FileUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.core.component.DataComponentHolder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.*;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.level.storage.TagValueOutput;
 
 import java.util.List;
 
@@ -48,8 +51,14 @@ public class NbtUtils {
      * @return the resulting NBT Tag, or null if not found
      */
     public static CompoundTag getNbt(final Entity entity) {
-        CompoundTag result = new CompoundTag();
-        return entity != null ? entity.saveWithoutId(result) : result;
+        try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(entity.problemPath(), ((SLF4JLogger) CoreUtils.LOG).getLogInstance())) {
+            TagValueOutput tagValueOutput = TagValueOutput.createWithContext(scopedCollector, entity.registryAccess());
+            entity.saveWithoutId(tagValueOutput);
+            return tagValueOutput.buildResult();
+        } catch (Throwable ex) {
+            CoreUtils.LOG.debugError(ex);
+            return new CompoundTag();
+        }
     }
 
     /**

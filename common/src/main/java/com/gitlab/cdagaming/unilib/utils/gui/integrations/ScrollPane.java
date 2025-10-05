@@ -30,7 +30,7 @@ import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
 import io.github.cdagaming.unicore.utils.MathUtils;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -279,8 +279,8 @@ public class ScrollPane extends ExtendedScreen {
             final int barTop = Math.max((int) getAmountScrolled() * (screenHeight - height) / maxScroll + top, top);
 
             RenderUtils.renderSprite(getCurrentMatrix(), graphics -> {
-                graphics.blitSprite(RenderType::guiTextured, getScrollerBackgroundSprite(), scrollBarX, top, scrollBarWidth, bottom - top);
-                graphics.blitSprite(RenderType::guiTextured, getScrollerSprite(), scrollBarX, barTop, scrollBarWidth, height);
+                graphics.blitSprite(RenderPipelines.GUI_TEXTURED, getScrollerBackgroundSprite(), scrollBarX, top, scrollBarWidth, bottom - top);
+                graphics.blitSprite(RenderPipelines.GUI_TEXTURED, getScrollerSprite(), scrollBarX, barTop, scrollBarWidth, height);
             });
         }
     }
