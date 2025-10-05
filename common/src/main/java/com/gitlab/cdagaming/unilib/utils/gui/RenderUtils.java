@@ -34,7 +34,6 @@ import com.gitlab.cdagaming.unilib.utils.gui.controls.ExtendedButtonControl;
 import com.gitlab.cdagaming.unilib.utils.gui.controls.ExtendedTextControl;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import io.github.cdagaming.unicore.impl.Pair;
 import io.github.cdagaming.unicore.impl.Tuple;
@@ -46,11 +45,11 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import org.lwjgl.opengl.GL11;
+import org.joml.Matrix4f;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -58,6 +57,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Rendering Utilities used to Parse Screen Data and handle rendering tasks
@@ -279,14 +279,12 @@ public class RenderUtils {
             final PoseStack lv = client.pose();
             lv.pushPose();
             lv.scale(scale, scale, 1.0f);
-            RenderSystem.enableDepthTest();
 
             final int xPos = Math.round(x / scale);
             final int yPos = Math.round(y / scale);
             client.renderItem(stack, xPos, yPos);
             client.renderItemDecorations(fontRenderer, stack, xPos, yPos);
 
-            RenderSystem.disableDepthTest();
             lv.popPose();
         } catch (Throwable ex) {
             CoreUtils.LOG.debugError(ex);
@@ -299,6 +297,8 @@ public class RenderUtils {
     /**
      * Renders a Gradient Box from the defined arguments
      *
+     * @param mc              The Matrix Stack, used for Rendering
+     * @param renderType      The Render Type, used for Rendering
      * @param posX            The Starting X Position to render the object
      * @param posY            The Starting Y Position to render the object
      * @param width           The full width for the object to render to
@@ -311,7 +311,8 @@ public class RenderUtils {
      * @param contentColor    The starting content color for the object
      * @param contentColorEnd The ending content color for the object
      */
-    public static void drawGradientBox(final double posX, final double posY,
+    public static void drawGradientBox(@Nonnull final GuiGraphics mc, final RenderType renderType,
+                                       final double posX, final double posY,
                                        final double width, final double height,
                                        final double zLevel,
                                        final Object borderColor, final Object borderColorEnd,
@@ -326,24 +327,52 @@ public class RenderUtils {
         // Draw Borders
         if (borderColor != null) {
             // Top Left
-            drawGradient(posX, posX + border, posY + border, canvasBottom, zLevel, borderColor, borderColorEnd);
+            drawGradient(mc, renderType, posX, posX + border, posY + border, canvasBottom, zLevel, borderColor, borderColorEnd);
             // Top Right
-            drawGradient(canvasRight, canvasRight + border, posY + border, canvasBottom, zLevel, borderColor, borderColorEnd);
+            drawGradient(mc, renderType, canvasRight, canvasRight + border, posY + border, canvasBottom, zLevel, borderColor, borderColorEnd);
             // Bottom Left
-            drawGradient(posX - borderOffset, canvasRight + border + borderOffset, canvasBottom, canvasBottom + border, zLevel, borderColorEnd, borderColorEnd);
+            drawGradient(mc, renderType, posX - borderOffset, canvasRight + border + borderOffset, canvasBottom, canvasBottom + border, zLevel, borderColorEnd, borderColorEnd);
             // Bottom Right
-            drawGradient(posX - borderOffset, canvasRight + border + borderOffset, posY, posY + border, zLevel, borderColor, borderColor);
+            drawGradient(mc, renderType, posX - borderOffset, canvasRight + border + borderOffset, posY, posY + border, zLevel, borderColor, borderColor);
         }
 
         // Draw Content Box
         if (contentColor != null) {
-            drawGradient(posX + border, canvasRight, posY + border, canvasBottom, zLevel, contentColor, contentColorEnd);
+            drawGradient(mc, renderType, posX + border, canvasRight, posY + border, canvasBottom, zLevel, contentColor, contentColorEnd);
         }
     }
 
     /**
      * Renders a Gradient Box from the defined arguments
      *
+     * @param mc              The Matrix Stack, used for Rendering
+     * @param posX            The Starting X Position to render the object
+     * @param posY            The Starting Y Position to render the object
+     * @param width           The full width for the object to render to
+     * @param height          The full height for the object to render to
+     * @param zLevel          The Z level position for the object to render at
+     * @param borderColor     The starting border color for the object
+     * @param borderColorEnd  The ending border color for the object
+     * @param border          The full width of the border for the object
+     * @param borderOffset    The offset to apply to the vertical border bounds (Useful for Drop Shadows)
+     * @param contentColor    The starting content color for the object
+     * @param contentColorEnd The ending content color for the object
+     */
+    public static void drawGradientBox(@Nonnull final GuiGraphics mc,
+                                       final double posX, final double posY,
+                                       final double width, final double height,
+                                       final double zLevel,
+                                       final Object borderColor, final Object borderColorEnd,
+                                       final int border, final int borderOffset,
+                                       final Object contentColor, final Object contentColorEnd) {
+        drawGradientBox(mc, RenderType.gui(), posX, posY, width, height, zLevel, borderColor, borderColorEnd, border, borderOffset, contentColor, contentColorEnd);
+    }
+
+    /**
+     * Renders a Gradient Box from the defined arguments
+     *
+     * @param mc              The Matrix Stack, used for Rendering
+     * @param renderType      The Render Type, used for Rendering
      * @param posX            The Starting X Position to render the object
      * @param posY            The Starting Y Position to render the object
      * @param width           The full width for the object to render to
@@ -355,13 +384,14 @@ public class RenderUtils {
      * @param contentColor    The starting content color for the object
      * @param contentColorEnd The ending content color for the object
      */
-    public static void drawGradientBox(final double posX, final double posY,
+    public static void drawGradientBox(@Nonnull final GuiGraphics mc, final RenderType renderType,
+                                       final double posX, final double posY,
                                        final double width, final double height,
                                        final double zLevel,
                                        final Object borderColor, final Object borderColorEnd,
                                        final int border,
                                        final Object contentColor, final Object contentColorEnd) {
-        drawGradientBox(
+        drawGradientBox(mc, renderType,
                 posX, posY,
                 width, height,
                 zLevel,
@@ -372,6 +402,31 @@ public class RenderUtils {
     }
 
     /**
+     * Renders a Gradient Box from the defined arguments
+     *
+     * @param mc              The Matrix Stack, used for Rendering
+     * @param posX            The Starting X Position to render the object
+     * @param posY            The Starting Y Position to render the object
+     * @param width           The full width for the object to render to
+     * @param height          The full height for the object to render to
+     * @param zLevel          The Z level position for the object to render at
+     * @param borderColor     The starting border color for the object
+     * @param borderColorEnd  The ending border color for the object
+     * @param border          The full width of the border for the object
+     * @param contentColor    The starting content color for the object
+     * @param contentColorEnd The ending content color for the object
+     */
+    public static void drawGradientBox(@Nonnull final GuiGraphics mc,
+                                       final double posX, final double posY,
+                                       final double width, final double height,
+                                       final double zLevel,
+                                       final Object borderColor, final Object borderColorEnd,
+                                       final int border,
+                                       final Object contentColor, final Object contentColorEnd) {
+        drawGradientBox(mc, RenderType.gui(), posX, posY, width, height, zLevel, borderColor, borderColorEnd, border, contentColor, contentColorEnd);
+    }
+
+    /**
      * Renders a Button Object from the defined arguments
      *
      * @param graphics The current game instance
@@ -379,20 +434,15 @@ public class RenderUtils {
      */
     public static void renderSprite(@Nonnull final GuiGraphics graphics,
                                     final Consumer<GuiGraphics> callback) {
-        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.enableBlend();
-        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        RenderSystem.enableDepthTest();
-
         callback.accept(graphics);
-
-        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
     /**
      * Draws a Textured Rectangle, following the defined arguments
      *
      * @param mc            The current game instance
+     * @param matrixStack   The Matrix Stack, used for Rendering
+     * @param function      The Render Type Function, used for Rendering
      * @param left          The Left Position of the Object
      * @param right         The Right Position of the Object
      * @param top           The Top Position of the Object
@@ -407,14 +457,15 @@ public class RenderUtils {
      * @param endColorObj   The ending texture RGB data to interpret
      * @param texLocation   The game texture to render the object as
      */
-    public static void drawTexture(@Nonnull final Minecraft mc,
+    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
+                                   final Function<ResourceLocation, RenderType> function,
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel, final boolean asFullTexture,
                                    final double minU, final double maxU, final double minV, final double maxV,
                                    final Object startColorObj, final Object endColorObj,
                                    final ResourceLocation texLocation) {
         if (!asFullTexture) {
-            drawGradient(
+            drawGradient(matrixStack,
                     left, right, top, bottom,
                     zLevel,
                     startColorObj, endColorObj
@@ -422,21 +473,7 @@ public class RenderUtils {
             return;
         }
 
-        try {
-            if (ResourceUtils.isValidResource(texLocation)) {
-                final Pair<Boolean, Integer> data = StringUtils.getValidInteger(texLocation);
-                if (data.getFirst()) {
-                    RenderSystem.bindTexture(data.getSecond());
-                } else {
-                    RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
-                    RenderSystem.setShaderTexture(0, texLocation);
-                }
-            } else {
-                return;
-            }
-        } catch (Exception ignored) {
-            return;
-        }
+        if (!ResourceUtils.isValidResource(texLocation)) return;
 
         final Pair<Color, Color> colorData = StringUtils.findColor(startColorObj, endColorObj);
         final Color startColor = colorData.getFirst();
@@ -445,26 +482,57 @@ public class RenderUtils {
             return;
         }
 
-        RenderSystem.enableBlend();
-        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-
-        final Tesselator tessellator = RenderSystem.renderThreadTesselator();
-        final BufferBuilder buffer = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-        buffer.addVertex((float) left, (float) bottom, (float) zLevel).setUv((float) minU, (float) maxV).setColor(endColor.getRed(), endColor.getGreen(), endColor.getBlue(), endColor.getAlpha());
-        buffer.addVertex((float) right, (float) bottom, (float) zLevel).setUv((float) maxU, (float) maxV).setColor(endColor.getRed(), endColor.getGreen(), endColor.getBlue(), endColor.getAlpha());
-        buffer.addVertex((float) right, (float) top, (float) zLevel).setUv((float) maxU, (float) minV).setColor(startColor.getRed(), startColor.getGreen(), startColor.getBlue(), startColor.getAlpha());
-        buffer.addVertex((float) left, (float) top, (float) zLevel).setUv((float) minU, (float) minV).setColor(startColor.getRed(), startColor.getGreen(), startColor.getBlue(), startColor.getAlpha());
-        BufferUploader.drawWithShader(buffer.buildOrThrow());
-
-        RenderSystem.disableBlend();
+        matrixStack.drawSpecial(bufferSource -> {
+            final Matrix4f matrix4f = matrixStack.pose().last().pose();
+            final VertexConsumer buffer = bufferSource.getBuffer(function.apply(texLocation));
+            buffer.addVertex(matrix4f, (float) left, (float) bottom, (float) zLevel).setUv((float) minU, (float) maxV).setColor(endColor.getRed(), endColor.getGreen(), endColor.getBlue(), endColor.getAlpha());
+            buffer.addVertex(matrix4f, (float) right, (float) bottom, (float) zLevel).setUv((float) maxU, (float) maxV).setColor(endColor.getRed(), endColor.getGreen(), endColor.getBlue(), endColor.getAlpha());
+            buffer.addVertex(matrix4f, (float) right, (float) top, (float) zLevel).setUv((float) maxU, (float) minV).setColor(startColor.getRed(), startColor.getGreen(), startColor.getBlue(), startColor.getAlpha());
+            buffer.addVertex(matrix4f, (float) left, (float) top, (float) zLevel).setUv((float) minU, (float) minV).setColor(startColor.getRed(), startColor.getGreen(), startColor.getBlue(), startColor.getAlpha());
+        });
     }
 
     /**
      * Draws a Textured Rectangle, following the defined arguments
      *
      * @param mc            The current game instance
+     * @param matrixStack   The Matrix Stack, used for Rendering
+     * @param left          The Left Position of the Object
+     * @param right         The Right Position of the Object
+     * @param top           The Top Position of the Object
+     * @param bottom        The Bottom Position of the Object
+     * @param zLevel        The Z Level Position of the Object
+     * @param asFullTexture Whether to render as full-texture or color-only
+     * @param minU          The minimum horizontal axis to render this Object by
+     * @param maxU          The maximum horizontal axis to render this Object by
+     * @param minV          The minimum vertical axis to render this Object by
+     * @param maxV          The minimum vertical axis to render this Object by
+     * @param startColorObj The starting texture RGB data to interpret
+     * @param endColorObj   The ending texture RGB data to interpret
+     * @param texLocation   The game texture to render the object as
+     */
+    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
+                                   final double left, final double right, final double top, final double bottom,
+                                   final double zLevel, final boolean asFullTexture,
+                                   final double minU, final double maxU, final double minV, final double maxV,
+                                   final Object startColorObj, final Object endColorObj,
+                                   final ResourceLocation texLocation) {
+        drawTexture(mc, matrixStack, RenderType::guiTextured,
+                left, right, top, bottom,
+                zLevel, asFullTexture,
+                minU, maxU,
+                minV, maxV,
+                startColorObj, endColorObj,
+                texLocation
+        );
+    }
+
+    /**
+     * Draws a Textured Rectangle, following the defined arguments
+     *
+     * @param mc            The current game instance
+     * @param matrixStack   The Matrix Stack, used for Rendering
+     * @param function      The Render Type Function, used for Rendering
      * @param left          The Left Position of the Object
      * @param right         The Right Position of the Object
      * @param top           The Top Position of the Object
@@ -478,13 +546,14 @@ public class RenderUtils {
      * @param endColorObj   The ending texture RGB data to interpret
      * @param texLocation   The game texture to render the object as
      */
-    public static void drawTexture(@Nonnull final Minecraft mc,
+    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
+                                   final Function<ResourceLocation, RenderType> function,
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel,
                                    final double minU, final double maxU, final double minV, final double maxV,
                                    final Object startColorObj, final Object endColorObj,
                                    final ResourceLocation texLocation) {
-        drawTexture(mc,
+        drawTexture(mc, matrixStack, function,
                 left, right, top, bottom,
                 zLevel, true,
                 minU, maxU,
@@ -497,7 +566,43 @@ public class RenderUtils {
     /**
      * Draws a Textured Rectangle, following the defined arguments
      *
+     * @param mc            The current game instance
+     * @param matrixStack   The Matrix Stack, used for Rendering
+     * @param left          The Left Position of the Object
+     * @param right         The Right Position of the Object
+     * @param top           The Top Position of the Object
+     * @param bottom        The Bottom Position of the Object
+     * @param zLevel        The Z Level Position of the Object
+     * @param minU          The minimum horizontal axis to render this Object by
+     * @param maxU          The maximum horizontal axis to render this Object by
+     * @param minV          The minimum vertical axis to render this Object by
+     * @param maxV          The minimum vertical axis to render this Object by
+     * @param startColorObj The starting texture RGB data to interpret
+     * @param endColorObj   The ending texture RGB data to interpret
+     * @param texLocation   The game texture to render the object as
+     */
+    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
+                                   final double left, final double right, final double top, final double bottom,
+                                   final double zLevel,
+                                   final double minU, final double maxU, final double minV, final double maxV,
+                                   final Object startColorObj, final Object endColorObj,
+                                   final ResourceLocation texLocation) {
+        drawTexture(mc, matrixStack, RenderType::guiTextured,
+                left, right, top, bottom,
+                zLevel,
+                minU, maxU,
+                minV, maxV,
+                startColorObj, endColorObj,
+                texLocation
+        );
+    }
+
+    /**
+     * Draws a Textured Rectangle, following the defined arguments
+     *
      * @param mc                   The current game instance
+     * @param matrixStack          The Matrix Stack, used for Rendering
+     * @param function             The Render Type Function, used for Rendering
      * @param left                 The Left Position of the Object
      * @param right                The Right Position of the Object
      * @param top                  The Top Position of the Object
@@ -515,7 +620,8 @@ public class RenderUtils {
      * @param endColorObj          The ending texture RGB data to interpret
      * @param texLocation          The game texture to render the object as
      */
-    public static void drawTexture(@Nonnull final Minecraft mc,
+    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
+                                   final Function<ResourceLocation, RenderType> function,
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel, final boolean asFullTexture,
                                    final boolean usingExternalTexture,
@@ -524,7 +630,7 @@ public class RenderUtils {
                                    final double textureWidth, final double textureHeight,
                                    final Object startColorObj, final Object endColorObj,
                                    final ResourceLocation texLocation) {
-        drawTexture(mc,
+        drawTexture(mc, matrixStack, function,
                 left, right, top, bottom,
                 zLevel, asFullTexture,
                 getUVCoord(u + 0.0D, 0.0D, usingExternalTexture, textureWidth),
@@ -540,6 +646,51 @@ public class RenderUtils {
      * Draws a Textured Rectangle, following the defined arguments
      *
      * @param mc                   The current game instance
+     * @param matrixStack          The Matrix Stack, used for Rendering
+     * @param left                 The Left Position of the Object
+     * @param right                The Right Position of the Object
+     * @param top                  The Top Position of the Object
+     * @param bottom               The Bottom Position of the Object
+     * @param zLevel               The Z Level Position of the Object
+     * @param asFullTexture        Whether to render as full-texture or color-only
+     * @param usingExternalTexture Whether we are using a non-local/external texture
+     * @param regionWidth          The Width of the Texture Region
+     * @param regionHeight         The Height of the Texture Region
+     * @param u                    The U Mapping Value
+     * @param v                    The V Mapping Value
+     * @param textureWidth         The Width of the Texture
+     * @param textureHeight        The Height of the Texture
+     * @param startColorObj        The starting texture RGB data to interpret
+     * @param endColorObj          The ending texture RGB data to interpret
+     * @param texLocation          The game texture to render the object as
+     */
+    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
+                                   final double left, final double right, final double top, final double bottom,
+                                   final double zLevel, final boolean asFullTexture,
+                                   final boolean usingExternalTexture,
+                                   final double regionWidth, final double regionHeight,
+                                   final double u, final double v,
+                                   final double textureWidth, final double textureHeight,
+                                   final Object startColorObj, final Object endColorObj,
+                                   final ResourceLocation texLocation) {
+        drawTexture(mc, matrixStack, RenderType::guiTextured,
+                left, right, top, bottom,
+                zLevel, asFullTexture,
+                usingExternalTexture,
+                regionWidth, regionHeight,
+                u, v,
+                textureWidth, textureHeight,
+                startColorObj, endColorObj,
+                texLocation
+        );
+    }
+
+    /**
+     * Draws a Textured Rectangle, following the defined arguments
+     *
+     * @param mc                   The current game instance
+     * @param matrixStack          The Matrix Stack, used for Rendering
+     * @param function             The Render Type Function, used for Rendering
      * @param left                 The Left Position of the Object
      * @param right                The Right Position of the Object
      * @param top                  The Top Position of the Object
@@ -556,7 +707,8 @@ public class RenderUtils {
      * @param endColorObj          The ending texture RGB data to interpret
      * @param texLocation          The game texture to render the object as
      */
-    public static void drawTexture(@Nonnull final Minecraft mc,
+    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
+                                   final Function<ResourceLocation, RenderType> function,
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel, final boolean usingExternalTexture,
                                    final double regionWidth, final double regionHeight,
@@ -564,7 +716,7 @@ public class RenderUtils {
                                    final double textureWidth, final double textureHeight,
                                    final Object startColorObj, final Object endColorObj,
                                    final ResourceLocation texLocation) {
-        drawTexture(mc,
+        drawTexture(mc, matrixStack, function,
                 left, right, top, bottom,
                 zLevel, true,
                 usingExternalTexture,
@@ -580,6 +732,48 @@ public class RenderUtils {
      * Draws a Textured Rectangle, following the defined arguments
      *
      * @param mc                   The current game instance
+     * @param matrixStack          The Matrix Stack, used for Rendering
+     * @param left                 The Left Position of the Object
+     * @param right                The Right Position of the Object
+     * @param top                  The Top Position of the Object
+     * @param bottom               The Bottom Position of the Object
+     * @param zLevel               The Z Level Position of the Object
+     * @param usingExternalTexture Whether we are using a non-local/external texture
+     * @param regionWidth          The Width of the Texture Region
+     * @param regionHeight         The Height of the Texture Region
+     * @param u                    The U Mapping Value
+     * @param v                    The V Mapping Value
+     * @param textureWidth         The Width of the Texture
+     * @param textureHeight        The Height of the Texture
+     * @param startColorObj        The starting texture RGB data to interpret
+     * @param endColorObj          The ending texture RGB data to interpret
+     * @param texLocation          The game texture to render the object as
+     */
+    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
+                                   final double left, final double right, final double top, final double bottom,
+                                   final double zLevel, final boolean usingExternalTexture,
+                                   final double regionWidth, final double regionHeight,
+                                   final double u, final double v,
+                                   final double textureWidth, final double textureHeight,
+                                   final Object startColorObj, final Object endColorObj,
+                                   final ResourceLocation texLocation) {
+        drawTexture(mc, matrixStack, RenderType::guiTextured,
+                left, right, top, bottom,
+                zLevel, usingExternalTexture,
+                regionWidth, regionHeight,
+                u, v,
+                textureWidth, textureHeight,
+                startColorObj, endColorObj,
+                texLocation
+        );
+    }
+
+    /**
+     * Draws a Textured Rectangle, following the defined arguments
+     *
+     * @param mc                   The current game instance
+     * @param matrixStack          The Matrix Stack, used for Rendering
+     * @param function             The Render Type Function, used for Rendering
      * @param left                 The Left Position of the Object
      * @param right                The Right Position of the Object
      * @param top                  The Top Position of the Object
@@ -591,13 +785,14 @@ public class RenderUtils {
      * @param endColorObj          The ending texture RGB data to interpret
      * @param texLocation          The game texture to render the object as
      */
-    public static void drawTexture(@Nonnull final Minecraft mc,
+    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
+                                   final Function<ResourceLocation, RenderType> function,
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel, final boolean asFullTexture,
                                    final boolean usingExternalTexture,
                                    final Object startColorObj, final Object endColorObj,
                                    final ResourceLocation texLocation) {
-        drawTexture(mc,
+        drawTexture(mc, matrixStack, function,
                 left, right, top, bottom,
                 zLevel, asFullTexture,
                 usingExternalTexture,
@@ -613,6 +808,39 @@ public class RenderUtils {
      * Draws a Textured Rectangle, following the defined arguments
      *
      * @param mc                   The current game instance
+     * @param matrixStack          The Matrix Stack, used for Rendering
+     * @param left                 The Left Position of the Object
+     * @param right                The Right Position of the Object
+     * @param top                  The Top Position of the Object
+     * @param bottom               The Bottom Position of the Object
+     * @param zLevel               The Z Level Position of the Object
+     * @param asFullTexture        Whether to render as full-texture or color-only
+     * @param usingExternalTexture Whether we are using a non-local/external texture
+     * @param startColorObj        The starting texture RGB data to interpret
+     * @param endColorObj          The ending texture RGB data to interpret
+     * @param texLocation          The game texture to render the object as
+     */
+    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
+                                   final double left, final double right, final double top, final double bottom,
+                                   final double zLevel, final boolean asFullTexture,
+                                   final boolean usingExternalTexture,
+                                   final Object startColorObj, final Object endColorObj,
+                                   final ResourceLocation texLocation) {
+        drawTexture(mc, matrixStack, RenderType::guiTextured,
+                left, right, top, bottom,
+                zLevel, asFullTexture,
+                usingExternalTexture,
+                startColorObj, endColorObj,
+                texLocation
+        );
+    }
+
+    /**
+     * Draws a Textured Rectangle, following the defined arguments
+     *
+     * @param mc                   The current game instance
+     * @param matrixStack          The Matrix Stack, used for Rendering
+     * @param function             The Render Type Function, used for Rendering
      * @param left                 The Left Position of the Object
      * @param right                The Right Position of the Object
      * @param top                  The Top Position of the Object
@@ -623,12 +851,13 @@ public class RenderUtils {
      * @param endColorObj          The ending texture RGB data to interpret
      * @param texLocation          The game texture to render the object as
      */
-    public static void drawTexture(@Nonnull final Minecraft mc,
+    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
+                                   final Function<ResourceLocation, RenderType> function,
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel, final boolean usingExternalTexture,
                                    final Object startColorObj, final Object endColorObj,
                                    final ResourceLocation texLocation) {
-        drawTexture(mc,
+        drawTexture(mc, matrixStack, function,
                 left, right, top, bottom,
                 zLevel, true,
                 usingExternalTexture,
@@ -638,8 +867,38 @@ public class RenderUtils {
     }
 
     /**
+     * Draws a Textured Rectangle, following the defined arguments
+     *
+     * @param mc                   The current game instance
+     * @param matrixStack          The Matrix Stack, used for Rendering
+     * @param left                 The Left Position of the Object
+     * @param right                The Right Position of the Object
+     * @param top                  The Top Position of the Object
+     * @param bottom               The Bottom Position of the Object
+     * @param zLevel               The Z Level Position of the Object
+     * @param usingExternalTexture Whether we are using a non-local/external texture
+     * @param startColorObj        The starting texture RGB data to interpret
+     * @param endColorObj          The ending texture RGB data to interpret
+     * @param texLocation          The game texture to render the object as
+     */
+    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
+                                   final double left, final double right, final double top, final double bottom,
+                                   final double zLevel, final boolean usingExternalTexture,
+                                   final Object startColorObj, final Object endColorObj,
+                                   final ResourceLocation texLocation) {
+        drawTexture(mc, matrixStack, RenderType::guiTextured,
+                left, right, top, bottom,
+                zLevel, usingExternalTexture,
+                startColorObj, endColorObj,
+                texLocation
+        );
+    }
+
+    /**
      * Draws a Gradient Rectangle, following the defined arguments
      *
+     * @param mc            The Matrix Stack, used for Rendering
+     * @param renderType    The Render Type, used for Rendering
      * @param left          The Left side length of the Object
      * @param right         The Right side length of the Object
      * @param top           The top length of the Object
@@ -648,7 +907,8 @@ public class RenderUtils {
      * @param startColorObj The Starting Color Data
      * @param endColorObj   The Ending Color Data
      */
-    public static void drawGradient(final double left, final double right, final double top, final double bottom,
+    public static void drawGradient(@Nonnull final GuiGraphics mc, final RenderType renderType,
+                                    final double left, final double right, final double top, final double bottom,
                                     final double zLevel,
                                     final Object startColorObj, final Object endColorObj) {
         final Pair<Color, Color> colorData = StringUtils.findColor(startColorObj, endColorObj);
@@ -658,26 +918,41 @@ public class RenderUtils {
             return;
         }
 
-        RenderSystem.disableDepthTest();
-        RenderSystem.enableBlend();
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        mc.drawSpecial(bufferSource -> {
+            final Matrix4f matrix4f = mc.pose().last().pose();
+            final VertexConsumer buffer = bufferSource.getBuffer(renderType);
+            buffer.addVertex(matrix4f, (float) left, (float) bottom, (float) zLevel).setColor(endColor.getRed(), endColor.getGreen(), endColor.getBlue(), endColor.getAlpha());
+            buffer.addVertex(matrix4f, (float) right, (float) bottom, (float) zLevel).setColor(endColor.getRed(), endColor.getGreen(), endColor.getBlue(), endColor.getAlpha());
+            buffer.addVertex(matrix4f, (float) right, (float) top, (float) zLevel).setColor(startColor.getRed(), startColor.getGreen(), startColor.getBlue(), startColor.getAlpha());
+            buffer.addVertex(matrix4f, (float) left, (float) top, (float) zLevel).setColor(startColor.getRed(), startColor.getGreen(), startColor.getBlue(), startColor.getAlpha());
+        });
+    }
 
-        final Tesselator tessellator = RenderSystem.renderThreadTesselator();
-        final BufferBuilder buffer = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        buffer.addVertex((float) left, (float) bottom, (float) zLevel).setColor(endColor.getRed(), endColor.getGreen(), endColor.getBlue(), endColor.getAlpha());
-        buffer.addVertex((float) right, (float) bottom, (float) zLevel).setColor(endColor.getRed(), endColor.getGreen(), endColor.getBlue(), endColor.getAlpha());
-        buffer.addVertex((float) right, (float) top, (float) zLevel).setColor(startColor.getRed(), startColor.getGreen(), startColor.getBlue(), startColor.getAlpha());
-        buffer.addVertex((float) left, (float) top, (float) zLevel).setColor(startColor.getRed(), startColor.getGreen(), startColor.getBlue(), startColor.getAlpha());
-        BufferUploader.drawWithShader(buffer.buildOrThrow());
-
-        RenderSystem.disableBlend();
-        RenderSystem.enableDepthTest();
+    /**
+     * Draws a Gradient Rectangle, following the defined arguments
+     *
+     * @param mc            The Matrix Stack, used for Rendering
+     * @param left          The Left side length of the Object
+     * @param right         The Right side length of the Object
+     * @param top           The top length of the Object
+     * @param bottom        The bottom length of the Object
+     * @param zLevel        The Z Level Position of the Object
+     * @param startColorObj The Starting Color Data
+     * @param endColorObj   The Ending Color Data
+     */
+    public static void drawGradient(@Nonnull final GuiGraphics mc,
+                                    final double left, final double right, final double top, final double bottom,
+                                    final double zLevel,
+                                    final Object startColorObj, final Object endColorObj) {
+        drawGradient(mc, RenderType.gui(), left, right, top, bottom, zLevel, startColorObj, endColorObj);
     }
 
     /**
      * Draws a textured rectangle from a region in a 256x256 texture
      *
+     * @param mc           The Matrix Stack, used for Rendering
+     * @param function     The Render Type Function, used for Rendering
+     * @param texLocation  The texture location, if any
      * @param xPos         The Starting X Position of the Object
      * @param yPos         The Starting Y Position of the Object
      * @param zLevel       The Z Level Position of the Object
@@ -686,16 +961,43 @@ public class RenderUtils {
      * @param regionWidth  The Width of the Texture Region
      * @param regionHeight The Height of the Texture Region
      */
-    public static void blit(final double xPos, final double yPos,
+    public static void blit(@Nonnull final GuiGraphics mc,
+                            final Function<ResourceLocation, RenderType> function, final ResourceLocation texLocation,
+                            final double xPos, final double yPos,
                             final double zLevel,
                             final double u, final double v,
                             final double regionWidth, final double regionHeight) {
-        blit(xPos, yPos, zLevel, u, v, regionWidth, regionHeight, 256, 256);
+        blit(mc, function, texLocation, xPos, yPos, zLevel, u, v, regionWidth, regionHeight, 256, 256);
+    }
+
+    /**
+     * Draws a textured rectangle from a region in a 256x256 texture
+     *
+     * @param mc           The Matrix Stack, used for Rendering
+     * @param texLocation  The texture location, if any
+     * @param xPos         The Starting X Position of the Object
+     * @param yPos         The Starting Y Position of the Object
+     * @param zLevel       The Z Level Position of the Object
+     * @param u            The U Mapping Value
+     * @param v            The V Mapping Value
+     * @param regionWidth  The Width of the Texture Region
+     * @param regionHeight The Height of the Texture Region
+     */
+    public static void blit(@Nonnull final GuiGraphics mc,
+                            final ResourceLocation texLocation,
+                            final double xPos, final double yPos,
+                            final double zLevel,
+                            final double u, final double v,
+                            final double regionWidth, final double regionHeight) {
+        blit(mc, RenderType::guiTextured, texLocation, xPos, yPos, zLevel, u, v, regionWidth, regionHeight);
     }
 
     /**
      * Draws a textured rectangle from a region in a texture
      *
+     * @param mc            The Matrix Stack, used for Rendering
+     * @param function      The Render Type Function, used for Rendering
+     * @param texLocation   The texture location, if any
      * @param xPos          The Starting X Position of the Object
      * @param yPos          The Starting Y Position of the Object
      * @param zLevel        The Z Level Position of the Object
@@ -706,12 +1008,15 @@ public class RenderUtils {
      * @param textureWidth  The Width of the Texture
      * @param textureHeight The Height of the Texture
      */
-    public static void blit(final double xPos, final double yPos,
+    public static void blit(@Nonnull final GuiGraphics mc,
+                            final Function<ResourceLocation, RenderType> function, final ResourceLocation texLocation,
+                            final double xPos, final double yPos,
                             final double zLevel,
                             final double u, final double v,
                             final double regionWidth, final double regionHeight,
                             final double textureWidth, final double textureHeight) {
-        blit(xPos, xPos + regionWidth, yPos, yPos + regionHeight,
+        blit(mc, function, texLocation,
+                xPos, xPos + regionWidth, yPos, yPos + regionHeight,
                 zLevel,
                 regionWidth, regionHeight,
                 u, v,
@@ -722,6 +1027,34 @@ public class RenderUtils {
     /**
      * Draws a textured rectangle from a region in a texture
      *
+     * @param mc            The Matrix Stack, used for Rendering
+     * @param texLocation   The texture location, if any
+     * @param xPos          The Starting X Position of the Object
+     * @param yPos          The Starting Y Position of the Object
+     * @param zLevel        The Z Level Position of the Object
+     * @param u             The U Mapping Value
+     * @param v             The V Mapping Value
+     * @param regionWidth   The Width of the Texture Region
+     * @param regionHeight  The Height of the Texture Region
+     * @param textureWidth  The Width of the Texture
+     * @param textureHeight The Height of the Texture
+     */
+    public static void blit(@Nonnull final GuiGraphics mc,
+                            final ResourceLocation texLocation,
+                            final double xPos, final double yPos,
+                            final double zLevel,
+                            final double u, final double v,
+                            final double regionWidth, final double regionHeight,
+                            final double textureWidth, final double textureHeight) {
+        blit(mc, RenderType::guiTextured, texLocation, xPos, yPos, zLevel, u, v, regionWidth, regionHeight, textureWidth, textureHeight);
+    }
+
+    /**
+     * Draws a textured rectangle from a region in a texture
+     *
+     * @param mc            The Matrix Stack, used for Rendering
+     * @param function      The Render Type Function, used for Rendering
+     * @param texLocation   The texture location, if any
      * @param left          The Left Position of the Object
      * @param right         The Right Position of the Object
      * @param top           The Top Position of the Object
@@ -734,12 +1067,15 @@ public class RenderUtils {
      * @param textureWidth  The Width of the Texture
      * @param textureHeight The Height of the Texture
      */
-    public static void blit(final double left, final double right, final double top, final double bottom,
+    public static void blit(@Nonnull final GuiGraphics mc,
+                            final Function<ResourceLocation, RenderType> function, final ResourceLocation texLocation,
+                            final double left, final double right, final double top, final double bottom,
                             final double zLevel,
                             final double regionWidth, final double regionHeight,
                             final double u, final double v,
                             final double textureWidth, final double textureHeight) {
-        innerBlit(left, right, top, bottom,
+        innerBlit(mc, function, texLocation,
+                left, right, top, bottom,
                 zLevel,
                 getUVCoord(u + 0.0D, textureWidth),
                 getUVCoord(u + regionWidth, textureWidth),
@@ -751,26 +1087,92 @@ public class RenderUtils {
     /**
      * Draws a textured rectangle from a region in a texture
      *
-     * @param left   The Left Position of the Object
-     * @param right  The Right Position of the Object
-     * @param top    The Top Position of the Object
-     * @param bottom The Bottom Position of the Object
-     * @param zLevel The Z Level Position of the Object
-     * @param minU   The minimum horizontal axis to render this Object by
-     * @param maxU   The maximum horizontal axis to render this Object by
-     * @param minV   The minimum vertical axis to render this Object by
-     * @param maxV   The minimum vertical axis to render this Object by
+     * @param mc            The Matrix Stack, used for Rendering
+     * @param texLocation   The texture location, if any
+     * @param left          The Left Position of the Object
+     * @param right         The Right Position of the Object
+     * @param top           The Top Position of the Object
+     * @param bottom        The Bottom Position of the Object
+     * @param zLevel        The Z Level Position of the Object
+     * @param regionWidth   The Width of the Texture Region
+     * @param regionHeight  The Height of the Texture Region
+     * @param u             The U Mapping Value
+     * @param v             The V Mapping Value
+     * @param textureWidth  The Width of the Texture
+     * @param textureHeight The Height of the Texture
      */
-    public static void innerBlit(final double left, final double right, final double top, final double bottom,
+    public static void blit(@Nonnull final GuiGraphics mc,
+                            final ResourceLocation texLocation,
+                            final double left, final double right, final double top, final double bottom,
+                            final double zLevel,
+                            final double regionWidth, final double regionHeight,
+                            final double u, final double v,
+                            final double textureWidth, final double textureHeight) {
+        blit(mc, RenderType::guiTextured, texLocation,
+                left, right, top, bottom,
+                zLevel,
+                regionWidth, regionHeight,
+                u, v,
+                textureWidth, textureHeight
+        );
+    }
+
+    /**
+     * Draws a textured rectangle from a region in a texture
+     *
+     * @param mc          The Matrix Stack, used for Rendering
+     * @param function    The Render Type Function, used for Rendering
+     * @param texLocation The texture location, if any
+     * @param left        The Left Position of the Object
+     * @param right       The Right Position of the Object
+     * @param top         The Top Position of the Object
+     * @param bottom      The Bottom Position of the Object
+     * @param zLevel      The Z Level Position of the Object
+     * @param minU        The minimum horizontal axis to render this Object by
+     * @param maxU        The maximum horizontal axis to render this Object by
+     * @param minV        The minimum vertical axis to render this Object by
+     * @param maxV        The minimum vertical axis to render this Object by
+     */
+    public static void innerBlit(@Nonnull final GuiGraphics mc,
+                                 final Function<ResourceLocation, RenderType> function, final ResourceLocation texLocation,
+                                 final double left, final double right, final double top, final double bottom,
                                  final double zLevel,
                                  final double minU, final double maxU, final double minV, final double maxV) {
-        final Tesselator tessellator = RenderSystem.renderThreadTesselator();
-        final BufferBuilder buffer = tessellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        buffer.addVertex((float) left, (float) bottom, (float) zLevel).setUv((float) minU, (float) maxV);
-        buffer.addVertex((float) right, (float) bottom, (float) zLevel).setUv((float) maxU, (float) maxV);
-        buffer.addVertex((float) right, (float) top, (float) zLevel).setUv((float) maxU, (float) minV);
-        buffer.addVertex((float) left, (float) top, (float) zLevel).setUv((float) minU, (float) minV);
-        BufferUploader.drawWithShader(buffer.buildOrThrow());
+        mc.drawSpecial(bufferSource -> {
+            final Matrix4f matrix4f = mc.pose().last().pose();
+            final VertexConsumer buffer = bufferSource.getBuffer(function.apply(texLocation));
+            buffer.addVertex(matrix4f, (float) left, (float) bottom, (float) zLevel).setUv((float) minU, (float) maxV);
+            buffer.addVertex(matrix4f, (float) right, (float) bottom, (float) zLevel).setUv((float) maxU, (float) maxV);
+            buffer.addVertex(matrix4f, (float) right, (float) top, (float) zLevel).setUv((float) maxU, (float) minV);
+            buffer.addVertex(matrix4f, (float) left, (float) top, (float) zLevel).setUv((float) minU, (float) minV);
+        });
+    }
+
+    /**
+     * Draws a textured rectangle from a region in a texture
+     *
+     * @param mc          The Matrix Stack, used for Rendering
+     * @param texLocation The texture location, if any
+     * @param left        The Left Position of the Object
+     * @param right       The Right Position of the Object
+     * @param top         The Top Position of the Object
+     * @param bottom      The Bottom Position of the Object
+     * @param zLevel      The Z Level Position of the Object
+     * @param minU        The minimum horizontal axis to render this Object by
+     * @param maxU        The maximum horizontal axis to render this Object by
+     * @param minV        The minimum vertical axis to render this Object by
+     * @param maxV        The minimum vertical axis to render this Object by
+     */
+    public static void innerBlit(@Nonnull final GuiGraphics mc,
+                                 final ResourceLocation texLocation,
+                                 final double left, final double right, final double top, final double bottom,
+                                 final double zLevel,
+                                 final double minU, final double maxU, final double minV, final double maxV) {
+        innerBlit(mc, RenderType::guiTextured, texLocation,
+                left, right, top, bottom,
+                zLevel,
+                minU, maxU, minV, maxV
+        );
     }
 
     /**
@@ -1003,7 +1405,7 @@ public class RenderUtils {
 
                 if (StringUtils.isNullOrEmpty(backgroundColorInfo.texLocation())) {
                     // Draw with Colors
-                    drawGradientBox(
+                    drawGradientBox(matrixStack,
                             tooltipX - 4, tooltipY - 4,
                             tooltipTextWidth + 8, tooltipHeight + 8,
                             zLevel,
@@ -1024,7 +1426,7 @@ public class RenderUtils {
                     final double top = tooltipY - 4;
                     final double bottom = tooltipY + height;
 
-                    drawTexture(mc,
+                    drawTexture(mc, matrixStack,
                             left, right, top, bottom,
                             0.0D, usingExternalTexture,
                             backgroundStart, backgroundEnd,
@@ -1040,7 +1442,7 @@ public class RenderUtils {
 
                 if (StringUtils.isNullOrEmpty(borderColorInfo.texLocation())) {
                     // Draw with Colors
-                    drawGradientBox(
+                    drawGradientBox(matrixStack,
                             tooltipX - 3, tooltipY - 3,
                             tooltipTextWidth + 6, tooltipHeight + 6,
                             zLevel, borderStart, borderEnd,
@@ -1060,28 +1462,28 @@ public class RenderUtils {
 
                     // Draw Borders
                     // Top Left
-                    drawTexture(mc,
+                    drawTexture(mc, matrixStack,
                             renderX, renderX + border, renderY, canvasBottom + border,
                             zLevel, usingExternalTexture,
                             borderStart, borderEnd,
                             borderTexture
                     );
                     // Top Right
-                    drawTexture(mc,
+                    drawTexture(mc, matrixStack,
                             canvasRight, canvasRight + border, renderY, canvasBottom + border,
                             zLevel, usingExternalTexture,
                             borderStart, borderEnd,
                             borderTexture
                     );
                     // Bottom Left
-                    drawTexture(mc,
+                    drawTexture(mc, matrixStack,
                             renderX, canvasRight + border, canvasBottom, canvasBottom + border,
                             zLevel, usingExternalTexture,
                             borderStart, borderEnd,
                             borderTexture
                     );
                     // Right Border
-                    drawTexture(mc,
+                    drawTexture(mc, matrixStack,
                             renderX, canvasRight + border, renderY, renderY + border,
                             zLevel, usingExternalTexture,
                             borderStart, borderEnd,
@@ -1151,10 +1553,11 @@ public class RenderUtils {
      */
     public static void renderString(@Nonnull final GuiGraphics matrixStack, final Font fontRenderer, final String text, final float xPos, final float yPos, final int color) {
         if (!StringUtils.isNullOrEmpty(text)) {
-            fontRenderer.drawInBatch(
-                    text, xPos, yPos, color, true, matrixStack.pose().last().pose(), matrixStack.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880, fontRenderer.isBidirectional()
+            matrixStack.drawSpecial(
+                    bufferSource -> fontRenderer.drawInBatch(
+                            text, xPos, yPos, color, true, matrixStack.pose().last().pose(), bufferSource, Font.DisplayMode.NORMAL, 0, 15728880
+                    )
             );
-            matrixStack.flushIfUnmanaged();
         }
     }
 

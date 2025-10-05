@@ -690,8 +690,8 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
     protected void renderSelection(final Minecraft client, final int yPos, final int width, final int height, final int outerColor, final int innerColor) {
         final int left = getScreenX() + (getScreenWidth() - width) / 2;
         final int right = getScreenX() + (getScreenWidth() + width) / 2;
-        RenderUtils.drawGradient(left, right, yPos - 2, yPos + height + 2, 0.0D, outerColor, outerColor);
-        RenderUtils.drawGradient(left + 1, right - 1, yPos - 1, yPos + height + 1, 0.0D, innerColor, innerColor);
+        RenderUtils.drawGradient(getCurrentMatrix(), left, right, yPos - 2, yPos + height + 2, 0.0D, outerColor, outerColor);
+        RenderUtils.drawGradient(getCurrentMatrix(), left + 1, right - 1, yPos - 1, yPos + height + 1, 0.0D, innerColor, innerColor);
     }
 
     /**

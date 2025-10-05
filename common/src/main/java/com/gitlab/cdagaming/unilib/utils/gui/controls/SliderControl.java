@@ -32,7 +32,9 @@ import io.github.cdagaming.unicore.impl.Tuple;
 import io.github.cdagaming.unicore.utils.MathUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ARGB;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nonnull;
@@ -238,8 +240,8 @@ public class SliderControl extends ExtendedButtonControl {
     protected void renderBg(@Nonnull GuiGraphics matrixStack, @Nonnull Minecraft mc, int mouseX, int mouseY) {
         if (isControlVisible()) {
             RenderUtils.renderSprite(matrixStack, graphics -> {
-                graphics.blitSprite(getSprite(), getControlPosX(), getControlPosY(), getControlWidth(), getControlHeight());
-                graphics.blitSprite(getHandleSprite(), getControlPosX() + (int) (getSliderValue(true) * (double) (getControlWidth() - 8)), getControlPosY(), 8, 20);
+                graphics.blitSprite(RenderType::guiTextured, getSprite(), getControlPosX(), getControlPosY(), getControlWidth(), getControlHeight(), ARGB.white(alpha));
+                graphics.blitSprite(RenderType::guiTextured, getHandleSprite(), getControlPosX() + (int) (getSliderValue(true) * (double) (getControlWidth() - 8)), getControlPosY(), 8, 20, ARGB.white(alpha));
             });
         }
     }
