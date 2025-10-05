@@ -109,7 +109,7 @@ public class GameUtils {
      * @return the Game Session UUID
      */
     public static String getUuid(final Minecraft client) {
-        return getSession(client).getPlayerID();
+        return null;
     }
 
     /**

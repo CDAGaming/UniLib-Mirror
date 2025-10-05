@@ -883,9 +883,7 @@ public class ExtendedScreen extends GuiScreen {
             drawDefaultBackground();
 
             for (GuiSlot listControl : getLists()) {
-                if (listControl.getEnabled()) {
-                    listControl.drawScreen(mouseX, mouseY, partialTicks);
-                }
+                listControl.drawScreen(mouseX, mouseY, partialTicks);
             }
 
             super.drawScreen(mouseX, mouseY, partialTicks);
@@ -1018,14 +1016,14 @@ public class ExtendedScreen extends GuiScreen {
     }
 
     @Override
-    protected void mouseReleased(int mouseX, int mouseY, int state) {
+    protected void mouseMovedOrUp(int mouseX, int mouseY, int state) {
         if (isLoaded()) {
             for (Gui extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
-                    extendedScreen.mouseReleased(mouseX, mouseY, state);
+                    extendedScreen.mouseMovedOrUp(mouseX, mouseY, state);
                 }
             }
-            super.mouseReleased(mouseX, mouseY, state);
+            super.mouseMovedOrUp(mouseX, mouseY, state);
         }
     }
 
@@ -1673,7 +1671,7 @@ public class ExtendedScreen extends GuiScreen {
      * @return The Current Font Renderer for this Screen
      */
     public FontRenderer getFontRenderer() {
-        return StringUtils.getOrDefault(getGameInstance().fontRendererObj, RenderUtils.getDefaultFontRenderer());
+        return StringUtils.getOrDefault(getGameInstance().fontRenderer, RenderUtils.getDefaultFontRenderer());
     }
 
     /**

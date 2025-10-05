@@ -147,7 +147,7 @@ public class KeyUtils {
      * @return the created KeyBind instance
      */
     private KeyBinding createKey(final String id, final String name, final String category, final int defaultKey, final int currentKey) {
-        final KeyBinding result = new KeyBinding(name, defaultKey, category);
+        final KeyBinding result = new KeyBinding(name, defaultKey);
         keySyncQueue.put(id, currentKey);
         return result;
     }
@@ -187,9 +187,9 @@ public class KeyUtils {
         final KeyBindData keyData = new KeyBindData(
                 keyBind,
                 nameFormatter,
-                keyBind::getKeyCategory,
+                () -> category,
                 categoryFormatter,
-                keyBind::getKeyCodeDefault,
+                () -> defaultKey,
                 detailsSupplier,
                 canCheckSupplier,
                 canSyncSupplier,
@@ -285,7 +285,7 @@ public class KeyUtils {
      * @param newKey   the new key for the specified KeyBinding
      */
     private void setKey(final KeyBinding instance, final int newKey) {
-        instance.setKeyCode(newKey);
+        instance.keyCode = newKey;
         KeyBinding.resetKeyBindingArrayAndHash();
     }
 
@@ -570,7 +570,7 @@ public class KeyUtils {
          * @return the KeyBind description
          */
         public String description() {
-            return binding().getKeyDescription();
+            return binding().keyDescription;
         }
 
         /**
@@ -588,7 +588,7 @@ public class KeyUtils {
          * @return the currently assigned key code
          */
         public int keyCode() {
-            return binding().getKeyCode();
+            return binding().keyCode;
         }
 
         /**
