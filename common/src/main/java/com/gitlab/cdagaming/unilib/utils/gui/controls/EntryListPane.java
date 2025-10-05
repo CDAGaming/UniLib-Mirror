@@ -28,6 +28,7 @@ import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ScrollPane;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.IGuiEventListener;
 
 import javax.annotation.Nullable;
 import java.util.AbstractList;
@@ -69,6 +70,10 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
      */
     @Nullable
     private E hovered;
+    /**
+     * Whether we are focused on this widget
+     */
+    private boolean inFocus;
 
     /**
      * Initialization Event for this Control, assigning defined arguments
@@ -137,6 +142,31 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
      */
     public E getFirstElement() {
         return getEntry(0);
+    }
+
+    @Nullable
+    public E getFocused() {
+        return (E) super.getFocused();
+    }
+
+    @Override
+    public void focusChanged(final boolean focused) {
+        if (!inFocus && getItemCount() == 0) {
+            return;
+        } else {
+            inFocus = !inFocus;
+            if (inFocus && getSelected() == null && getItemCount() > 0) {
+                moveSelection(1);
+            } else if (inFocus && getSelected() != null) {
+                moveSelection(0);
+            }
+            return;
+        }
+    }
+
+    @Override
+    public List<? extends IGuiEventListener> getChildren() {
+        return children();
     }
 
     /**
@@ -329,26 +359,6 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
         renderListItems(getGameInstance(), getMouseX(), getMouseY(), getPartialTicks());
     }
 
-    @Override
-    public void checkScrollbarClick(double mouseX, double mouseY, int button) {
-        super.checkScrollbarClick(mouseX, mouseY, button);
-
-        if (isLoaded() && isOverScreen() && isValidMouseClick(button)) {
-            final E entry = getEntryAtPosition(mouseX, mouseY);
-            if (entry != null) {
-                if (entry.mouseClicked(mouseX, mouseY, button)) {
-                    setSelected(entry);
-                    setFocused(true);
-                }
-            } else {
-                clickedHeader(
-                        (int) (mouseX - (double) (getScreenX() + getScreenWidth() / 2 - getRowWidth() / 2)),
-                        (int) (mouseY - (double) getScreenY()) + (int) getAmountScrolled() - getPadding()
-                );
-            }
-        }
-    }
-
     /**
      * Center the Scrollbar to the specified entry on the list
      *
@@ -411,18 +421,65 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
     }
 
     @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+        if (!isValidMouseClick(mouseButton)) {
+            return false;
+        } else {
+            checkScrollbarClick(mouseX, mouseY, mouseButton);
+            if (!isOverScreen()) {
+                return false;
+            } else {
+                final E entry = getEntryAtPosition(mouseX, mouseY);
+                if (entry != null) {
+                    if (entry.mouseClicked(mouseX, mouseY, mouseButton)) {
+                        setFocused(entry);
+                        return true;
+                    }
+                } else if (clickedHeader(
+                        (int) (mouseX - (double) (getScreenX() + getScreenWidth() / 2 - getRowWidth() / 2)),
+                        (int) (mouseY - (double) getScreenY()) + (int) getAmountScrolled() - getPadding()
+                )) {
+                    return true;
+                }
+            }
+
+            return isScrolling();
+        }
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int mouseButton) {
+        setScrolling(false);
+        return getFocused() != null && getFocused().mouseReleased(mouseX, mouseY, mouseButton);
+    }
+
+    @Override
+    protected void setFocused(@Nullable IGuiEventListener arg) {
+        super.setFocused(arg);
+        final int index = children().indexOf(arg);
+        if (index >= 0) {
+            final E entry = getEntry(index);
+            setSelected(entry);
+        }
+    }
+
+    @Override
     public int getHeightPerScroll() {
         return itemHeight / 2;
     }
 
     @Override
-    protected void keyTyped(char typedChar, int keyCode) {
-        if (keyCode == getKeyByVersion(208, 264)) {
+    public boolean keyPressed(int keyCode, int mouseX, int mouseY) {
+        if (super.keyPressed(keyCode, mouseX, mouseY)) {
+            return true;
+        } else if (keyCode == getKeyByVersion(208, 264)) {
             moveSelection(1); // Down Arrow
+            return true;
         } else if (keyCode == getKeyByVersion(200, 265)) {
             moveSelection(-1); // Up Arrow
+            return true;
         } else {
-            super.keyTyped(typedChar, keyCode);
+            return false;
         }
     }
 
@@ -485,9 +542,8 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
     protected void moveSelection(final int direction) {
         final E entry = direction != 0 ? nextEntry(direction) : getSelected();
         if (entry != null) {
-            setSelected(entry);
+            setFocused(entry);
             ensureVisible(entry);
-            setFocused(true);
         }
     }
 
@@ -610,6 +666,15 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
     }
 
     /**
+     * Retrieve whether we are focused on this widget
+     *
+     * @return {@link Boolean#TRUE} if condition is satisfied
+     */
+    protected boolean isFocused() {
+        return getParent() != null && getParent().getFocused() == this;
+    }
+
+    /**
      * Remove the specified entry from the list
      *
      * @param index The index to interpret
@@ -660,12 +725,25 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
      * @param <E> The entry type for the object
      * @author CDAGaming
      */
-    protected abstract static class Entry<E extends EntryListPane.Entry<E>> {
+    protected abstract static class Entry<E extends EntryListPane.Entry<E>> implements IGuiEventListener {
         /**
          * The entry list reference
          */
         @Deprecated
         EntryListPane<E> list;
+
+        @Override
+        public void focusChanged(boolean focused) {
+            setFocused(focused);
+        }
+
+        public void setFocused(boolean focused) {
+            // N/A
+        }
+
+        public boolean isFocused() {
+            return list.getFocused() == this;
+        }
 
         /**
          * Render the entry content to the screen
@@ -732,6 +810,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
          * @param button The Event Mouse Button Clicked
          * @return The Event Result
          */
+        @Override
         public boolean mouseClicked(final double mouseX, final double mouseY, final int button) {
             return true;
         }

@@ -24,6 +24,7 @@
 
 package com.gitlab.cdagaming.unilib.utils.gui.controls;
 
+import com.gitlab.cdagaming.unilib.ModUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
@@ -195,11 +196,12 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
     }
 
     @Override
-    public void drawButton(@Nonnull Minecraft mc, int mouseX, int mouseY, float partialTicks) {
-        if (isControlVisible()) {
+    public void render(int mouseX, int mouseY, float partialTicks) {
+        final Minecraft mc = ModUtils.getMinecraft();
+        if (mc != null && isControlVisible()) {
             setHoveringOver(isOverScreen() && RenderUtils.isMouseOver(mouseX, mouseY, this));
 
-            mouseDragged(mc, mouseX, mouseY);
+            renderBg(mc, mouseX, mouseY);
             final int color;
 
             if (!isControlEnabled()) {
@@ -224,7 +226,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * Equivalent of MouseListener.mouseDragged(MouseEvent e).
      */
     @Override
-    protected void mouseDragged(@Nonnull Minecraft mc, int mouseX, int mouseY) {
+    protected void renderBg(@Nonnull Minecraft mc, int mouseX, int mouseY) {
         if (isControlVisible()) {
             final int hoverState = getHoverState(isHoveringOrFocusingOver());
             final int hoverValue = 46 + hoverState * 20;
@@ -246,7 +248,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * Equivalent of MouseListener.mousePressed(MouseEvent e).
      */
     @Override
-    public boolean mousePressed(@Nonnull Minecraft arg, int mouseX, int mouseY) {
+    protected boolean isPressable(double mouseX, double mouseY) {
         return isOverScreen() && isControlEnabled() && isControlVisible() && isHoveringOver();
     }
 
@@ -323,6 +325,20 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
     public void onClick() {
         if (onPushEvent != null) {
             onPushEvent.run();
+        }
+    }
+
+    /**
+     * Event to trigger upon Button Action, including onClick Events
+     *
+     * @param mouseX The Event Mouse X Coordinate
+     * @param mouseY The Event Mouse Y Coordinate
+     */
+    @Override
+    public void onClick(double mouseX, double mouseY) {
+        if (isPressable(mouseX, mouseY)) {
+            onClick();
+            super.onClick(mouseX, mouseY);
         }
     }
 

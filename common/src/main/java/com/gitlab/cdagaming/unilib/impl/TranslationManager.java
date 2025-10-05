@@ -28,7 +28,7 @@ import com.gitlab.cdagaming.unilib.utils.ResourceUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import io.github.cdagaming.unicore.utils.TranslationUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IResource;
+import net.minecraft.resources.IResource;
 
 import java.io.InputStream;
 import java.util.List;
