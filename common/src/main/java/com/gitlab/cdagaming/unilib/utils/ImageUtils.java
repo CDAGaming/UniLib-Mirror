@@ -280,8 +280,9 @@ public class ImageUtils {
                 return texLocation;
             }
             try {
-                final DynamicTexture dynTexture = new DynamicTexture(bufferData.getSecond().get(bufferData.getFirst()).getNativeImage());
-                final ResourceLocation cachedTexture = ResourceUtils.register(instance.getTextureManager(), textureName.toLowerCase() + (shouldRepeat ? "_" + cachedImages.get(textureName).getSecond().getFirst() : ""), dynTexture);
+                final String cachedName = textureName.toLowerCase() + (shouldRepeat ? "_" + cachedImages.get(textureName).getSecond().getFirst() : "");
+                final DynamicTexture dynTexture = new DynamicTexture(() -> cachedName, bufferData.getSecond().get(bufferData.getFirst()).getNativeImage());
+                final ResourceLocation cachedTexture = ResourceUtils.register(instance.getTextureManager(), cachedName, dynTexture);
                 if (bufferData.getSecond().get(bufferData.getFirst()).shouldRenderNext()) {
                     if (doesContinue) {
                         bufferData.getSecond().get(bufferData.setFirst(bufferData.getFirst() + 1)).setRenderTime();
