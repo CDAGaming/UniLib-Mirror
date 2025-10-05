@@ -31,7 +31,13 @@ import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratedElementType;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.narration.NarrationSupplier;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.AbstractList;
 import java.util.Collection;
@@ -46,6 +52,10 @@ import java.util.function.Predicate;
  * @author CDAGaming
  */
 public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends ScrollPane {
+    /**
+     * The default translation for narration usage
+     */
+    private static final Component USAGE_NARRATION = new TranslatableComponent("narration.selection.usage");
     /**
      * The height of each item in the list
      */
@@ -163,6 +173,25 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
                 moveSelection(0);
             }
             return inFocus;
+        }
+    }
+
+    @Override
+    public void updateNarration(@Nonnull NarrationElementOutput arg) {
+        final E hovered = getHovered();
+        if (hovered != null) {
+            narrateListElementPosition(arg.nest(), hovered);
+            hovered.updateNarration(arg);
+        } else {
+            final E selected = getSelected();
+            if (selected != null) {
+                narrateListElementPosition(arg.nest(), selected);
+                selected.updateNarration(arg);
+            }
+        }
+
+        if (isFocused()) {
+            arg.add(NarratedElementType.USAGE, USAGE_NARRATION);
         }
     }
 
@@ -680,6 +709,16 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
         return getParent() != null && getParent().getFocused() == this;
     }
 
+    @Nonnull
+    @Override
+    public NarrationPriority narrationPriority() {
+        if (isFocused()) {
+            return NarrationPriority.FOCUSED;
+        } else {
+            return getHovered() != null ? NarrationPriority.HOVERED : NarrationPriority.NONE;
+        }
+    }
+
     /**
      * Remove the specified entry from the list
      *
@@ -726,12 +765,28 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
     }
 
     /**
+     * Narrate the List Element Position
+     *
+     * @param output The Narration Output
+     * @param entry  The entry to interpret
+     */
+    protected void narrateListElementPosition(final NarrationElementOutput output, final E entry) {
+        final List<E> list = children();
+        if (list.size() > 1) {
+            int i = list.indexOf(entry);
+            if (i != -1) {
+                output.add(NarratedElementType.POSITION, new TranslatableComponent("narrator.position.list", i + 1, list.size()));
+            }
+        }
+    }
+
+    /**
      * Representation of an Entry for an {@link EntryListPane}
      *
      * @param <E> The entry type for the object
      * @author CDAGaming
      */
-    protected abstract static class Entry<E extends EntryListPane.Entry<E>> implements GuiEventListener {
+    protected abstract static class Entry<E extends EntryListPane.Entry<E>> implements GuiEventListener, NarrationSupplier {
         /**
          * The entry list reference
          */
@@ -749,6 +804,18 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
 
         public boolean isFocused() {
             return list.getFocused() == this;
+        }
+
+        /**
+         * Retrieve the narration for this entry
+         *
+         * @return the narration for this entry
+         */
+        public abstract Component getNarration();
+
+        @Override
+        public void updateNarration(NarrationElementOutput output) {
+            output.add(NarratedElementType.TITLE, getNarration());
         }
 
         /**

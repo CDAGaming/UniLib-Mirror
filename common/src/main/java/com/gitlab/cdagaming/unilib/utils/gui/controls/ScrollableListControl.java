@@ -29,6 +29,8 @@ import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -230,6 +232,11 @@ public class ScrollableListControl extends EntryListPane<ScrollableListControl.S
          */
         private void onPressed() {
             ScrollableListControl.this.setSelected(this);
+        }
+
+        @Override
+        public Component getNarration() {
+            return new TranslatableComponent("narrator.select", this.name);
         }
     }
 }
