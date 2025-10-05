@@ -28,8 +28,11 @@ import com.gitlab.cdagaming.unilib.core.impl.screen.ScreenConstants;
 import com.gitlab.cdagaming.unilib.utils.ResourceUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
+import com.mojang.blaze3d.platform.cursor.CursorType;
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import io.github.cdagaming.unicore.utils.MathUtils;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.ResourceLocation;
 
@@ -281,6 +284,9 @@ public class ScrollPane extends ExtendedScreen {
             RenderUtils.renderSprite(getCurrentMatrix(), graphics -> {
                 graphics.blitSprite(RenderPipelines.GUI_TEXTURED, getScrollerBackgroundSprite(), scrollBarX, top, scrollBarWidth, bottom - top);
                 graphics.blitSprite(RenderPipelines.GUI_TEXTURED, getScrollerSprite(), scrollBarX, barTop, scrollBarWidth, height);
+                if (isOverScrollbar(getMouseX(), getMouseY())) {
+                    graphics.requestCursor(getCursorType());
+                }
             });
         }
     }
@@ -291,6 +297,10 @@ public class ScrollPane extends ExtendedScreen {
         renderScrollbar();
 
         super.postRender();
+    }
+
+    protected CursorType getCursorType() {
+        return isScrolling() ? CursorTypes.RESIZE_NS : CursorTypes.POINTING_HAND;
     }
 
     /**
@@ -304,28 +314,28 @@ public class ScrollPane extends ExtendedScreen {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+    public boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean doubleClick) {
         if (isLoaded()) {
-            checkScrollbarClick(mouseX, mouseY, mouseButton);
+            checkScrollbarClick(mouseButtonEvent.x(), mouseButtonEvent.y(), mouseButtonEvent.button());
 
-            return super.mouseClicked(mouseX, mouseY, mouseButton);
+            return super.mouseClicked(mouseButtonEvent, doubleClick);
         }
         return false;
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int mouseButton) {
+    public boolean mouseReleased(MouseButtonEvent mouseButtonEvent) {
         setScrolling(false);
-        return isLoaded() && super.mouseReleased(mouseX, mouseY, mouseButton);
+        return isLoaded() && super.mouseReleased(mouseButtonEvent);
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+    public boolean mouseDragged(MouseButtonEvent mouseButtonEvent, double deltaX, double deltaY) {
         if (isLoaded()) {
-            if (isValidMouseClick(button) && needsScrollbar() && isScrolling()) {
-                if (mouseY < getTop()) {
+            if (isValidMouseClick(mouseButtonEvent.button()) && needsScrollbar() && isScrolling()) {
+                if (mouseButtonEvent.y() < getTop()) {
                     setScroll(0.0F);
-                } else if (mouseY > getBottom()) {
+                } else if (mouseButtonEvent.y() > getBottom()) {
                     setScroll(getMaxScroll());
                 } else {
                     final int deltaYInt = (int) (deltaY > 0 ? deltaY + 0.5 : deltaY - 0.5);
@@ -336,7 +346,7 @@ public class ScrollPane extends ExtendedScreen {
                 }
                 return true;
             }
-            return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+            return super.mouseDragged(mouseButtonEvent, deltaX, deltaY);
         }
         return false;
     }
