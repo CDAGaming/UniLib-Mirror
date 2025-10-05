@@ -185,6 +185,10 @@ public class CheckBoxControl extends ExtendedButtonControl {
                     left, getTop(), getRight() - 2, getBottom(),
                     color
             );
+
+            if (isHovered()) {
+                matrixStack.requestCursor(getCursorType());
+            }
         }
     }
 

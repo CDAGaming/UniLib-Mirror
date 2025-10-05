@@ -33,11 +33,12 @@ import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.options.controls.ControlsScreen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.*;
 
@@ -148,7 +149,7 @@ public class KeyUtils {
      * @param currentKey The current key for this binding
      * @return the created KeyBind instance
      */
-    private KeyMapping createKey(final String id, final String name, final String category, final int defaultKey, final int currentKey) {
+    private KeyMapping createKey(final String id, final String name, final KeyMapping.Category category, final int defaultKey, final int currentKey) {
         final KeyMapping result = new KeyMapping(name, defaultKey, category);
         keySyncQueue.put(id, currentKey);
         return result;
@@ -175,7 +176,7 @@ public class KeyUtils {
      */
     public KeyMapping registerKey(final String id, final String name,
                                   final Function<String, String> nameFormatter,
-                                  final String category,
+                                  final KeyMapping.Category category,
                                   final Function<String, String> categoryFormatter,
                                   final int defaultKey, final int currentKey,
                                   final Supplier<String> detailsSupplier,
@@ -222,7 +223,7 @@ public class KeyUtils {
      * @return the created and registered KeyBind instance
      */
     public KeyMapping registerKey(final String id, final String name,
-                                  final String category,
+                                  final KeyMapping.Category category,
                                   final int defaultKey, final int currentKey,
                                   final Supplier<String> detailsSupplier,
                                   final Supplier<Boolean> canCheckSupplier,
@@ -260,7 +261,7 @@ public class KeyUtils {
      * @return the created and registered KeyBind instance
      */
     public KeyMapping registerKey(final String id, final String name,
-                                  final String category,
+                                  final KeyMapping.Category category,
                                   final int defaultKey, final int currentKey,
                                   final Supplier<Boolean> canCheckSupplier,
                                   final Supplier<Boolean> canSyncSupplier,
@@ -273,6 +274,244 @@ public class KeyUtils {
                 category,
                 defaultKey, currentKey,
                 () -> "",
+                canCheckSupplier,
+                canSyncSupplier,
+                onPress, onBind, onOutdated,
+                callback
+        );
+    }
+
+    /**
+     * Registers a new Keybinding with the specified info
+     *
+     * @param id                The keybinding internal identifier, used for the Key Sync Queue
+     * @param name              The name or description of the keybinding
+     * @param nameFormatter     The Function to supply extra formatting to the key name
+     * @param category          The category for the keybinding
+     * @param categoryFormatter The Function to supply extra formatting to the key category
+     * @param defaultKey        The default key for this binding
+     * @param currentKey        The current key for this binding
+     * @param detailsSupplier   The supplier for additional key details
+     * @param canCheckSupplier  The supplier for whether key iteration operations are allowed
+     * @param canSyncSupplier   The supplier for whether key sync operations are allowed
+     * @param onPress           The event to execute when the KeyBind is being pressed
+     * @param onBind            The event to execute when the KeyBind is being rebound to another key
+     * @param onOutdated        The event to determine whether the KeyBind is up-to-date (Ex: Vanilla==Config)
+     * @param callback          The event to execute upon an exception occurring during KeyBind events
+     * @return the created and registered KeyBind instance
+     */
+    public KeyMapping registerKey(final String id, final String name,
+                                  final Function<String, String> nameFormatter,
+                                  final ResourceLocation category,
+                                  final Function<String, String> categoryFormatter,
+                                  final int defaultKey, final int currentKey,
+                                  final Supplier<String> detailsSupplier,
+                                  final Supplier<Boolean> canCheckSupplier,
+                                  final Supplier<Boolean> canSyncSupplier,
+                                  final Runnable onPress,
+                                  final BiConsumer<Integer, Boolean> onBind,
+                                  final Predicate<Integer> onOutdated,
+                                  final BiFunction<Throwable, Pair<String, KeyBindData>, Boolean> callback) {
+        return registerKey(
+                id, name, nameFormatter,
+                KeyMapping.Category.register(category),
+                categoryFormatter,
+                defaultKey, currentKey,
+                detailsSupplier,
+                canCheckSupplier,
+                canSyncSupplier,
+                onPress, onBind, onOutdated,
+                callback
+        );
+    }
+
+    /**
+     * Registers a new Keybinding with the specified info
+     *
+     * @param id                The keybinding internal identifier, used for the Key Sync Queue
+     * @param name              The name or description of the keybinding
+     * @param nameFormatter     The Function to supply extra formatting to the key name
+     * @param category          The category for the keybinding
+     * @param categoryFormatter The Function to supply extra formatting to the key category
+     * @param defaultKey        The default key for this binding
+     * @param currentKey        The current key for this binding
+     * @param detailsSupplier   The supplier for additional key details
+     * @param canCheckSupplier  The supplier for whether key iteration operations are allowed
+     * @param canSyncSupplier   The supplier for whether key sync operations are allowed
+     * @param onPress           The event to execute when the KeyBind is being pressed
+     * @param onBind            The event to execute when the KeyBind is being rebound to another key
+     * @param onOutdated        The event to determine whether the KeyBind is up-to-date (Ex: Vanilla==Config)
+     * @param callback          The event to execute upon an exception occurring during KeyBind events
+     * @return the created and registered KeyBind instance
+     */
+    public KeyMapping registerKey(final String id, final String name,
+                                  final Function<String, String> nameFormatter,
+                                  final String category,
+                                  final Function<String, String> categoryFormatter,
+                                  final int defaultKey, final int currentKey,
+                                  final Supplier<String> detailsSupplier,
+                                  final Supplier<Boolean> canCheckSupplier,
+                                  final Supplier<Boolean> canSyncSupplier,
+                                  final Runnable onPress,
+                                  final BiConsumer<Integer, Boolean> onBind,
+                                  final Predicate<Integer> onOutdated,
+                                  final BiFunction<Throwable, Pair<String, KeyBindData>, Boolean> callback) {
+        return registerKey(
+                id, name, nameFormatter,
+                ResourceUtils.parseResource(category),
+                categoryFormatter,
+                defaultKey, currentKey,
+                detailsSupplier,
+                canCheckSupplier,
+                canSyncSupplier,
+                onPress, onBind, onOutdated,
+                callback
+        );
+    }
+
+    /**
+     * Registers a new Keybinding with the specified info
+     *
+     * @param id               The keybinding internal identifier, used for the Key Sync Queue
+     * @param name             The name or description of the keybinding
+     * @param category         The category for the keybinding
+     * @param defaultKey       The default key for this binding
+     * @param currentKey       The current key for this binding
+     * @param detailsSupplier  The supplier for additional key details
+     * @param canCheckSupplier The supplier for whether key iteration operations are allowed
+     * @param canSyncSupplier  The supplier for whether key sync operations are allowed
+     * @param onPress          The event to execute when the KeyBind is being pressed
+     * @param onBind           The event to execute when the KeyBind is being rebound to another key
+     * @param onOutdated       The event to determine whether the KeyBind is up-to-date (Ex: Vanilla==Config)
+     * @param callback         The event to execute upon an exception occurring during KeyBind events
+     * @return the created and registered KeyBind instance
+     */
+    public KeyMapping registerKey(final String id, final String name,
+                                  final ResourceLocation category,
+                                  final int defaultKey, final int currentKey,
+                                  final Supplier<String> detailsSupplier,
+                                  final Supplier<Boolean> canCheckSupplier,
+                                  final Supplier<Boolean> canSyncSupplier,
+                                  final Runnable onPress,
+                                  final BiConsumer<Integer, Boolean> onBind,
+                                  final Predicate<Integer> onOutdated,
+                                  final BiFunction<Throwable, Pair<String, KeyBindData>, Boolean> callback) {
+        return registerKey(
+                id, name,
+                KeyMapping.Category.register(category),
+                defaultKey, currentKey,
+                detailsSupplier,
+                canCheckSupplier,
+                canSyncSupplier,
+                onPress, onBind, onOutdated,
+                callback
+        );
+    }
+
+    /**
+     * Registers a new Keybinding with the specified info
+     *
+     * @param id               The keybinding internal identifier, used for the Key Sync Queue
+     * @param name             The name or description of the keybinding
+     * @param category         The category for the keybinding
+     * @param defaultKey       The default key for this binding
+     * @param currentKey       The current key for this binding
+     * @param detailsSupplier  The supplier for additional key details
+     * @param canCheckSupplier The supplier for whether key iteration operations are allowed
+     * @param canSyncSupplier  The supplier for whether key sync operations are allowed
+     * @param onPress          The event to execute when the KeyBind is being pressed
+     * @param onBind           The event to execute when the KeyBind is being rebound to another key
+     * @param onOutdated       The event to determine whether the KeyBind is up-to-date (Ex: Vanilla==Config)
+     * @param callback         The event to execute upon an exception occurring during KeyBind events
+     * @return the created and registered KeyBind instance
+     */
+    public KeyMapping registerKey(final String id, final String name,
+                                  final String category,
+                                  final int defaultKey, final int currentKey,
+                                  final Supplier<String> detailsSupplier,
+                                  final Supplier<Boolean> canCheckSupplier,
+                                  final Supplier<Boolean> canSyncSupplier,
+                                  final Runnable onPress,
+                                  final BiConsumer<Integer, Boolean> onBind,
+                                  final Predicate<Integer> onOutdated,
+                                  final BiFunction<Throwable, Pair<String, KeyBindData>, Boolean> callback) {
+        return registerKey(
+                id, name,
+                ResourceUtils.parseResource(category),
+                defaultKey, currentKey,
+                detailsSupplier,
+                canCheckSupplier,
+                canSyncSupplier,
+                onPress, onBind, onOutdated,
+                callback
+        );
+    }
+
+    /**
+     * Registers a new Keybinding with the specified info
+     *
+     * @param id               The keybinding internal identifier, used for the Key Sync Queue
+     * @param name             The name or description of the keybinding
+     * @param category         The category for the keybinding
+     * @param defaultKey       The default key for this binding
+     * @param currentKey       The current key for this binding
+     * @param canCheckSupplier The supplier for whether key iteration operations are allowed
+     * @param canSyncSupplier  The supplier for whether key sync operations are allowed
+     * @param onPress          The event to execute when the KeyBind is being pressed
+     * @param onBind           The event to execute when the KeyBind is being rebound to another key
+     * @param onOutdated       The event to determine whether the KeyBind is up-to-date (Ex: Vanilla==Config)
+     * @param callback         The event to execute upon an exception occurring during KeyBind events
+     * @return the created and registered KeyBind instance
+     */
+    public KeyMapping registerKey(final String id, final String name,
+                                  final ResourceLocation category,
+                                  final int defaultKey, final int currentKey,
+                                  final Supplier<Boolean> canCheckSupplier,
+                                  final Supplier<Boolean> canSyncSupplier,
+                                  final Runnable onPress,
+                                  final BiConsumer<Integer, Boolean> onBind,
+                                  final Predicate<Integer> onOutdated,
+                                  final BiFunction<Throwable, Pair<String, KeyBindData>, Boolean> callback) {
+        return registerKey(
+                id, name,
+                KeyMapping.Category.register(category),
+                defaultKey, currentKey,
+                canCheckSupplier,
+                canSyncSupplier,
+                onPress, onBind, onOutdated,
+                callback
+        );
+    }
+
+    /**
+     * Registers a new Keybinding with the specified info
+     *
+     * @param id               The keybinding internal identifier, used for the Key Sync Queue
+     * @param name             The name or description of the keybinding
+     * @param category         The category for the keybinding
+     * @param defaultKey       The default key for this binding
+     * @param currentKey       The current key for this binding
+     * @param canCheckSupplier The supplier for whether key iteration operations are allowed
+     * @param canSyncSupplier  The supplier for whether key sync operations are allowed
+     * @param onPress          The event to execute when the KeyBind is being pressed
+     * @param onBind           The event to execute when the KeyBind is being rebound to another key
+     * @param onOutdated       The event to determine whether the KeyBind is up-to-date (Ex: Vanilla==Config)
+     * @param callback         The event to execute upon an exception occurring during KeyBind events
+     * @return the created and registered KeyBind instance
+     */
+    public KeyMapping registerKey(final String id, final String name,
+                                  final String category,
+                                  final int defaultKey, final int currentKey,
+                                  final Supplier<Boolean> canCheckSupplier,
+                                  final Supplier<Boolean> canSyncSupplier,
+                                  final Runnable onPress,
+                                  final BiConsumer<Integer, Boolean> onBind,
+                                  final Predicate<Integer> onOutdated,
+                                  final BiFunction<Throwable, Pair<String, KeyBindData>, Boolean> callback) {
+        return registerKey(
+                id, name,
+                ResourceUtils.parseResource(category),
+                defaultKey, currentKey,
                 canCheckSupplier,
                 canSyncSupplier,
                 onPress, onBind, onOutdated,
@@ -295,7 +534,7 @@ public class KeyUtils {
         if (getKeyName(newKey).equals(unknownKeyName)) {
             inputKey = InputConstants.UNKNOWN;
         } else {
-            inputKey = InputConstants.getKey(newKey, GLFW.glfwGetKeyScancode(newKey));
+            inputKey = InputConstants.getKey(new KeyEvent(newKey, GLFW.glfwGetKeyScancode(newKey), 0));
         }
         instance.setKey(inputKey);
         KeyMapping.resetMapping();
@@ -354,17 +593,7 @@ public class KeyUtils {
         if (!areKeysRegistered()) {
             if (getInstance().options != null) {
                 for (Map.Entry<String, KeyBindData> data : getRegistrationEntries()) {
-                    final KeyBindData entry = data.getValue();
-                    final String category = entry.category();
-
-                    final Map<String, Integer> categoryMap = KeyMapping.CATEGORY_SORT_ORDER;
-                    if (!categoryMap.containsKey(category)) {
-                        final Optional<Integer> largest = categoryMap.values().stream().max(Integer::compareTo);
-                        final int largestInt = largest.orElse(0);
-                        categoryMap.put(category, largestInt + 1);
-                    }
-                    getInstance().options.keyMappings = StringUtils.addToArray(getInstance().options.keyMappings, entry.binding());
-
+                    getInstance().options.keyMappings = StringUtils.addToArray(getInstance().options.keyMappings, data.getValue().binding());
                     registrationQueue.remove(data.getKey());
                 }
             } else {
@@ -387,7 +616,7 @@ public class KeyUtils {
 
                         if (!getKeyName(currentBind).equals(unknownKeyName) && !isValidClearCode(currentBind)) {
                             // Only process the key if it is not an unknown or invalid key
-                            if (GLFW.glfwGetKey(getInstance().getWindow().getWindow(), currentBind) == GLFW.GLFW_PRESS && !(GameUtils.getCurrentScreen(getInstance()) instanceof ControlsScreen)) {
+                            if (GLFW.glfwGetKey(getInstance().getWindow().handle(), currentBind) == GLFW.GLFW_PRESS && !(GameUtils.getCurrentScreen(getInstance()) instanceof ControlsScreen)) {
                                 try {
                                     keyData.runEvent().run();
                                 } catch (Throwable ex) {
@@ -520,7 +749,7 @@ public class KeyUtils {
      */
     public record KeyBindData(KeyMapping binding,
                               Function<String, String> nameFormatter,
-                              Supplier<String> categorySupplier,
+                              Supplier<KeyMapping.Category> categorySupplier,
                               Function<String, String> categoryFormatter,
                               Supplier<Integer> defaultKeySupplier,
                               Supplier<String> detailsSupplier,
@@ -534,7 +763,7 @@ public class KeyUtils {
          *
          * @return the KeyBind category
          */
-        public String category() {
+        public KeyMapping.Category category() {
             return categorySupplier().get();
         }
 
@@ -544,7 +773,7 @@ public class KeyUtils {
          * @return the raw KeyBind category name
          */
         public String rawCategoryName() {
-            return category();
+            return category().id().toLanguageKey("key.category");
         }
 
         /**

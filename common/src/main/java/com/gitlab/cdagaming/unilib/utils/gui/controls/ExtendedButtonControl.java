@@ -28,9 +28,12 @@ import com.gitlab.cdagaming.unilib.ModUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
+import com.mojang.blaze3d.platform.cursor.CursorType;
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ARGB;
@@ -224,6 +227,10 @@ public class ExtendedButtonControl extends Button implements DynamicWidget {
                     getRight() - 2, getBottom(),
                     color
             );
+
+            if (isHovered()) {
+                matrixStack.requestCursor(getCursorType());
+            }
         }
     }
 
@@ -233,6 +240,10 @@ public class ExtendedButtonControl extends Button implements DynamicWidget {
 
     void setBlitOffset(int blitOffset) {
         // N/A
+    }
+
+    protected CursorType getCursorType() {
+        return isActive() ? CursorTypes.POINTING_HAND : CursorTypes.NOT_ALLOWED;
     }
 
     /**
@@ -357,7 +368,7 @@ public class ExtendedButtonControl extends Button implements DynamicWidget {
      * Event to trigger upon Button Action, including onClick Events
      */
     @Override
-    public void onPress() {
+    public void onPress(InputWithModifiers input) {
         onClick();
     }
 
