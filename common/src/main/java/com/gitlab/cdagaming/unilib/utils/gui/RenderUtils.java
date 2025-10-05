@@ -33,8 +33,10 @@ import com.gitlab.cdagaming.unilib.utils.ResourceUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.controls.ExtendedButtonControl;
 import com.gitlab.cdagaming.unilib.utils.gui.controls.ExtendedTextControl;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
+import com.gitlab.cdagaming.unilib.utils.gui.integrations.GradientBlitRenderState;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.textures.GpuTextureView;
 import io.github.cdagaming.unicore.impl.Pair;
 import io.github.cdagaming.unicore.impl.Tuple;
 import io.github.cdagaming.unicore.utils.MathUtils;
@@ -44,12 +46,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.item.ItemStack;
-import org.joml.Matrix4f;
+import org.joml.Matrix3x2f;
+import org.joml.Matrix3x2fStack;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -57,7 +62,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  * Rendering Utilities used to Parse Screen Data and handle rendering tasks
@@ -227,6 +231,10 @@ public class RenderUtils {
         return ModUtils.getMinecraft().font;
     }
 
+    public static int colorToArgb(final Color color) {
+        return ARGB.color(color.getAlpha(), color.getRed(), color.getGreen(), color.getBlue());
+    }
+
     /**
      * Adds a Scheduled/Queued Task to Display the Specified Gui Screen
      *
@@ -276,16 +284,16 @@ public class RenderUtils {
     public static void drawItemStack(@Nonnull final GuiGraphics client, final Font fontRenderer, final int x, final int y, final ItemStack stack, final float scale) {
         if (BLOCKED_RENDER_ITEMS.contains(stack)) return;
         try {
-            final PoseStack lv = client.pose();
-            lv.pushPose();
-            lv.scale(scale, scale, 1.0f);
+            final Matrix3x2fStack lv = client.pose();
+            lv.pushMatrix();
+            lv.scale(scale, scale);
 
             final int xPos = Math.round(x / scale);
             final int yPos = Math.round(y / scale);
             client.renderItem(stack, xPos, yPos);
             client.renderItemDecorations(fontRenderer, stack, xPos, yPos);
 
-            lv.popPose();
+            lv.popMatrix();
         } catch (Throwable ex) {
             CoreUtils.LOG.debugError(ex);
             if (!BLOCKED_RENDER_ITEMS.contains(stack)) {
@@ -311,7 +319,7 @@ public class RenderUtils {
      * @param contentColor    The starting content color for the object
      * @param contentColorEnd The ending content color for the object
      */
-    public static void drawGradientBox(@Nonnull final GuiGraphics mc, final RenderType renderType,
+    public static void drawGradientBox(@Nonnull final GuiGraphics mc, final RenderPipeline renderType,
                                        final double posX, final double posY,
                                        final double width, final double height,
                                        final double zLevel,
@@ -365,7 +373,7 @@ public class RenderUtils {
                                        final Object borderColor, final Object borderColorEnd,
                                        final int border, final int borderOffset,
                                        final Object contentColor, final Object contentColorEnd) {
-        drawGradientBox(mc, RenderType.gui(), posX, posY, width, height, zLevel, borderColor, borderColorEnd, border, borderOffset, contentColor, contentColorEnd);
+        drawGradientBox(mc, RenderPipelines.GUI, posX, posY, width, height, zLevel, borderColor, borderColorEnd, border, borderOffset, contentColor, contentColorEnd);
     }
 
     /**
@@ -384,7 +392,7 @@ public class RenderUtils {
      * @param contentColor    The starting content color for the object
      * @param contentColorEnd The ending content color for the object
      */
-    public static void drawGradientBox(@Nonnull final GuiGraphics mc, final RenderType renderType,
+    public static void drawGradientBox(@Nonnull final GuiGraphics mc, final RenderPipeline renderType,
                                        final double posX, final double posY,
                                        final double width, final double height,
                                        final double zLevel,
@@ -423,7 +431,7 @@ public class RenderUtils {
                                        final Object borderColor, final Object borderColorEnd,
                                        final int border,
                                        final Object contentColor, final Object contentColorEnd) {
-        drawGradientBox(mc, RenderType.gui(), posX, posY, width, height, zLevel, borderColor, borderColorEnd, border, contentColor, contentColorEnd);
+        drawGradientBox(mc, RenderPipelines.GUI, posX, posY, width, height, zLevel, borderColor, borderColorEnd, border, contentColor, contentColorEnd);
     }
 
     /**
@@ -458,7 +466,7 @@ public class RenderUtils {
      * @param texLocation   The game texture to render the object as
      */
     public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
-                                   final Function<ResourceLocation, RenderType> function,
+                                   final RenderPipeline function,
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel, final boolean asFullTexture,
                                    final double minU, final double maxU, final double minV, final double maxV,
@@ -482,14 +490,25 @@ public class RenderUtils {
             return;
         }
 
-        matrixStack.drawSpecial(bufferSource -> {
-            final Matrix4f matrix4f = matrixStack.pose().last().pose();
-            final VertexConsumer buffer = bufferSource.getBuffer(function.apply(texLocation));
-            buffer.addVertex(matrix4f, (float) left, (float) bottom, (float) zLevel).setUv((float) minU, (float) maxV).setColor(endColor.getRed(), endColor.getGreen(), endColor.getBlue(), endColor.getAlpha());
-            buffer.addVertex(matrix4f, (float) right, (float) bottom, (float) zLevel).setUv((float) maxU, (float) maxV).setColor(endColor.getRed(), endColor.getGreen(), endColor.getBlue(), endColor.getAlpha());
-            buffer.addVertex(matrix4f, (float) right, (float) top, (float) zLevel).setUv((float) maxU, (float) minV).setColor(startColor.getRed(), startColor.getGreen(), startColor.getBlue(), startColor.getAlpha());
-            buffer.addVertex(matrix4f, (float) left, (float) top, (float) zLevel).setUv((float) minU, (float) minV).setColor(startColor.getRed(), startColor.getGreen(), startColor.getBlue(), startColor.getAlpha());
-        });
+        final GpuTextureView gpuTextureView = mc.getTextureManager().getTexture(texLocation).getTextureView();
+        submitTexture(matrixStack,
+                function, gpuTextureView,
+                (int) left, (int) top, (int) right, (int) bottom,
+                (float) minU, (float) maxU, (float) minV, (float) maxV,
+                colorToArgb(startColor), colorToArgb(endColor));
+    }
+
+    public static void submitTexture(@Nonnull GuiGraphics matrixStack,
+                                     final RenderPipeline renderPipeline, final GpuTextureView gpuTextureView,
+                                     final int left, final int top, final int right, final int bottom,
+                                     final float minU, final float maxU, final float minV, final float maxV,
+                                     final int startColor, final int endColor) {
+        matrixStack.guiRenderState.submitGuiElement(new GradientBlitRenderState(renderPipeline, TextureSetup.singleTexture(gpuTextureView), new Matrix3x2f(matrixStack.pose()),
+                left, top, right, bottom,
+                minU, maxU, minV, maxV,
+                startColor, endColor,
+                matrixStack.scissorStack.peek()
+        ));
     }
 
     /**
@@ -517,7 +536,7 @@ public class RenderUtils {
                                    final double minU, final double maxU, final double minV, final double maxV,
                                    final Object startColorObj, final Object endColorObj,
                                    final ResourceLocation texLocation) {
-        drawTexture(mc, matrixStack, RenderType::guiTextured,
+        drawTexture(mc, matrixStack, RenderPipelines.GUI_TEXTURED,
                 left, right, top, bottom,
                 zLevel, asFullTexture,
                 minU, maxU,
@@ -547,7 +566,7 @@ public class RenderUtils {
      * @param texLocation   The game texture to render the object as
      */
     public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
-                                   final Function<ResourceLocation, RenderType> function,
+                                   final RenderPipeline function,
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel,
                                    final double minU, final double maxU, final double minV, final double maxV,
@@ -587,7 +606,7 @@ public class RenderUtils {
                                    final double minU, final double maxU, final double minV, final double maxV,
                                    final Object startColorObj, final Object endColorObj,
                                    final ResourceLocation texLocation) {
-        drawTexture(mc, matrixStack, RenderType::guiTextured,
+        drawTexture(mc, matrixStack, RenderPipelines.GUI_TEXTURED,
                 left, right, top, bottom,
                 zLevel,
                 minU, maxU,
@@ -621,7 +640,7 @@ public class RenderUtils {
      * @param texLocation          The game texture to render the object as
      */
     public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
-                                   final Function<ResourceLocation, RenderType> function,
+                                   final RenderPipeline function,
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel, final boolean asFullTexture,
                                    final boolean usingExternalTexture,
@@ -673,7 +692,7 @@ public class RenderUtils {
                                    final double textureWidth, final double textureHeight,
                                    final Object startColorObj, final Object endColorObj,
                                    final ResourceLocation texLocation) {
-        drawTexture(mc, matrixStack, RenderType::guiTextured,
+        drawTexture(mc, matrixStack, RenderPipelines.GUI_TEXTURED,
                 left, right, top, bottom,
                 zLevel, asFullTexture,
                 usingExternalTexture,
@@ -708,7 +727,7 @@ public class RenderUtils {
      * @param texLocation          The game texture to render the object as
      */
     public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
-                                   final Function<ResourceLocation, RenderType> function,
+                                   final RenderPipeline function,
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel, final boolean usingExternalTexture,
                                    final double regionWidth, final double regionHeight,
@@ -757,7 +776,7 @@ public class RenderUtils {
                                    final double textureWidth, final double textureHeight,
                                    final Object startColorObj, final Object endColorObj,
                                    final ResourceLocation texLocation) {
-        drawTexture(mc, matrixStack, RenderType::guiTextured,
+        drawTexture(mc, matrixStack, RenderPipelines.GUI_TEXTURED,
                 left, right, top, bottom,
                 zLevel, usingExternalTexture,
                 regionWidth, regionHeight,
@@ -786,7 +805,7 @@ public class RenderUtils {
      * @param texLocation          The game texture to render the object as
      */
     public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
-                                   final Function<ResourceLocation, RenderType> function,
+                                   final RenderPipeline function,
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel, final boolean asFullTexture,
                                    final boolean usingExternalTexture,
@@ -826,7 +845,7 @@ public class RenderUtils {
                                    final boolean usingExternalTexture,
                                    final Object startColorObj, final Object endColorObj,
                                    final ResourceLocation texLocation) {
-        drawTexture(mc, matrixStack, RenderType::guiTextured,
+        drawTexture(mc, matrixStack, RenderPipelines.GUI_TEXTURED,
                 left, right, top, bottom,
                 zLevel, asFullTexture,
                 usingExternalTexture,
@@ -852,7 +871,7 @@ public class RenderUtils {
      * @param texLocation          The game texture to render the object as
      */
     public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
-                                   final Function<ResourceLocation, RenderType> function,
+                                   final RenderPipeline function,
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel, final boolean usingExternalTexture,
                                    final Object startColorObj, final Object endColorObj,
@@ -886,7 +905,7 @@ public class RenderUtils {
                                    final double zLevel, final boolean usingExternalTexture,
                                    final Object startColorObj, final Object endColorObj,
                                    final ResourceLocation texLocation) {
-        drawTexture(mc, matrixStack, RenderType::guiTextured,
+        drawTexture(mc, matrixStack, RenderPipelines.GUI_TEXTURED,
                 left, right, top, bottom,
                 zLevel, usingExternalTexture,
                 startColorObj, endColorObj,
@@ -907,7 +926,7 @@ public class RenderUtils {
      * @param startColorObj The Starting Color Data
      * @param endColorObj   The Ending Color Data
      */
-    public static void drawGradient(@Nonnull final GuiGraphics mc, final RenderType renderType,
+    public static void drawGradient(@Nonnull final GuiGraphics mc, final RenderPipeline renderType,
                                     final double left, final double right, final double top, final double bottom,
                                     final double zLevel,
                                     final Object startColorObj, final Object endColorObj) {
@@ -918,14 +937,10 @@ public class RenderUtils {
             return;
         }
 
-        mc.drawSpecial(bufferSource -> {
-            final Matrix4f matrix4f = mc.pose().last().pose();
-            final VertexConsumer buffer = bufferSource.getBuffer(renderType);
-            buffer.addVertex(matrix4f, (float) left, (float) bottom, (float) zLevel).setColor(endColor.getRed(), endColor.getGreen(), endColor.getBlue(), endColor.getAlpha());
-            buffer.addVertex(matrix4f, (float) right, (float) bottom, (float) zLevel).setColor(endColor.getRed(), endColor.getGreen(), endColor.getBlue(), endColor.getAlpha());
-            buffer.addVertex(matrix4f, (float) right, (float) top, (float) zLevel).setColor(startColor.getRed(), startColor.getGreen(), startColor.getBlue(), startColor.getAlpha());
-            buffer.addVertex(matrix4f, (float) left, (float) top, (float) zLevel).setColor(startColor.getRed(), startColor.getGreen(), startColor.getBlue(), startColor.getAlpha());
-        });
+        mc.fillGradient(
+                (int) left, (int) top, (int) right, (int) bottom,
+                colorToArgb(startColor), colorToArgb(endColor)
+        );
     }
 
     /**
@@ -944,7 +959,7 @@ public class RenderUtils {
                                     final double left, final double right, final double top, final double bottom,
                                     final double zLevel,
                                     final Object startColorObj, final Object endColorObj) {
-        drawGradient(mc, RenderType.gui(), left, right, top, bottom, zLevel, startColorObj, endColorObj);
+        drawGradient(mc, RenderPipelines.GUI, left, right, top, bottom, zLevel, startColorObj, endColorObj);
     }
 
     /**
@@ -962,7 +977,7 @@ public class RenderUtils {
      * @param regionHeight The Height of the Texture Region
      */
     public static void blit(@Nonnull final GuiGraphics mc,
-                            final Function<ResourceLocation, RenderType> function, final ResourceLocation texLocation,
+                            final RenderPipeline function, final ResourceLocation texLocation,
                             final double xPos, final double yPos,
                             final double zLevel,
                             final double u, final double v,
@@ -989,7 +1004,7 @@ public class RenderUtils {
                             final double zLevel,
                             final double u, final double v,
                             final double regionWidth, final double regionHeight) {
-        blit(mc, RenderType::guiTextured, texLocation, xPos, yPos, zLevel, u, v, regionWidth, regionHeight);
+        blit(mc, RenderPipelines.GUI_TEXTURED, texLocation, xPos, yPos, zLevel, u, v, regionWidth, regionHeight);
     }
 
     /**
@@ -1009,7 +1024,7 @@ public class RenderUtils {
      * @param textureHeight The Height of the Texture
      */
     public static void blit(@Nonnull final GuiGraphics mc,
-                            final Function<ResourceLocation, RenderType> function, final ResourceLocation texLocation,
+                            final RenderPipeline function, final ResourceLocation texLocation,
                             final double xPos, final double yPos,
                             final double zLevel,
                             final double u, final double v,
@@ -1046,7 +1061,7 @@ public class RenderUtils {
                             final double u, final double v,
                             final double regionWidth, final double regionHeight,
                             final double textureWidth, final double textureHeight) {
-        blit(mc, RenderType::guiTextured, texLocation, xPos, yPos, zLevel, u, v, regionWidth, regionHeight, textureWidth, textureHeight);
+        blit(mc, RenderPipelines.GUI_TEXTURED, texLocation, xPos, yPos, zLevel, u, v, regionWidth, regionHeight, textureWidth, textureHeight);
     }
 
     /**
@@ -1068,7 +1083,7 @@ public class RenderUtils {
      * @param textureHeight The Height of the Texture
      */
     public static void blit(@Nonnull final GuiGraphics mc,
-                            final Function<ResourceLocation, RenderType> function, final ResourceLocation texLocation,
+                            final RenderPipeline function, final ResourceLocation texLocation,
                             final double left, final double right, final double top, final double bottom,
                             final double zLevel,
                             final double regionWidth, final double regionHeight,
@@ -1108,7 +1123,7 @@ public class RenderUtils {
                             final double regionWidth, final double regionHeight,
                             final double u, final double v,
                             final double textureWidth, final double textureHeight) {
-        blit(mc, RenderType::guiTextured, texLocation,
+        blit(mc, RenderPipelines.GUI_TEXTURED, texLocation,
                 left, right, top, bottom,
                 zLevel,
                 regionWidth, regionHeight,
@@ -1134,18 +1149,11 @@ public class RenderUtils {
      * @param maxV        The minimum vertical axis to render this Object by
      */
     public static void innerBlit(@Nonnull final GuiGraphics mc,
-                                 final Function<ResourceLocation, RenderType> function, final ResourceLocation texLocation,
+                                 final RenderPipeline function, final ResourceLocation texLocation,
                                  final double left, final double right, final double top, final double bottom,
                                  final double zLevel,
                                  final double minU, final double maxU, final double minV, final double maxV) {
-        mc.drawSpecial(bufferSource -> {
-            final Matrix4f matrix4f = mc.pose().last().pose();
-            final VertexConsumer buffer = bufferSource.getBuffer(function.apply(texLocation));
-            buffer.addVertex(matrix4f, (float) left, (float) bottom, (float) zLevel).setUv((float) minU, (float) maxV);
-            buffer.addVertex(matrix4f, (float) right, (float) bottom, (float) zLevel).setUv((float) maxU, (float) maxV);
-            buffer.addVertex(matrix4f, (float) right, (float) top, (float) zLevel).setUv((float) maxU, (float) minV);
-            buffer.addVertex(matrix4f, (float) left, (float) top, (float) zLevel).setUv((float) minU, (float) minV);
-        });
+        mc.innerBlit(function, texLocation, (int) left, (int) top, (int) right, (int) bottom, (float) minU, (float) maxU, (float) minV, (float) maxV, 0xFFFFFF);
     }
 
     /**
@@ -1168,7 +1176,7 @@ public class RenderUtils {
                                  final double left, final double right, final double top, final double bottom,
                                  final double zLevel,
                                  final double minU, final double maxU, final double minV, final double maxV) {
-        innerBlit(mc, RenderType::guiTextured, texLocation,
+        innerBlit(mc, RenderPipelines.GUI_TEXTURED, texLocation,
                 left, right, top, bottom,
                 zLevel,
                 minU, maxU, minV, maxV
@@ -1303,6 +1311,7 @@ public class RenderUtils {
                                            final boolean isTooltip,
                                            final ScreenConstants.TooltipData colorInfo) {
         if (colorInfo.renderTooltips() && !textToInput.isEmpty() && fontRenderer != null) {
+            matrixStack.nextStratum();
             List<String> textLines = textToInput;
             int tooltipTextWidth = 0;
 
@@ -1492,8 +1501,7 @@ public class RenderUtils {
                 }
             }
 
-            matrixStack.pose().pushPose();
-            matrixStack.pose().translate(0.0, 0.0, zLevel);
+            matrixStack.pose().pushMatrix();
 
             for (int lineNumber = 0; lineNumber < textLines.size(); ++lineNumber) {
                 final String line = textLines.get(lineNumber);
@@ -1509,7 +1517,7 @@ public class RenderUtils {
                 tooltipY += fontHeight + 1;
             }
 
-            matrixStack.pose().popPose();
+            matrixStack.pose().popMatrix();
         }
     }
 
@@ -1553,11 +1561,7 @@ public class RenderUtils {
      */
     public static void renderString(@Nonnull final GuiGraphics matrixStack, final Font fontRenderer, final String text, final float xPos, final float yPos, final int color) {
         if (!StringUtils.isNullOrEmpty(text)) {
-            matrixStack.drawSpecial(
-                    bufferSource -> fontRenderer.drawInBatch(
-                            text, xPos, yPos, color, true, matrixStack.pose().last().pose(), bufferSource, Font.DisplayMode.NORMAL, 0, 15728880
-                    )
-            );
+            matrixStack.drawString(fontRenderer, text, (int) xPos, (int) yPos, ARGB.color(-1, color));
         }
     }
 
