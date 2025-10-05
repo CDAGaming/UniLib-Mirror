@@ -439,16 +439,7 @@ public class ImageFrame {
         final NativeImage newImage = new NativeImage(img.getWidth(), img.getHeight(), useStb);
         for (int x = 0; x < img.getWidth(); x++) {
             for (int y = 0; y < img.getHeight(); y++) {
-                int rgb = img.getRGB(x, y);
-                final int alpha = (rgb >> 24) & 0xFF;
-                final int red = (rgb >> 16) & 0xFF;
-                final int green = (rgb >> 8) & 0xFF;
-                final int blue = rgb & 0xFF;
-                rgb = ((alpha & 0xFF) << 24) |
-                        ((blue & 0xFF) << 16) |
-                        ((green & 0xFF) << 8) |
-                        ((red & 0xFF));
-                newImage.setPixelRGBA(x, y, rgb);
+                newImage.setPixel(x, y, img.getRGB(x, y));
             }
         }
 

@@ -31,7 +31,9 @@ import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.ARGB;
 
 import javax.annotation.Nonnull;
 
@@ -257,9 +259,11 @@ public class ExtendedButtonControl extends Button implements DynamicWidget {
     protected void renderBg(@Nonnull GuiGraphics matrixStack, @Nonnull Minecraft mc, int mouseX, int mouseY) {
         if (isControlVisible()) {
             RenderUtils.renderSprite(matrixStack, graphics -> graphics.blitSprite(
+                    RenderType::guiTextured,
                     RenderUtils.getButtonTexture(isControlEnabled(), isHoveringOrFocusingOver()),
                     getControlPosX(), getControlPosY(),
-                    getControlWidth(), getControlHeight()
+                    getControlWidth(), getControlHeight(),
+                    ARGB.white(alpha)
             ));
         }
     }

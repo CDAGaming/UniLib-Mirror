@@ -508,7 +508,8 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
         final Color endColor = StringUtils.offsetColor(data.endColor(), tintFactor);
 
         if (StringUtils.isNullOrEmpty(data.texLocation())) {
-            RenderUtils.drawGradient(left, right, top, bottom,
+            RenderUtils.drawGradient(getCurrentMatrix(),
+                    left, right, top, bottom,
                     data.colorLevel(),
                     startColor, endColor
             );
@@ -584,6 +585,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
                             final Object startColorObj, final Object endColorObj,
                             final ResourceLocation texLocation) {
         RenderUtils.drawTexture(getGameInstance(),
+                getCurrentMatrix(),
                 left, right, top, bottom,
                 zLevel, asFullTexture,
                 usingExternalTexture,
