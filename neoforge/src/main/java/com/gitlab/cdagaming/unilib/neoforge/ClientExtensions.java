@@ -24,6 +24,14 @@
 
 package com.gitlab.cdagaming.unilib.neoforge;
 
+import com.gitlab.cdagaming.unilib.ModUtils;
+import com.gitlab.cdagaming.unilib.impl.TranslationListener;
+import com.gitlab.cdagaming.unilib.utils.ResourceUtils;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
+
 /**
  * The Primary Application Class and Utilities
  *
@@ -34,6 +42,14 @@ public class ClientExtensions {
      * Begins Scheduling Ticks on Class Initialization
      */
     public static void Setup() {
-        // N/A
+        ModUtils.CAN_USE_RELOAD_LISTENER = false;
+    }
+
+    @EventBusSubscriber(modid = "@MOD_ID@", bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    public class EventHandler {
+        @SubscribeEvent
+        public static void registerReloadManager(AddClientReloadListenersEvent event) {
+            event.addListener(ResourceUtils.getResource("@MOD_ID@", "translation_listener"), TranslationListener.INSTANCE);
+        }
     }
 }

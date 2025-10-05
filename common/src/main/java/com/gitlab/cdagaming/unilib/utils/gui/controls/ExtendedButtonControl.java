@@ -273,7 +273,7 @@ public class ExtendedButtonControl extends Button implements DynamicWidget {
      * Equivalent of MouseListener.mousePressed(MouseEvent e).
      */
     @Override
-    protected boolean clicked(double mouseX, double mouseY) {
+    public boolean isMouseOver(double mouseX, double mouseY) {
         return isOverScreen() && isControlEnabled() && isControlVisible() && isHoveringOver();
     }
 

@@ -25,7 +25,12 @@
 package com.gitlab.cdagaming.unilib.utils;
 
 import io.github.cdagaming.unicore.utils.StringUtils;
+import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Image Utilities used to Parse texture resource data
@@ -37,6 +42,10 @@ public class ResourceUtils {
      * Object representing an empty texture resource
      */
     private static final ResourceLocation EMPTY_RESOURCE = parseResource("");
+    /**
+     * Object representing prefix registration data
+     */
+    private static final Map<String, Integer> prefixRegister = StringUtils.newHashMap();
 
     /**
      * Retrieve a texture resource within the specified namespace and path
@@ -106,5 +115,27 @@ public class ResourceUtils {
      */
     public static boolean isValidResource(final ResourceLocation location) {
         return location != null && !StringUtils.isNullOrEmpty(getNamespace(location)) && !StringUtils.isNullOrEmpty(getPath(location));
+    }
+
+    /**
+     * Register a Dynamic Texture, for use elsewhere in the application
+     * <p>Stub Function for removed implementation in 24w46a and above (1.21.4)
+     *
+     * @param manager        The Texture Manager to attach to
+     * @param prefix         The Texture Name Prefix
+     * @param dynamicTexture The Dynamic Texture Data
+     * @return the created or found texture data
+     */
+    public static ResourceLocation register(final TextureManager manager, final String prefix, final DynamicTexture dynamicTexture) {
+        Integer index = prefixRegister.get(prefix);
+        if (index == null) {
+            index = 1;
+        } else {
+            index = index + 1;
+        }
+        prefixRegister.put(prefix, index);
+        final ResourceLocation resourceLocation = ResourceLocation.withDefaultNamespace(String.format(Locale.ROOT, "dynamic/%s_%d", prefix, index));
+        manager.register(resourceLocation, dynamicTexture);
+        return resourceLocation;
     }
 }
