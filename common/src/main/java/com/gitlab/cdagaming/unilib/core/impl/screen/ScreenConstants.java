@@ -24,11 +24,9 @@
 
 package com.gitlab.cdagaming.unilib.core.impl.screen;
 
-import com.gitlab.cdagaming.unilib.core.CoreUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
 
 import java.awt.*;
-import java.util.function.Function;
 
 /**
  * Constant Variables and Methods used for Rendering Operations
@@ -50,26 +48,44 @@ public class ScreenConstants {
             new ColorSection(40, 0, 127, 80)
     );
     /**
-     * The Default Alternative Screen Background Info
-     */
-    public static final ColorData DEFAULT_ALT_SCREEN_BACKGROUND = new ColorData(
-            new ColorSection(16, 16, 16, 192),
-            new ColorSection(16, 16, 16, 208)
-    );
-    /**
      * The Default Screen Background Resources
      */
-    private static final Function<Integer, String> DEFAULT_GUI_BACKGROUND_SUPPLIER = (protocol) -> "minecraft:" + (CoreUtils.isLegacyHard(protocol) ? (CoreUtils.isLegacyAlpha(protocol) ? "/dirt.png" : "/gui/background.png") : "textures/gui/options_background.png");
-    /**
-     * The Default Screen Background Resources
-     */
-    private static final String DEFAULT_GUI_BACKGROUND = getDefaultGUIBackground(CoreUtils.MCBuildProtocol);
+    private static final String DEFAULT_GUI_BACKGROUND = "minecraft:textures/gui/menu_background.png";
     /**
      * The Default Screen Background Info
      */
     public static final ColorData DEFAULT_SCREEN_BACKGROUND = new ColorData(
-            new ColorSection(64, 64, 64, 255),
             getDefaultGUIBackground()
+    );
+    /**
+     * The alternative Screen Background Resources
+     */
+    private static final String DEFAULT_GUI_BACKGROUND_ALT = "minecraft:textures/gui/menu_list_background.png";
+    /**
+     * The Default Alternative Screen Background Info
+     */
+    public static final ColorData DEFAULT_ALT_SCREEN_BACKGROUND = new ColorData(
+            getDefaultGUIBackgroundAlt()
+    );
+    /**
+     * The Default Screen Background Resources, while in a world
+     */
+    private static final String DEFAULT_WORLD_GUI_BACKGROUND = "minecraft:textures/gui/inworld_menu_background.png";
+    /**
+     * The Default Screen Background Info, while in a world
+     */
+    public static final ColorData DEFAULT_WORLD_SCREEN_BACKGROUND = new ColorData(
+            getDefaultWorldGUIBackground()
+    );
+    /**
+     * The alternative Screen Background Resources, while in a world
+     */
+    private static final String DEFAULT_WORLD_GUI_BACKGROUND_ALT = "minecraft:textures/gui/inworld_menu_list_background.png";
+    /**
+     * The Default Alternative Screen Background Info, while in a world
+     */
+    public static final ColorData DEFAULT_ALT_WORLD_SCREEN_BACKGROUND = new ColorData(
+            getDefaultWorldGUIBackgroundAlt()
     );
     /**
      * The default Tooltip Rendering Info
@@ -87,20 +103,37 @@ public class ScreenConstants {
     /**
      * Retrieve The Default Screen Background Resources
      *
-     * @param protocol The Protocol to Target for this operation
-     * @return The Default Screen Background Resources
-     */
-    public static String getDefaultGUIBackground(final int protocol) {
-        return DEFAULT_GUI_BACKGROUND_SUPPLIER.apply(protocol);
-    }
-
-    /**
-     * Retrieve The Default Screen Background Resources
-     *
      * @return The Default Screen Background Resources
      */
     public static String getDefaultGUIBackground() {
         return DEFAULT_GUI_BACKGROUND;
+    }
+
+    /**
+     * Retrieve The alternative Screen Background Resources
+     *
+     * @return The alternative Screen Background Resources
+     */
+    public static String getDefaultGUIBackgroundAlt() {
+        return DEFAULT_GUI_BACKGROUND_ALT;
+    }
+
+    /**
+     * Retrieve The Default Screen Background Resources, while in a world
+     *
+     * @return The Default Screen Background Resources, while in a world
+     */
+    public static String getDefaultWorldGUIBackground() {
+        return DEFAULT_WORLD_GUI_BACKGROUND;
+    }
+
+    /**
+     * Retrieve The alternative Screen Background Resources, while in a world
+     *
+     * @return The alternative Screen Background Resources, while in a world
+     */
+    public static String getDefaultWorldGUIBackgroundAlt() {
+        return DEFAULT_WORLD_GUI_BACKGROUND_ALT;
     }
 
     /**
