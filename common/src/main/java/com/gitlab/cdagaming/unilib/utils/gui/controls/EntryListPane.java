@@ -37,6 +37,7 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.narration.NarrationSupplier;
 import net.minecraft.client.gui.navigation.FocusNavigationEvent;
 import net.minecraft.client.gui.navigation.ScreenDirection;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 
 import javax.annotation.Nonnull;
@@ -453,17 +454,17 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        if (!isValidMouseClick(mouseButton)) {
+    public boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean doubleClick) {
+        if (!isValidMouseClick(mouseButtonEvent.button())) {
             return false;
         } else {
-            checkScrollbarClick(mouseX, mouseY, mouseButton);
+            checkScrollbarClick(mouseButtonEvent.x(), mouseButtonEvent.y(), mouseButtonEvent.button());
             if (!isOverScreen()) {
                 return false;
             } else {
-                final E entry = getEntryAtPosition(mouseX, mouseY);
+                final E entry = getEntryAtPosition(mouseButtonEvent.x(), mouseButtonEvent.y());
                 if (entry != null) {
-                    if (entry.mouseClicked(mouseX, mouseY, mouseButton)) {
+                    if (entry.mouseClicked(mouseButtonEvent, doubleClick)) {
                         final E focused = getFocused();
                         if (focused != entry && focused instanceof ContainerEventHandler containerEventHandler) {
                             containerEventHandler.setFocused(null);
@@ -472,8 +473,8 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
                         return true;
                     }
                 } else if (clickedHeader(
-                        (int) (mouseX - (double) (getScreenX() + getScreenWidth() / 2 - getRowWidth() / 2)),
-                        (int) (mouseY - (double) getScreenY()) + (int) getAmountScrolled() - getPadding()
+                        (int) (mouseButtonEvent.x() - (double) (getScreenX() + getScreenWidth() / 2 - getRowWidth() / 2)),
+                        (int) (mouseButtonEvent.y() - (double) getScreenY()) + (int) getAmountScrolled() - getPadding()
                 )) {
                     return true;
                 }
@@ -484,9 +485,9 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int mouseButton) {
+    public boolean mouseReleased(MouseButtonEvent mouseButtonEvent) {
         setScrolling(false);
-        return getFocused() != null && getFocused().mouseReleased(mouseX, mouseY, mouseButton);
+        return getFocused() != null && getFocused().mouseReleased(mouseButtonEvent);
     }
 
     @Override
@@ -918,13 +919,12 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
         /**
          * Event to trigger upon the mouse being clicked
          *
-         * @param mouseX The Event Mouse X Coordinate
-         * @param mouseY The Event Mouse Y Coordinate
-         * @param button The Event Mouse Button Clicked
+         * @param mouseButtonEvent The Mouse Event
+         * @param doubleClick      Whether the mouse event was a double click
          * @return The Event Result
          */
         @Override
-        public boolean mouseClicked(final double mouseX, final double mouseY, final int button) {
+        public boolean mouseClicked(final MouseButtonEvent mouseButtonEvent, final boolean doubleClick) {
             return true;
         }
     }

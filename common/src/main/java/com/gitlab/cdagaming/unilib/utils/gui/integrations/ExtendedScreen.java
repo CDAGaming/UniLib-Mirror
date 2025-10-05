@@ -42,6 +42,8 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -912,7 +914,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
 
             for (GuiEventListener extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
-                    extendedScreen.renderWithTooltip(matrixStack, mouseX, mouseY, partialTicks);
+                    extendedScreen.renderWithTooltipAndSubtitles(matrixStack, mouseX, mouseY, partialTicks);
                 }
             }
 
@@ -926,21 +928,21 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int mouseButton) {
+    public boolean mouseReleased(MouseButtonEvent mouseButtonEvent) {
         if (isLoaded()) {
             for (AbstractSelectionList<?> listControl : getLists()) {
-                if (listControl.mouseReleased(mouseX, mouseY, mouseButton)) {
+                if (listControl.mouseReleased(mouseButtonEvent)) {
                     return true;
                 }
             }
             for (GuiEventListener extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
-                    if (extendedScreen.mouseReleased(mouseX, mouseY, mouseButton)) {
+                    if (extendedScreen.mouseReleased(mouseButtonEvent)) {
                         return true;
                     }
                 }
             }
-            return super.mouseReleased(mouseX, mouseY, mouseButton);
+            return super.mouseReleased(mouseButtonEvent);
         }
         return false;
     }
@@ -949,21 +951,21 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
      * Event to trigger upon Mouse Input
      */
     @Override
-    public boolean mouseDragged(double mX, double mY, int mouseButton, double dragX, double dragY) {
+    public boolean mouseDragged(MouseButtonEvent mouseButtonEvent, double dragX, double dragY) {
         if (isLoaded()) {
             for (AbstractSelectionList<?> listControl : getLists()) {
-                if (listControl.mouseDragged(mX, mY, mouseButton, dragX, dragY)) {
+                if (listControl.mouseDragged(mouseButtonEvent, dragX, dragY)) {
                     return true;
                 }
             }
             for (GuiEventListener extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
-                    if (extendedScreen.mouseDragged(mX, mY, mouseButton, dragX, dragY)) {
+                    if (extendedScreen.mouseDragged(mouseButtonEvent, dragX, dragY)) {
                         return true;
                     }
                 }
             }
-            return super.mouseDragged(mX, mY, mouseButton, dragX, dragY);
+            return super.mouseDragged(mouseButtonEvent, dragX, dragY);
         }
         return false;
     }
@@ -996,22 +998,20 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
     /**
      * Event to trigger upon Pressing a Key
      *
-     * @param keyCode The KeyCode entered, if any
-     * @param mouseX  The Event Mouse X Coordinate
-     * @param mouseY  The Event Mouse Y Coordinate
+     * @param keyEvent The KeyCode Event
      * @return The Event Result
      */
     @Override
-    public boolean keyPressed(int keyCode, int mouseX, int mouseY) {
+    public boolean keyPressed(KeyEvent keyEvent) {
         if (isLoaded()) {
             if (isCurrentScreen()) {
-                if (isEscapeKey(keyCode) && canClose()) {
+                if (isEscapeKey(keyEvent.input()) && canClose()) {
                     openScreen(getParent());
                     return true;
                 }
-                return super.keyPressed(keyCode, mouseX, mouseY);
+                return super.keyPressed(keyEvent);
             } else if (getFocused() != null) {
-                return getFocused().keyPressed(keyCode, mouseX, mouseY);
+                return getFocused().keyPressed(keyEvent);
             }
         }
         return false;

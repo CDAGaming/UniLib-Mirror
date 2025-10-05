@@ -27,11 +27,15 @@ package com.gitlab.cdagaming.unilib.utils.gui.controls;
 import com.gitlab.cdagaming.unilib.utils.ResourceUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
+import com.mojang.blaze3d.platform.cursor.CursorType;
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import io.github.cdagaming.unicore.impl.Pair;
 import io.github.cdagaming.unicore.impl.Tuple;
 import io.github.cdagaming.unicore.utils.MathUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
@@ -220,6 +224,11 @@ public class SliderControl extends ExtendedButtonControl {
         return !isHoveringOrFocusingOver() ? SLIDER_HANDLE_SPRITE : SLIDER_HANDLE_HIGHLIGHTED_SPRITE;
     }
 
+    @Override
+    protected CursorType getCursorType() {
+        return dragging ? CursorTypes.RESIZE_EW : super.getCursorType();
+    }
+
     /**
      * Returns the current Hover state of this control
      * <p>
@@ -251,25 +260,26 @@ public class SliderControl extends ExtendedButtonControl {
      * Equivalent of MouseListener.mousePressed(MouseEvent e).
      */
     @Override
-    public void onClick(double mouseX, double mouseY) {
-        if (super.isMouseOver(mouseX, mouseY)) {
+    public void onClick(MouseButtonEvent mouseButtonEvent, boolean doubleClick) {
+        if (super.isMouseOver(mouseButtonEvent.x(), mouseButtonEvent.y())) {
             dragging = isControlEnabled();
-            setValueFromMouse(mouseX);
+            setValueFromMouse(mouseButtonEvent.x());
         }
     }
 
     @Override
-    public void onRelease(double d, double mouseY) {
+    public void onRelease(MouseButtonEvent mouseButtonEvent) {
         dragging = false;
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int mouseX, int mouseY) {
+    public boolean keyPressed(KeyEvent keyEvent) {
+        int keyCode = keyEvent.input();
         boolean bl = keyCode == GLFW.GLFW_KEY_LEFT;
         if (bl || keyCode == GLFW.GLFW_KEY_RIGHT) {
             float f = bl ? -valueStep : valueStep;
             setSliderValue(getSliderValue() + f);
-            onPress();
+            onPress(keyEvent);
 
             return true;
         }
@@ -356,9 +366,9 @@ public class SliderControl extends ExtendedButtonControl {
     }
 
     @Override
-    protected void onDrag(double mX, double mY, double dragX, double dragY) {
-        setValueFromMouse(mX);
-        super.onDrag(mX, mY, dragX, dragY);
+    protected void onDrag(MouseButtonEvent mouseButtonEvent, double dragX, double dragY) {
+        setValueFromMouse(mouseButtonEvent.x());
+        super.onDrag(mouseButtonEvent, dragX, dragY);
     }
 
     /**

@@ -46,7 +46,7 @@ public class UniLibNeoForge {
             throw new UnsupportedOperationException("Incompatible JVM!!! @MOD_NAME@ requires Java 8 or above to work properly!");
         }
 
-        if (FMLEnvironment.dist.isClient()) {
+        if (FMLEnvironment.getDist().isClient()) {
             ClientExtensions.Setup();
 
             CoreUtils.MOD_COUNT_SUPPLIER = () -> ModList.get().getMods().size();

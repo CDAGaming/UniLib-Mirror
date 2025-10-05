@@ -33,6 +33,7 @@ import com.gitlab.cdagaming.unilib.utils.gui.widgets.ButtonWidget;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.ScrollableTextWidget;
 import io.github.cdagaming.unicore.impl.Tuple;
 import io.github.cdagaming.unicore.utils.StringUtils;
+import net.minecraft.client.input.KeyEvent;
 
 import java.util.List;
 import java.util.Map;
@@ -110,12 +111,12 @@ public class ControlsGui extends ExtendedScreen {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int mouseX, int mouseY) {
+    public boolean keyPressed(KeyEvent keyEvent) {
         if (entryData != null) {
-            setKeyData(keyCode);
+            setKeyData(keyEvent.input());
             return true;
         } else {
-            return super.keyPressed(keyCode, mouseX, mouseY);
+            return super.keyPressed(keyEvent);
         }
     }
 

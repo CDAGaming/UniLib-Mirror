@@ -29,6 +29,7 @@ import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 
 import javax.annotation.Nonnull;
@@ -217,8 +218,8 @@ public class ScrollableListControl extends EntryListPane<ScrollableListControl.S
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (isValidMouseClick(button)) {
+        public boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean doubleClick) {
+            if (isValidMouseClick(mouseButtonEvent.button())) {
                 this.onPressed();
                 return true;
             } else {
