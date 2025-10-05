@@ -147,21 +147,21 @@ public class NbtUtils {
 
         switch (tag.getId()) {
             case 1:
-                return ((ByteTag) tag).getAsByte();
+                return ((ByteTag) tag).byteValue();
             case 2:
-                return ((ShortTag) tag).getAsShort();
+                return ((ShortTag) tag).shortValue();
             case 3:
-                return ((IntTag) tag).getAsInt();
+                return ((IntTag) tag).intValue();
             case 4:
-                return ((LongTag) tag).getAsLong();
+                return ((LongTag) tag).longValue();
             case 5:
-                return ((FloatTag) tag).getAsFloat();
+                return ((FloatTag) tag).floatValue();
             case 6:
-                return ((DoubleTag) tag).getAsDouble();
+                return ((DoubleTag) tag).doubleValue();
             case 7:
                 return ((ByteArrayTag) tag).getAsByteArray();
             case 8:
-                return ((StringTag) tag).getAsString();
+                return ((StringTag) tag).value();
             case 9: {
                 final ListTag list = ((ListTag) tag);
                 final List<Object> converted = StringUtils.newArrayList();
