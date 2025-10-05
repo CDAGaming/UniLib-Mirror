@@ -449,7 +449,7 @@ public class KeyUtils {
         for (Map.Entry<String, KeyBindData> entry : getKeyEntries()) {
             final String keyName = entry.getKey();
             final KeyBindData keyData = entry.getValue();
-            if (filterData.contains(keyData.category())) {
+            if (filterData.contains(keyData.rawCategoryName())) {
                 filteredMappings.put(keyName, keyData);
             }
         }

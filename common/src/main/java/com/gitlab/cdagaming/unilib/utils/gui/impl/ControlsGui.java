@@ -125,7 +125,7 @@ public class ControlsGui extends ExtendedScreen {
         for (Map.Entry<String, KeyUtils.KeyBindData> entry : keyMappings.entrySet()) {
             final String keyName = entry.getKey();
             final KeyUtils.KeyBindData keyData = entry.getValue();
-            final String keyCategory = keyData.category();
+            final String keyCategory = keyData.rawCategoryName();
             if (!categorizedNames.containsKey(keyCategory)) {
                 categorizedNames.put(keyCategory, StringUtils.newArrayList(keyName));
             } else if (!categorizedNames.get(keyCategory).contains(keyName)) {
