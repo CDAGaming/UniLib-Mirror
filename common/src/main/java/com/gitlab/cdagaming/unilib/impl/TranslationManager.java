@@ -27,7 +27,7 @@ package com.gitlab.cdagaming.unilib.impl;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import io.github.cdagaming.unicore.utils.TranslationUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.StringTranslate;
+import net.minecraft.src.client.gui.StringTranslate;
 
 import java.util.Properties;
 
