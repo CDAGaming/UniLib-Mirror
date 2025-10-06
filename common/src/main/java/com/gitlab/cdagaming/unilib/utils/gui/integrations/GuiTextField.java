@@ -25,9 +25,9 @@
 package com.gitlab.cdagaming.unilib.utils.gui.integrations;
 
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
-import net.minecraft.src.FontRenderer;
-import net.minecraft.src.Gui;
-import net.minecraft.src.GuiScreen;
+import com.mojang.minecraft.gui.Gui;
+import com.mojang.minecraft.gui.GuiScreen;
+import com.mojang.minecraft.render.FontRenderer;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 

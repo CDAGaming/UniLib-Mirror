@@ -29,8 +29,8 @@ import com.gitlab.cdagaming.unilib.core.utils.ModUpdaterUtils;
 import com.gitlab.cdagaming.unilib.impl.TranslationListener;
 import com.gitlab.cdagaming.unilib.impl.TranslationManager;
 import com.gitlab.cdagaming.unilib.utils.KeyUtils;
+import com.mojang.minecraft.Minecraft;
 import io.github.cdagaming.unicore.utils.MappingUtils;
-import net.minecraft.client.Minecraft;
 
 /**
  * The Primary Application Class and Utilities

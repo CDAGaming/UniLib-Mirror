@@ -27,11 +27,11 @@ package com.gitlab.cdagaming.unilib.utils;
 import com.gitlab.cdagaming.unilib.ModUtils;
 import com.gitlab.cdagaming.unilib.core.CoreUtils;
 import com.gitlab.cdagaming.unilib.core.impl.KeyConverter;
+import com.mojang.minecraft.Minecraft;
+import com.mojang.minecraft.gui.GuiControls;
+import com.mojang.minecraft.player.controller.KeyBinding;
 import io.github.cdagaming.unicore.impl.Pair;
 import io.github.cdagaming.unicore.utils.StringUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.src.GuiControls;
-import net.minecraft.src.KeyBinding;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;

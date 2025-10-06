@@ -36,18 +36,18 @@ import com.gitlab.cdagaming.unilib.utils.gui.controls.ExtendedButtonControl;
 import com.gitlab.cdagaming.unilib.utils.gui.controls.ExtendedTextControl;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
+import com.mojang.minecraft.Minecraft;
+import com.mojang.minecraft.entity.item.ItemStack;
+import com.mojang.minecraft.entity.render.RenderItem;
+import com.mojang.minecraft.gui.GuiScreen;
+import com.mojang.minecraft.render.FontRenderer;
+import com.mojang.minecraft.render.RenderHelper;
+import com.mojang.minecraft.render.Tessellator;
 import io.github.cdagaming.unicore.impl.Pair;
 import io.github.cdagaming.unicore.impl.Tuple;
 import io.github.cdagaming.unicore.utils.MathUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import io.github.cdagaming.unicore.utils.TimeUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.src.FontRenderer;
-import net.minecraft.src.GuiScreen;
-import net.minecraft.src.RenderHelper;
-import net.minecraft.src.Tessellator;
-import net.minecraft.src.RenderItem;
-import net.minecraft.src.ItemStack;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
@@ -219,7 +219,7 @@ public class RenderUtils {
      * @return The Default/Global Font Renderer
      */
     public static FontRenderer getDefaultFontRenderer() {
-        return ModUtils.getMinecraft().fontRenderer;
+        return ModUtils.getMinecraft().fontRender;
     }
 
     /**
@@ -229,7 +229,7 @@ public class RenderUtils {
      * @param targetScreen The target Gui Screen to display
      */
     public static void openScreen(@Nonnull final Minecraft client, final GuiScreen targetScreen) {
-        client.displayGuiScreen(new GuiScreen() {
+        client.setCurrentScreen(new GuiScreen() {
             @Override
             public void initGui() {
                 // N/A
@@ -237,7 +237,7 @@ public class RenderUtils {
 
             @Override
             public void drawScreen(int i, int j, float par3) {
-                client.displayGuiScreen(targetScreen);
+                client.setCurrentScreen(targetScreen);
             }
         });
     }
@@ -291,7 +291,7 @@ public class RenderUtils {
             final int xPos = Math.round(x / scale);
             final int yPos = Math.round(y / scale);
             itemRender.renderItemIntoGUI(fontRenderer, client.renderEngine, stack, xPos, yPos);
-            itemRender.renderItemOverlayIntoGUI(fontRenderer, client.renderEngine, stack, xPos, yPos);
+            itemRender.renderTextDmg(fontRenderer, client.renderEngine, stack, xPos, yPos);
 
             RenderHelper.disableStandardItemLighting();
             GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -417,7 +417,7 @@ public class RenderUtils {
                 if (data.getFirst()) {
                     GL11.glBindTexture(GL11.GL_TEXTURE_2D, data.getSecond());
                 } else {
-                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mc.renderEngine.getTexture(texLocation));
+                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mc.renderEngine.getTex(texLocation));
                 }
             } else {
                 return;
@@ -476,7 +476,7 @@ public class RenderUtils {
                 if (data.getFirst()) {
                     GL11.glBindTexture(GL11.GL_TEXTURE_2D, data.getSecond());
                 } else {
-                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mc.renderEngine.getTexture(texLocation));
+                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mc.renderEngine.getTex(texLocation));
                 }
             } else {
                 return;
@@ -891,7 +891,7 @@ public class RenderUtils {
     public static int computeGuiScale(@Nonnull final Minecraft mc) {
         int scaleFactor = 1;
 
-        int k = 0;
+        int k = mc.options.guiScale;
         if (k == 0) {
             k = 1000;
         }

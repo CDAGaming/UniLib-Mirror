@@ -25,11 +25,11 @@
 package com.gitlab.cdagaming.unilib.utils;
 
 import com.gitlab.cdagaming.unilib.ModUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.GuiScreen;
-import net.minecraft.src.Session;
-import net.minecraft.src.World;
+import com.mojang.minecraft.Minecraft;
+import com.mojang.minecraft.entity.EntityPlayer;
+import com.mojang.minecraft.gui.GuiScreen;
+import com.mojang.minecraft.level.World;
+import com.mojang.minecraft.util.Session;
 
 /**
  * Game-Related Utilities used to Parse base Game Data

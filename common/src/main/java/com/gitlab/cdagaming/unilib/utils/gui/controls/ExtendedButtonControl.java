@@ -27,8 +27,8 @@ package com.gitlab.cdagaming.unilib.utils.gui.controls;
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
-import net.minecraft.client.Minecraft;
-import net.minecraft.src.GuiButton;
+import com.mojang.minecraft.Minecraft;
+import com.mojang.minecraft.gui.GuiButton;
 
 import javax.annotation.Nonnull;
 
@@ -199,11 +199,11 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
     }
 
     @Override
-    public void drawButton(@Nonnull Minecraft mc, int mouseX, int mouseY) {
+    public void func_561_a(@Nonnull Minecraft mc, int mouseX, int mouseY) {
         if (isControlVisible()) {
             setHoveringOver(isOverScreen() && RenderUtils.isMouseOver(mouseX, mouseY, this));
 
-            mouseDragged(mc, mouseX, mouseY);
+            func_560_b(mc, mouseX, mouseY);
             final int color;
 
             if (!isControlEnabled()) {
@@ -215,7 +215,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
             }
 
             RenderUtils.renderScrollingString(mc,
-                    mc.fontRenderer, getControlMessage(),
+                    mc.fontRender, getControlMessage(),
                     getLeft() + 2, getTop(),
                     getRight() - 2, getBottom(),
                     color
@@ -228,9 +228,9 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * Equivalent of MouseListener.mouseDragged(MouseEvent e).
      */
     @Override
-    protected void mouseDragged(@Nonnull Minecraft mc, int mouseX, int mouseY) {
+    protected void func_560_b(@Nonnull Minecraft mc, int mouseX, int mouseY) {
         if (isControlVisible()) {
-            final int hoverState = getHoverState(isHoveringOrFocusingOver());
+            final int hoverState = func_558_a(isHoveringOrFocusingOver());
             final int hoverValue = 46 + hoverState * 20;
             final double xOffset = getControlWidth() / 2D;
 
@@ -250,7 +250,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * Equivalent of MouseListener.mousePressed(MouseEvent e).
      */
     @Override
-    public boolean mousePressed(@Nonnull Minecraft arg, int mouseX, int mouseY) {
+    public boolean func_562_c(@Nonnull Minecraft arg, int mouseX, int mouseY) {
         return isOverScreen() && isControlEnabled() && isControlVisible() && isHoveringOver();
     }
 
@@ -390,7 +390,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * @return Whether the control is currently visible
      */
     public boolean isControlVisible() {
-        return this.visible;
+        return this.enabled2;
     }
 
     /**
@@ -399,7 +399,7 @@ public class ExtendedButtonControl extends GuiButton implements DynamicWidget {
      * @param isVisible The new visibility state for this control
      */
     public void setControlVisible(final boolean isVisible) {
-        this.visible = isVisible;
+        this.enabled2 = isVisible;
     }
 
     /**
