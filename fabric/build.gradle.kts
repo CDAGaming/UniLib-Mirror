@@ -29,16 +29,11 @@ unimined.minecraft {
             accessWidener(accessWidenerFile)
         }
         loader("fabric_loader_version"()!!)
-        if (isJarMod) {
-            prodNamespace("official")
-            devMappings = null
-        }
-        customIntermediaries = true
     }
     if (isModern) {
         fabric(fabricData)
     } else {
-        legacyFabric(fabricData)
+        babric(fabricData)
     }
 }
 
@@ -98,7 +93,7 @@ tasks.named<ExportMappingsTask>("exportMappings") {
     val target = if (isMCPJar) "searge" else (if (!isModern) "mcp" else "mojmap")
     export {
         setTargetNamespaces(listOf(target))
-        setSourceNamespace(if (isJarMod) "official" else "intermediary")
+        setSourceNamespace("intermediary")
         location = file("$projectDir/src/main/resources/mappings.srg")
         setType("SRG")
     }
@@ -114,9 +109,6 @@ tasks.shadowJar {
 }
 
 tasks.named<RemapJarTask>("remapJar") {
-    if (isJarMod) {
-        prodNamespace("official")
-    }
     dependsOn(tasks.shadowJar.get())
     asJar {
         inputFile.set(tasks.shadowJar.get().archiveFile)

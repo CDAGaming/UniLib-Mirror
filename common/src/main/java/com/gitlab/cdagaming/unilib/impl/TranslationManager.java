@@ -54,13 +54,13 @@ public record TranslationManager(Minecraft client,
             StringTranslate stInstance = StringTranslate.getInstance();
             Properties data = (Properties) StringUtils.getField(
                     StringTranslate.class, stInstance,
-                    "translateTable", "field_20164_b", "b"
+                    "translateTable", "field_1174", "b"
             );
             data.putAll(entries);
             StringUtils.updateField(
                     StringTranslate.class, stInstance,
                     data,
-                    "translateTable", "field_20164_b", "b"
+                    "translateTable", "field_1174", "b"
             );
         });
     }
