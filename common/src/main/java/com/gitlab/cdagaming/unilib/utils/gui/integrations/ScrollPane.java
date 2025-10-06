@@ -337,7 +337,7 @@ public class ScrollPane extends ExtendedScreen {
 
     // remove in 1.13+
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+    public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         if (isLoaded()) {
             checkScrollbarClick(mouseX, mouseY, mouseButton);
             mousePrevX = mouseX;
@@ -349,7 +349,7 @@ public class ScrollPane extends ExtendedScreen {
 
     // remove in 1.13+
     @Override
-    protected void mouseMovedOrUp(int mouseX, int mouseY, int mouseButton) {
+    public void mouseMovedOrUp(int mouseX, int mouseY, int mouseButton) {
         setScrolling(false);
         if (isLoaded()) {
             super.mouseMovedOrUp(mouseX, mouseY, mouseButton);

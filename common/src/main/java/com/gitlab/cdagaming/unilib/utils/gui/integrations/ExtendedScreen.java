@@ -36,14 +36,21 @@ import io.github.cdagaming.unicore.impl.Tuple;
 import io.github.cdagaming.unicore.utils.MathUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.*;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiSlot;
+import net.minecraft.client.input.InputType;
+import net.minecraft.client.render.FontRenderer;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.util.List;
 
 /**
@@ -244,6 +251,23 @@ public class ExtendedScreen extends GuiScreen {
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(contents, null);
         } catch (Exception ignored) {
         }
+    }
+
+    /**
+     * Retrieve the current clipboard string
+     *
+     * @return the current clipboard string
+     */
+    public static String getClipboardString() {
+        try {
+            Transferable var0 = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+            if (var0 != null && var0.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                return (String) var0.getTransferData(DataFlavor.stringFlavor);
+            }
+        } catch (Exception ignored) {
+        }
+
+        return null;
     }
 
     /**
@@ -928,11 +952,24 @@ public class ExtendedScreen extends GuiScreen {
         }
     }
 
+    @Override
+    public void handleInput() {
+        final int mouseX = Mouse.getEventX() * getScreenWidth() / getGameInstance().resolution.width;
+        final int mouseY = getScreenHeight() - Mouse.getEventY() * getScreenHeight() / getGameInstance().resolution.height - 1;
+
+        while (Mouse.next() && getGameInstance().inputType != InputType.CONTROLLER) {
+            handleMouseInput(mouseX, mouseY);
+        }
+
+        while (Keyboard.next()) {
+            handleKeyboardInput(mouseX, mouseY);
+        }
+    }
+
     /**
      * Event to trigger upon Mouse Input
      */
-    @Override
-    public void handleMouseInput() {
+    public void handleMouseInput(int mouseX, int mouseY) {
         if (isLoaded()) {
             setMouseScroll(Mouse.getEventDWheel());
 
@@ -942,8 +979,6 @@ public class ExtendedScreen extends GuiScreen {
             }
 
             // Stub: Re-implement handleMouseInput for method_4259 (mouseClickMove)
-            final int mouseX = Mouse.getEventX() * getScreenWidth() / getGameInstance().displayWidth;
-            final int mouseY = getScreenHeight() - Mouse.getEventY() * getScreenHeight() / getGameInstance().displayHeight - 1;
             final int eventButton = Mouse.getEventButton();
             if (Mouse.getEventButtonState()) {
                 prevEventButton = eventButton;
@@ -956,6 +991,26 @@ public class ExtendedScreen extends GuiScreen {
                 final long timeSinceLastClick = getSystemTime() - prevMouseEvent;
                 method_4259(mouseX, mouseY, prevEventButton, timeSinceLastClick);
             }
+        }
+    }
+
+    /**
+     * Event to trigger upon Keyboard Input
+     */
+    public void handleKeyboardInput(int mouseX, int mouseY) {
+        int eventKey = Keyboard.getEventKey();
+        char eventChar = Keyboard.getEventCharacter();
+        if (eventKey == 0 && Character.isDefined(eventChar)) {
+            keyTyped(eventChar, eventKey, mouseX, mouseY);
+        }
+
+        if (Keyboard.getEventKeyState()) {
+            if (eventKey == 87) {
+                getGameInstance().gameWindow.toggleFullscreen();
+                return;
+            }
+
+            keyTyped(eventChar, eventKey, mouseX, mouseY);
         }
     }
 
@@ -982,12 +1037,12 @@ public class ExtendedScreen extends GuiScreen {
      * @param button The Button to trigger upon
      */
     @Override
-    protected void actionPerformed(@Nonnull GuiButton button) {
+    protected void buttonPressed(@Nonnull GuiButton button) {
         if (isOverScreen()) {
             if (button instanceof ExtendedButtonControl extendedButton) {
                 extendedButton.onClick();
             }
-            super.actionPerformed(button);
+            super.buttonPressed(button);
         }
     }
 
@@ -996,9 +1051,11 @@ public class ExtendedScreen extends GuiScreen {
      *
      * @param typedChar The typed Character, if any
      * @param keyCode   The KeyCode entered, if any
+     * @param mouseX    The Event Mouse X Coordinate
+     * @param mouseY    The Event Mouse Y Coordinate
      */
     @Override
-    protected void keyTyped(char typedChar, int keyCode) {
+    public void keyTyped(char typedChar, int keyCode, int mouseX, int mouseY) {
         if (isLoaded()) {
             if (isCurrentScreen() && isEscapeKey(keyCode) && canClose()) {
                 openScreen(getParent());
@@ -1010,7 +1067,7 @@ public class ExtendedScreen extends GuiScreen {
                     textField.textboxKeyTyped(typedChar, keyCode);
                 }
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
-                    extendedScreen.keyTyped(typedChar, keyCode);
+                    extendedScreen.keyTyped(typedChar, keyCode, mouseX, mouseY);
                 }
             }
         }
@@ -1024,7 +1081,7 @@ public class ExtendedScreen extends GuiScreen {
      * @param mouseButton The Event Mouse Button Clicked
      */
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+    public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         if (isLoaded()) {
             for (Gui extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedTextControl textField) {
@@ -1049,7 +1106,7 @@ public class ExtendedScreen extends GuiScreen {
     }
 
     @Override
-    protected void mouseMovedOrUp(int mouseX, int mouseY, int state) {
+    public void mouseMovedOrUp(int mouseX, int mouseY, int state) {
         if (isLoaded()) {
             for (Gui extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
