@@ -25,9 +25,9 @@
 package com.gitlab.cdagaming.unilib.utils.gui.integrations;
 
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
-import net.minecraft.src.client.gui.FontRenderer;
-import net.minecraft.src.client.gui.Gui;
-import net.minecraft.src.client.gui.GuiScreen;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -257,13 +257,13 @@ public class GuiTextField extends Gui {
         }
     }
 
-    public void mouseClicked(int x, int y, int button) {
+    public void mouseClicked(float x, float y, int button) {
         boolean state = this.isEnabled && x >= this.xPos && x < this.xPos + this.width && y >= this.yPos && y < this.yPos + this.height;
         this.setFocused(state);
         this.isTextSelected = false;
 
         if (this.isFocused && state && button == 0) {
-            int l = x - this.xPos;
+            int l = (int) (x - this.xPos);
             String string = RenderUtils.trimStringToWidth(this.fontRenderer, this.text.substring(this.lineScrollOffset), this.width);
             this.setCursorPosition(RenderUtils.trimStringToWidth(this.fontRenderer, string, l).length() + this.lineScrollOffset);
         }

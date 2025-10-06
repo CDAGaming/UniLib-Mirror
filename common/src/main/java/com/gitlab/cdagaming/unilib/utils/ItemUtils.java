@@ -26,9 +26,9 @@ package com.gitlab.cdagaming.unilib.utils;
 
 import io.github.cdagaming.unicore.utils.MathUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
-import net.minecraft.src.game.block.Block;
-import net.minecraft.src.game.item.Item;
-import net.minecraft.src.game.item.ItemStack;
+import net.minecraft.common.block.Block;
+import net.minecraft.common.item.Item;
+import net.minecraft.common.item.ItemStack;
 
 import java.util.List;
 

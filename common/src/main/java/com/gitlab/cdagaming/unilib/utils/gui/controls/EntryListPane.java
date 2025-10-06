@@ -301,7 +301,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
      * @param posX   The Event X Coordinate
      * @param posY   The Event Y Coordinate
      */
-    protected void renderDecorations(final Minecraft client, final int posX, final int posY) {
+    protected void renderDecorations(final Minecraft client, final float posX, final float posY) {
         // N/A
     }
 
@@ -499,7 +499,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
      * @param mouseY       The Event Mouse Y Coordinate
      * @param partialTicks The Rendering Tick Rate
      */
-    protected void renderListItems(final Minecraft client, final int mouseX, final int mouseY, final float partialTicks) {
+    protected void renderListItems(final Minecraft client, final float mouseX, final float mouseY, final float partialTicks) {
         final int rowLeft = getRowLeft();
         final int rowWidth = getRowWidth();
         final int rowHeight = itemHeight - getPadding();
@@ -526,7 +526,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
      * @param entryWidth   The width of the entry
      * @param entryHeight  The height of the entry
      */
-    protected void renderItem(final Minecraft client, final int mouseX, final int mouseY, final float partialTicks, final int index, final int xPos, final int yPos, final int entryWidth, final int entryHeight) {
+    protected void renderItem(final Minecraft client, final float mouseX, final float mouseY, final float partialTicks, final int index, final int xPos, final int yPos, final int entryWidth, final int entryHeight) {
         final E entry = getEntry(index);
         entry.renderBack(client, index, yPos, xPos, entryWidth, entryHeight, mouseX, mouseY, Objects.equals(getHovered(), entry), partialTicks);
         if (isSelectedItem(index)) {
@@ -685,7 +685,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
                                     final int index,
                                     final int yPos, final int xPos,
                                     final int entryWidth, final int entryHeight,
-                                    final int mouseX, final int mouseY,
+                                    final float mouseX, final float mouseY,
                                     final boolean hovered,
                                     final float partialTicks);
 
@@ -707,7 +707,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
                                final int index,
                                final int yPos, final int xPos,
                                final int entryWidth, final int entryHeight,
-                               final int mouseX, final int mouseY,
+                               final float mouseX, final float mouseY,
                                final boolean hovered,
                                final float partialTicks) {
             // N/A

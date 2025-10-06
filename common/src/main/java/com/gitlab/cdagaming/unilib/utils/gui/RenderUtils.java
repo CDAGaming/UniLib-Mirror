@@ -36,18 +36,19 @@ import com.gitlab.cdagaming.unilib.utils.gui.controls.ExtendedButtonControl;
 import com.gitlab.cdagaming.unilib.utils.gui.controls.ExtendedTextControl;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
+import com.indigo3d.util.RenderSystem;
 import io.github.cdagaming.unicore.impl.Pair;
 import io.github.cdagaming.unicore.impl.Tuple;
 import io.github.cdagaming.unicore.utils.MathUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import io.github.cdagaming.unicore.utils.TimeUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.client.gui.FontRenderer;
-import net.minecraft.src.client.gui.GuiScreen;
-import net.minecraft.src.client.renderer.RenderHelper;
-import net.minecraft.src.client.renderer.Tessellator;
-import net.minecraft.src.client.renderer.entity.RenderItem;
-import net.minecraft.src.game.item.ItemStack;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.world.RenderHelper;
+import net.minecraft.client.renderer.world.Tessellator;
+import net.minecraft.common.item.ItemStack;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
@@ -236,7 +237,7 @@ public class RenderUtils {
             }
 
             @Override
-            public void drawScreen(int i, int j, float par3) {
+            public void drawScreen(float i, float j, float par3) {
                 client.displayGuiScreen(targetScreen);
             }
         });
@@ -415,9 +416,9 @@ public class RenderUtils {
             if (ResourceUtils.isValidResource(texLocation)) {
                 final Pair<Boolean, Integer> data = StringUtils.getValidInteger(texLocation);
                 if (data.getFirst()) {
-                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, data.getSecond());
+                    RenderSystem.bindTexture2D(data.getSecond());
                 } else {
-                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mc.renderEngine.getTexture(texLocation));
+                    RenderSystem.bindTexture2D(texLocation);
                 }
             } else {
                 return;
@@ -425,16 +426,16 @@ public class RenderUtils {
         } catch (Exception ignored) {
             return;
         }
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        RenderSystem.color(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.enableBlend();
+        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        RenderSystem.enableDepthTest();
 
         blit(x, y, zLevel, startU, startV, width, height);
         blit(x + width, y, zLevel, endU, endV, width, height);
 
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glDisable(GL11.GL_BLEND);
+        RenderSystem.disableDepthTest();
+        RenderSystem.disableBlend();
     }
 
     /**
@@ -474,9 +475,9 @@ public class RenderUtils {
             if (ResourceUtils.isValidResource(texLocation)) {
                 final Pair<Boolean, Integer> data = StringUtils.getValidInteger(texLocation);
                 if (data.getFirst()) {
-                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, data.getSecond());
+                    RenderSystem.bindTexture2D(data.getSecond());
                 } else {
-                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mc.renderEngine.getTexture(texLocation));
+                    RenderSystem.bindTexture2D(texLocation);
                 }
             } else {
                 return;
@@ -492,14 +493,14 @@ public class RenderUtils {
             return;
         }
 
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_ALPHA_TEST);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glShadeModel(GL11.GL_SMOOTH);
+        RenderSystem.enableBlend();
+        RenderSystem.disableAlphaTest();
+        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        RenderSystem.useSmoothShadeModel();
 
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glDisable(GL11.GL_FOG);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.disableLighting();
+        RenderSystem.disableFog();
+        RenderSystem.color(1.0F, 1.0F, 1.0F, 1.0F);
 
         final Tessellator tessellator = Tessellator.instance;
         tessellator.startDrawingQuads();
@@ -511,9 +512,9 @@ public class RenderUtils {
         tessellator.addVertexWithUV(left, top, zLevel, minU, minV);
         tessellator.draw();
 
-        GL11.glShadeModel(GL11.GL_FLAT);
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glEnable(GL11.GL_ALPHA_TEST);
+        RenderSystem.useFlatShadeModel();
+        RenderSystem.disableBlend();
+        RenderSystem.enableAlphaTest();
     }
 
     /**
@@ -713,12 +714,12 @@ public class RenderUtils {
             return;
         }
 
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_ALPHA_TEST);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glShadeModel(GL11.GL_SMOOTH);
+        RenderSystem.disableDepthTest();
+        RenderSystem.disableTexture2D();
+        RenderSystem.enableBlend();
+        RenderSystem.disableAlphaTest();
+        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        RenderSystem.useSmoothShadeModel();
 
         final Tessellator tessellator = Tessellator.instance;
         tessellator.startDrawingQuads();
@@ -730,11 +731,11 @@ public class RenderUtils {
         tessellator.addVertex(left, top, zLevel);
         tessellator.draw();
 
-        GL11.glShadeModel(GL11.GL_FLAT);
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glEnable(GL11.GL_ALPHA_TEST);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        RenderSystem.useFlatShadeModel();
+        RenderSystem.disableBlend();
+        RenderSystem.enableAlphaTest();
+        RenderSystem.enableTexture2D();
+        RenderSystem.enableDepthTest();
     }
 
     /**
@@ -869,14 +870,14 @@ public class RenderUtils {
             final int displayHeight = mc.displayHeight;
             final int renderWidth = Math.max(0, rectangle.width() * scale);
             final int renderHeight = Math.max(0, rectangle.height() * scale);
-            GL11.glEnable(GL11.GL_SCISSOR_TEST);
-            GL11.glScissor(
+            RenderSystem.enableScissorTest();
+            RenderSystem.scissor(
                     rectangle.getLeft() * scale,
                     displayHeight - rectangle.getBottom() * scale,
                     renderWidth, renderHeight
             );
         } else {
-            GL11.glDisable(GL11.GL_SCISSOR_TEST);
+            RenderSystem.disableScissorTest();
         }
     }
 

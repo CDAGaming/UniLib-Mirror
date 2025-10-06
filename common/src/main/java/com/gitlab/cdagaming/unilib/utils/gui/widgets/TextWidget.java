@@ -28,7 +28,7 @@ import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.controls.ExtendedTextControl;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
 import io.github.cdagaming.unicore.utils.StringUtils;
-import net.minecraft.src.client.gui.FontRenderer;
+import net.minecraft.client.gui.FontRenderer;
 
 /**
  * Implementation for a Row-Style {@link ExtendedTextControl} Widget

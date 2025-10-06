@@ -175,7 +175,7 @@ public class ScrollableListControl extends EntryListPane<ScrollableListControl.S
      * @param hovered      Whether the entry is being hovered over
      * @param partialTicks The Rendering Tick Rate
      */
-    public void renderSlotItem(final String originalName, final int xPos, final int yPos, final int widthIn, final int heightIn, final int mouseXIn, final int mouseYIn, final boolean hovered, final float partialTicks) {
+    public void renderSlotItem(final String originalName, final int xPos, final int yPos, final int widthIn, final int heightIn, final float mouseXIn, final float mouseYIn, final boolean hovered, final float partialTicks) {
         RenderUtils.renderScrollingString(getGameInstance(),
                 getFontRenderer(),
                 originalName,
@@ -208,7 +208,7 @@ public class ScrollableListControl extends EntryListPane<ScrollableListControl.S
         }
 
         @Override
-        public void render(Minecraft client, int index, int yPos, int xPos, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float partialTicks) {
+        public void render(Minecraft client, int index, int yPos, int xPos, int entryWidth, int entryHeight, float mouseX, float mouseY, boolean hovered, float partialTicks) {
             ScrollableListControl.this.renderSlotItem(name, xPos, yPos, entryWidth, entryHeight, mouseX, mouseY, hovered, partialTicks);
         }
 
