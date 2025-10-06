@@ -39,7 +39,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiSlot;
+import net.minecraft.client.gui.ScrolledSelectionList;
 import net.minecraft.client.input.InputType;
 import net.minecraft.client.render.FontRenderer;
 import org.lwjgl.Sys;
@@ -86,7 +86,7 @@ public class ExtendedScreen extends GuiScreen {
     /**
      * Similar to buttonList, a list of compatible ScrollLists in this Screen
      */
-    private final List<GuiSlot> extendedLists = StringUtils.newArrayList();
+    private final List<ScrolledSelectionList> extendedLists = StringUtils.newArrayList();
     /**
      * The Screen Title, if any
      */
@@ -326,7 +326,7 @@ public class ExtendedScreen extends GuiScreen {
      * Responsible for Setting preliminary data
      */
     @Override
-    public void initGui() {
+    public void init() {
         // Restore Fixes -- MC 1.19.3 and below
         if (!restoreButtons.isEmpty()) {
             controlList.clear();
@@ -334,7 +334,7 @@ public class ExtendedScreen extends GuiScreen {
             restoreButtons.clear();
         }
         // Clear Data before Initialization
-        super.initGui();
+        super.init();
         clearData();
         enableRepeatEvents(true);
 
@@ -463,7 +463,7 @@ public class ExtendedScreen extends GuiScreen {
      * @return The added scroll list with attached class type
      */
     @Nonnull
-    public <T extends GuiSlot> T addList(@Nonnull T buttonIn) {
+    public <T extends ScrolledSelectionList> T addList(@Nonnull T buttonIn) {
         if (!canModifyControls()) {
             throw new IllegalStateException("Can't add control to control list");
         }
@@ -892,7 +892,7 @@ public class ExtendedScreen extends GuiScreen {
     }
 
     @Override
-    public void drawWorldBackground(int tint) {
+    public void drawWorldBackground() {
         renderCriticalData();
     }
 
@@ -924,8 +924,8 @@ public class ExtendedScreen extends GuiScreen {
 
             drawDefaultBackground();
 
-            for (GuiSlot listControl : getLists()) {
-                listControl.drawScreen(mouseX, mouseY, partialTicks);
+            for (ScrolledSelectionList listControl : getLists()) {
+                listControl.render(mouseX, mouseY, partialTicks);
             }
 
             super.drawScreen(mouseX, mouseY, partialTicks);
@@ -986,7 +986,7 @@ public class ExtendedScreen extends GuiScreen {
                 mouseClicked(mouseX, mouseY, prevEventButton);
             } else if (eventButton != -1) {
                 prevEventButton = -1;
-                mouseMovedOrUp(mouseX, mouseY, eventButton);
+                mouseMovedOrButtonReleased(mouseX, mouseY, eventButton);
             } else if (prevEventButton != -1 && prevMouseEvent > 0L) {
                 final long timeSinceLastClick = getSystemTime() - prevMouseEvent;
                 method_4259(mouseX, mouseY, prevEventButton, timeSinceLastClick);
@@ -1106,14 +1106,14 @@ public class ExtendedScreen extends GuiScreen {
     }
 
     @Override
-    public void mouseMovedOrUp(int mouseX, int mouseY, int state) {
+    public void mouseMovedOrButtonReleased(int mouseX, int mouseY, int state) {
         if (isLoaded()) {
             for (Gui extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
-                    extendedScreen.mouseMovedOrUp(mouseX, mouseY, state);
+                    extendedScreen.mouseMovedOrButtonReleased(mouseX, mouseY, state);
                 }
             }
-            super.mouseMovedOrUp(mouseX, mouseY, state);
+            super.mouseMovedOrButtonReleased(mouseX, mouseY, state);
         }
     }
 
@@ -1121,17 +1121,17 @@ public class ExtendedScreen extends GuiScreen {
      * Event to trigger on each tick
      */
     @Override
-    public void updateScreen() {
+    public void tick() {
         if (isLoaded()) {
             for (Gui extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedTextControl textField) {
                     textField.updateCursorCounter();
                 }
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
-                    extendedScreen.updateScreen();
+                    extendedScreen.tick();
                 }
             }
-            super.updateScreen();
+            super.tick();
         }
     }
 
@@ -1139,11 +1139,11 @@ public class ExtendedScreen extends GuiScreen {
      * Event to trigger upon exiting the Gui
      */
     @Override
-    public void onGuiClosed() {
+    public void onClosed() {
         if (isLoaded()) {
             for (Gui extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
-                    extendedScreen.onGuiClosed();
+                    extendedScreen.onClosed();
                 }
             }
             clearData();
@@ -1913,7 +1913,7 @@ public class ExtendedScreen extends GuiScreen {
      *
      * @return the list of compatible ScrollLists in this Screen
      */
-    public List<GuiSlot> getLists() {
+    public List<ScrolledSelectionList> getLists() {
         return StringUtils.newArrayList(extendedLists);
     }
 
