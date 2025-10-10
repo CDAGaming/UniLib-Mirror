@@ -36,6 +36,7 @@ import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.GradientBlitRenderState;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.textures.GpuSampler;
 import com.mojang.blaze3d.textures.GpuTextureView;
 import io.github.cdagaming.unicore.impl.Pair;
 import io.github.cdagaming.unicore.impl.Tuple;
@@ -49,6 +50,7 @@ import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
@@ -490,20 +492,20 @@ public class RenderUtils {
             return;
         }
 
-        final GpuTextureView gpuTextureView = mc.getTextureManager().getTexture(texLocation).getTextureView();
+        final AbstractTexture abstractTexture = mc.getTextureManager().getTexture(texLocation);
         submitTexture(matrixStack,
-                function, gpuTextureView,
+                function, abstractTexture.getTextureView(), abstractTexture.getSampler(),
                 (int) left, (int) top, (int) right, (int) bottom,
                 (float) minU, (float) maxU, (float) minV, (float) maxV,
                 colorToArgb(startColor), colorToArgb(endColor));
     }
 
     public static void submitTexture(@Nonnull GuiGraphics matrixStack,
-                                     final RenderPipeline renderPipeline, final GpuTextureView gpuTextureView,
+                                     final RenderPipeline renderPipeline, final GpuTextureView gpuTextureView, final GpuSampler gpuSampler,
                                      final int left, final int top, final int right, final int bottom,
                                      final float minU, final float maxU, final float minV, final float maxV,
                                      final int startColor, final int endColor) {
-        matrixStack.guiRenderState.submitGuiElement(new GradientBlitRenderState(renderPipeline, TextureSetup.singleTexture(gpuTextureView), new Matrix3x2f(matrixStack.pose()),
+        matrixStack.guiRenderState.submitGuiElement(new GradientBlitRenderState(renderPipeline, TextureSetup.singleTexture(gpuTextureView, gpuSampler), new Matrix3x2f(matrixStack.pose()),
                 left, top, right, bottom,
                 minU, maxU, minV, maxV,
                 startColor, endColor,

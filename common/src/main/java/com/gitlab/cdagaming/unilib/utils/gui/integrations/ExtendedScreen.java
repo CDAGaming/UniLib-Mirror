@@ -341,7 +341,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
      */
     public void initializeUi() {
         if (isUnloaded()) {
-            init(getGameInstance(), getScreenWidth(), getScreenHeight());
+            init(getScreenWidth(), getScreenHeight());
             return;
         }
         if (isInitializing()) {
@@ -381,26 +381,25 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
      * Event to trigger upon Window Reload
      */
     public void reloadUi() {
-        resize(getGameInstance(), getScreenWidth(), getScreenHeight());
+        resize(getScreenWidth(), getScreenHeight());
     }
 
     /**
      * Event to trigger upon Window Resize
      *
-     * @param mcIn The Minecraft Instance
      * @param w    The New Screen Width
      * @param h    The New Screen Height
      */
     @Override
-    public void resize(@Nonnull Minecraft mcIn, int w, int h) {
+    public void resize(int w, int h) {
         if (isLoaded()) {
             for (GuiEventListener extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
-                    extendedScreen.resize(mcIn, w, h);
+                    extendedScreen.resize(w, h);
                 }
             }
         }
-        super.resize(mcIn, w, h);
+        super.resize(w, h);
     }
 
     /**
