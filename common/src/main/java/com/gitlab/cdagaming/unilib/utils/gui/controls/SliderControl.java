@@ -37,7 +37,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import org.lwjgl.glfw.GLFW;
 
@@ -49,9 +49,9 @@ import javax.annotation.Nonnull;
  * @author CDAGaming
  */
 public class SliderControl extends ExtendedButtonControl {
-    private static final ResourceLocation SLIDER_SPRITE = ResourceUtils.getResource("widget/slider");
-    private static final ResourceLocation SLIDER_HANDLE_SPRITE = ResourceUtils.getResource("widget/slider_handle");
-    private static final ResourceLocation SLIDER_HANDLE_HIGHLIGHTED_SPRITE = ResourceUtils.getResource("widget/slider_handle_highlighted");
+    private static final Identifier SLIDER_SPRITE = ResourceUtils.getResource("widget/slider");
+    private static final Identifier SLIDER_HANDLE_SPRITE = ResourceUtils.getResource("widget/slider_handle");
+    private static final Identifier SLIDER_HANDLE_HIGHLIGHTED_SPRITE = ResourceUtils.getResource("widget/slider_handle_highlighted");
 
     /**
      * The Minimum Value the Slider can reach
@@ -216,11 +216,11 @@ public class SliderControl extends ExtendedButtonControl {
         setOnSlide(events.getThird());
     }
 
-    private ResourceLocation getSprite() {
+    private Identifier getSprite() {
         return SLIDER_SPRITE;
     }
 
-    private ResourceLocation getHandleSprite() {
+    private Identifier getHandleSprite() {
         return !isHoveringOrFocusingOver() ? SLIDER_HANDLE_SPRITE : SLIDER_HANDLE_HIGHLIGHTED_SPRITE;
     }
 

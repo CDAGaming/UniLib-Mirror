@@ -45,7 +45,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -341,7 +341,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
      */
     public void initializeUi() {
         if (isUnloaded()) {
-            init(getGameInstance(), getScreenWidth(), getScreenHeight());
+            init(getScreenWidth(), getScreenHeight());
             return;
         }
         if (isInitializing()) {
@@ -381,26 +381,25 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
      * Event to trigger upon Window Reload
      */
     public void reloadUi() {
-        resize(getGameInstance(), getScreenWidth(), getScreenHeight());
+        resize(getScreenWidth(), getScreenHeight());
     }
 
     /**
      * Event to trigger upon Window Resize
      *
-     * @param mcIn The Minecraft Instance
      * @param w    The New Screen Width
      * @param h    The New Screen Height
      */
     @Override
-    public void resize(@Nonnull Minecraft mcIn, int w, int h) {
+    public void resize(int w, int h) {
         if (isLoaded()) {
             for (GuiEventListener extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
-                    extendedScreen.resize(mcIn, w, h);
+                    extendedScreen.resize(w, h);
                 }
             }
         }
-        super.resize(mcIn, w, h);
+        super.resize(w, h);
     }
 
     /**
@@ -516,12 +515,12 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
                     startColor, endColor
             );
         } else {
-            final Tuple<Boolean, String, ResourceLocation> textureData = RenderUtils.getTextureData(
+            final Tuple<Boolean, String, Identifier> textureData = RenderUtils.getTextureData(
                     getGameInstance(),
                     data.texLocation()
             );
             final boolean usingExternalTexture = textureData.getFirst();
-            final ResourceLocation texLocation = textureData.getThird();
+            final Identifier texLocation = textureData.getThird();
 
             drawTexture(
                     left, right, top, bottom,
@@ -585,7 +584,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
                             final double u, final double v,
                             final double textureWidth, final double textureHeight,
                             final Object startColorObj, final Object endColorObj,
-                            final ResourceLocation texLocation) {
+                            final Identifier texLocation) {
         RenderUtils.drawTexture(getGameInstance(),
                 getCurrentMatrix(),
                 left, right, top, bottom,
@@ -622,7 +621,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
                             final boolean usingExternalTexture, final double offset,
                             final double u, final double v,
                             final Object startColorObj, final Object endColorObj,
-                            final ResourceLocation texLocation) {
+                            final Identifier texLocation) {
         drawTexture(
                 left, right,
                 top, bottom,
@@ -657,7 +656,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
                             final double offset,
                             final double u, final double v,
                             final Object startColorObj, final Object endColorObj,
-                            final ResourceLocation texLocation) {
+                            final Identifier texLocation) {
         drawTexture(
                 left, right,
                 top, bottom,
@@ -689,7 +688,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
                             final boolean usingExternalTexture, final double offset,
                             final double u, final double v,
                             final Object startColorObj, final Object endColorObj,
-                            final ResourceLocation texLocation) {
+                            final Identifier texLocation) {
         drawTexture(
                 left, right,
                 top, bottom,

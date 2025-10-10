@@ -27,7 +27,7 @@ package com.gitlab.cdagaming.unilib.utils;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Locale;
 import java.util.Map;
@@ -41,7 +41,7 @@ public class ResourceUtils {
     /**
      * Object representing an empty texture resource
      */
-    private static final ResourceLocation EMPTY_RESOURCE = parseResource("");
+    private static final Identifier EMPTY_RESOURCE = parseResource("");
     /**
      * Object representing prefix registration data
      */
@@ -54,8 +54,8 @@ public class ResourceUtils {
      * @param path      the path to interpret
      * @return The found texture resource
      */
-    public static ResourceLocation getResource(final String namespace, final String path) {
-        return ResourceLocation.fromNamespaceAndPath(namespace, path);
+    public static Identifier getResource(final String namespace, final String path) {
+        return Identifier.fromNamespaceAndPath(namespace, path);
     }
 
     /**
@@ -64,7 +64,7 @@ public class ResourceUtils {
      * @param path the path to interpret
      * @return The found texture resource
      */
-    public static ResourceLocation getResource(final String path) {
+    public static Identifier getResource(final String path) {
         return getResource("minecraft", path);
     }
 
@@ -74,8 +74,8 @@ public class ResourceUtils {
      * @param path the path to interpret
      * @return The found texture resource
      */
-    public static ResourceLocation parseResource(final String path) {
-        return ResourceLocation.parse(path);
+    public static Identifier parseResource(final String path) {
+        return Identifier.parse(path);
     }
 
     /**
@@ -83,7 +83,7 @@ public class ResourceUtils {
      *
      * @return an object representing an empty texture resource
      */
-    public static ResourceLocation getEmptyResource() {
+    public static Identifier getEmptyResource() {
         return EMPTY_RESOURCE;
     }
 
@@ -93,7 +93,7 @@ public class ResourceUtils {
      * @param location The texture resource to interpret
      * @return the namespace of the resource
      */
-    public static String getNamespace(final ResourceLocation location) {
+    public static String getNamespace(final Identifier location) {
         return location != null ? location.getNamespace() : "";
     }
 
@@ -103,7 +103,7 @@ public class ResourceUtils {
      * @param location The texture resource to interpret
      * @return the path of the resource
      */
-    public static String getPath(final ResourceLocation location) {
+    public static String getPath(final Identifier location) {
         return location != null ? location.getPath() : "";
     }
 
@@ -113,7 +113,7 @@ public class ResourceUtils {
      * @param location The texture resource to interpret
      * @return Whether the specified Texture contains valid information
      */
-    public static boolean isValidResource(final ResourceLocation location) {
+    public static boolean isValidResource(final Identifier location) {
         return location != null && !StringUtils.isNullOrEmpty(getNamespace(location)) && !StringUtils.isNullOrEmpty(getPath(location));
     }
 
@@ -126,7 +126,7 @@ public class ResourceUtils {
      * @param dynamicTexture The Dynamic Texture Data
      * @return the created or found texture data
      */
-    public static ResourceLocation register(final TextureManager manager, final String prefix, final DynamicTexture dynamicTexture) {
+    public static Identifier register(final TextureManager manager, final String prefix, final DynamicTexture dynamicTexture) {
         Integer index = prefixRegister.get(prefix);
         if (index == null) {
             index = 1;
@@ -134,7 +134,7 @@ public class ResourceUtils {
             index = index + 1;
         }
         prefixRegister.put(prefix, index);
-        final ResourceLocation resourceLocation = ResourceLocation.withDefaultNamespace(String.format(Locale.ROOT, "dynamic/%s_%d", prefix, index));
+        final Identifier resourceLocation = Identifier.withDefaultNamespace(String.format(Locale.ROOT, "dynamic/%s_%d", prefix, index));
         manager.register(resourceLocation, dynamicTexture);
         return resourceLocation;
     }

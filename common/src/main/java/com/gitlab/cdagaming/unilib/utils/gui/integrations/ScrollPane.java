@@ -34,7 +34,7 @@ import io.github.cdagaming.unicore.utils.MathUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import javax.annotation.Nonnull;
 
@@ -44,8 +44,8 @@ import javax.annotation.Nonnull;
  * @author CDAGaming
  */
 public class ScrollPane extends ExtendedScreen {
-    private static final ResourceLocation SCROLLER_SPRITE = ResourceUtils.getResource("widget/scroller");
-    private static final ResourceLocation SCROLLER_BACKGROUND_SPRITE = ResourceUtils.getResource("widget/scroller_background");
+    private static final Identifier SCROLLER_SPRITE = ResourceUtils.getResource("widget/scroller");
+    private static final Identifier SCROLLER_BACKGROUND_SPRITE = ResourceUtils.getResource("widget/scroller_background");
     private static final int DEFAULT_PADDING = 4;
     private static final int DEFAULT_HEADER_HEIGHT = 2;
     private static final int DEFAULT_FOOTER_HEIGHT = 2;
@@ -236,7 +236,7 @@ public class ScrollPane extends ExtendedScreen {
      *
      * @return the processed info
      */
-    protected ResourceLocation getScrollerBackgroundSprite() {
+    protected Identifier getScrollerBackgroundSprite() {
         return SCROLLER_BACKGROUND_SPRITE;
     }
 
@@ -245,7 +245,7 @@ public class ScrollPane extends ExtendedScreen {
      *
      * @return the processed info
      */
-    protected ResourceLocation getScrollerSprite() {
+    protected Identifier getScrollerSprite() {
         return SCROLLER_SPRITE;
     }
 
