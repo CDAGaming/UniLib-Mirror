@@ -159,7 +159,7 @@ public class CheckBoxControl extends ExtendedButtonControl {
      * Draws this button to the screen.
      */
     @Override
-    public void renderWidget(@Nonnull GuiGraphics matrixStack, int mouseX, int mouseY, float partial) {
+    public void renderContents(@Nonnull GuiGraphics matrixStack, int mouseX, int mouseY, float partial) {
         final Minecraft mc = ModUtils.getMinecraft();
         if (mc != null && isControlVisible()) {
             setHoveringOver(isOverScreen() && RenderUtils.isMouseOver(mouseX, mouseY, this));
@@ -185,10 +185,6 @@ public class CheckBoxControl extends ExtendedButtonControl {
                     left, getTop(), getRight() - 2, getBottom(),
                     color
             );
-
-            if (isHovered()) {
-                matrixStack.requestCursor(getCursorType());
-            }
         }
     }
 
