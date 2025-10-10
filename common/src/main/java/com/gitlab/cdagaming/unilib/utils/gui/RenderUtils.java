@@ -36,6 +36,7 @@ import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.GradientBlitRenderState;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.textures.GpuSampler;
 import com.mojang.blaze3d.textures.GpuTextureView;
 import io.github.cdagaming.unicore.impl.Pair;
 import io.github.cdagaming.unicore.impl.Tuple;
@@ -49,8 +50,9 @@ import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix3x2f;
@@ -83,14 +85,14 @@ public class RenderUtils {
     /**
      * An active cache for all currently allocated internal Texture Object Results
      */
-    private static final Map<String, Tuple<Boolean, String, ResourceLocation>> TEXTURE_CACHE = StringUtils.newHashMap();
+    private static final Map<String, Tuple<Boolean, String, Identifier>> TEXTURE_CACHE = StringUtils.newHashMap();
 
     /**
      * Retrieve the default Screen Textures as Texture Data
      *
      * @return the default Screen Textures
      */
-    public static ResourceLocation getScreenTexture(@Nonnull final Minecraft mc) {
+    public static Identifier getScreenTexture(@Nonnull final Minecraft mc) {
         return getTextureData(mc, ScreenConstants.getDefaultGUIBackground()).getThird();
     }
 
@@ -99,7 +101,7 @@ public class RenderUtils {
      *
      * @return the alternative Screen Textures
      */
-    public static ResourceLocation getAltScreenTexture(@Nonnull final Minecraft mc) {
+    public static Identifier getAltScreenTexture(@Nonnull final Minecraft mc) {
         return getTextureData(mc, ScreenConstants.getDefaultGUIBackgroundAlt()).getThird();
     }
 
@@ -108,7 +110,7 @@ public class RenderUtils {
      *
      * @return the default Screen Textures, while in a world
      */
-    public static ResourceLocation getWorldScreenTexture(@Nonnull final Minecraft mc) {
+    public static Identifier getWorldScreenTexture(@Nonnull final Minecraft mc) {
         return getTextureData(mc, ScreenConstants.getDefaultWorldGUIBackground()).getThird();
     }
 
@@ -117,7 +119,7 @@ public class RenderUtils {
      *
      * @return the alternative Screen Textures, while in a world
      */
-    public static ResourceLocation getAltWorldScreenTexture(@Nonnull final Minecraft mc) {
+    public static Identifier getAltWorldScreenTexture(@Nonnull final Minecraft mc) {
         return getTextureData(mc, ScreenConstants.getDefaultWorldGUIBackgroundAlt()).getThird();
     }
 
@@ -128,7 +130,7 @@ public class RenderUtils {
      * @param hoverState The hover state of the button
      * @return the default Widget Textures
      */
-    public static ResourceLocation getButtonTexture(final boolean enabled, final boolean hoverState) {
+    public static Identifier getButtonTexture(final boolean enabled, final boolean hoverState) {
         return DEFAULT_BUTTON_SPRITES.get(enabled, hoverState);
     }
 
@@ -471,7 +473,7 @@ public class RenderUtils {
                                    final double zLevel, final boolean asFullTexture,
                                    final double minU, final double maxU, final double minV, final double maxV,
                                    final Object startColorObj, final Object endColorObj,
-                                   final ResourceLocation texLocation) {
+                                   final Identifier texLocation) {
         if (!asFullTexture) {
             drawGradient(matrixStack,
                     left, right, top, bottom,
@@ -490,20 +492,20 @@ public class RenderUtils {
             return;
         }
 
-        final GpuTextureView gpuTextureView = mc.getTextureManager().getTexture(texLocation).getTextureView();
+        final AbstractTexture abstractTexture = mc.getTextureManager().getTexture(texLocation);
         submitTexture(matrixStack,
-                function, gpuTextureView,
+                function, abstractTexture.getTextureView(), abstractTexture.getSampler(),
                 (int) left, (int) top, (int) right, (int) bottom,
                 (float) minU, (float) maxU, (float) minV, (float) maxV,
                 colorToArgb(startColor), colorToArgb(endColor));
     }
 
     public static void submitTexture(@Nonnull GuiGraphics matrixStack,
-                                     final RenderPipeline renderPipeline, final GpuTextureView gpuTextureView,
+                                     final RenderPipeline renderPipeline, final GpuTextureView gpuTextureView, final GpuSampler gpuSampler,
                                      final int left, final int top, final int right, final int bottom,
                                      final float minU, final float maxU, final float minV, final float maxV,
                                      final int startColor, final int endColor) {
-        matrixStack.guiRenderState.submitGuiElement(new GradientBlitRenderState(renderPipeline, TextureSetup.singleTexture(gpuTextureView), new Matrix3x2f(matrixStack.pose()),
+        matrixStack.guiRenderState.submitGuiElement(new GradientBlitRenderState(renderPipeline, TextureSetup.singleTexture(gpuTextureView, gpuSampler), new Matrix3x2f(matrixStack.pose()),
                 left, top, right, bottom,
                 minU, maxU, minV, maxV,
                 startColor, endColor,
@@ -535,7 +537,7 @@ public class RenderUtils {
                                    final double zLevel, final boolean asFullTexture,
                                    final double minU, final double maxU, final double minV, final double maxV,
                                    final Object startColorObj, final Object endColorObj,
-                                   final ResourceLocation texLocation) {
+                                   final Identifier texLocation) {
         drawTexture(mc, matrixStack, RenderPipelines.GUI_TEXTURED,
                 left, right, top, bottom,
                 zLevel, asFullTexture,
@@ -571,7 +573,7 @@ public class RenderUtils {
                                    final double zLevel,
                                    final double minU, final double maxU, final double minV, final double maxV,
                                    final Object startColorObj, final Object endColorObj,
-                                   final ResourceLocation texLocation) {
+                                   final Identifier texLocation) {
         drawTexture(mc, matrixStack, function,
                 left, right, top, bottom,
                 zLevel, true,
@@ -605,7 +607,7 @@ public class RenderUtils {
                                    final double zLevel,
                                    final double minU, final double maxU, final double minV, final double maxV,
                                    final Object startColorObj, final Object endColorObj,
-                                   final ResourceLocation texLocation) {
+                                   final Identifier texLocation) {
         drawTexture(mc, matrixStack, RenderPipelines.GUI_TEXTURED,
                 left, right, top, bottom,
                 zLevel,
@@ -648,7 +650,7 @@ public class RenderUtils {
                                    final double u, final double v,
                                    final double textureWidth, final double textureHeight,
                                    final Object startColorObj, final Object endColorObj,
-                                   final ResourceLocation texLocation) {
+                                   final Identifier texLocation) {
         drawTexture(mc, matrixStack, function,
                 left, right, top, bottom,
                 zLevel, asFullTexture,
@@ -691,7 +693,7 @@ public class RenderUtils {
                                    final double u, final double v,
                                    final double textureWidth, final double textureHeight,
                                    final Object startColorObj, final Object endColorObj,
-                                   final ResourceLocation texLocation) {
+                                   final Identifier texLocation) {
         drawTexture(mc, matrixStack, RenderPipelines.GUI_TEXTURED,
                 left, right, top, bottom,
                 zLevel, asFullTexture,
@@ -734,7 +736,7 @@ public class RenderUtils {
                                    final double u, final double v,
                                    final double textureWidth, final double textureHeight,
                                    final Object startColorObj, final Object endColorObj,
-                                   final ResourceLocation texLocation) {
+                                   final Identifier texLocation) {
         drawTexture(mc, matrixStack, function,
                 left, right, top, bottom,
                 zLevel, true,
@@ -775,7 +777,7 @@ public class RenderUtils {
                                    final double u, final double v,
                                    final double textureWidth, final double textureHeight,
                                    final Object startColorObj, final Object endColorObj,
-                                   final ResourceLocation texLocation) {
+                                   final Identifier texLocation) {
         drawTexture(mc, matrixStack, RenderPipelines.GUI_TEXTURED,
                 left, right, top, bottom,
                 zLevel, usingExternalTexture,
@@ -810,7 +812,7 @@ public class RenderUtils {
                                    final double zLevel, final boolean asFullTexture,
                                    final boolean usingExternalTexture,
                                    final Object startColorObj, final Object endColorObj,
-                                   final ResourceLocation texLocation) {
+                                   final Identifier texLocation) {
         drawTexture(mc, matrixStack, function,
                 left, right, top, bottom,
                 zLevel, asFullTexture,
@@ -844,7 +846,7 @@ public class RenderUtils {
                                    final double zLevel, final boolean asFullTexture,
                                    final boolean usingExternalTexture,
                                    final Object startColorObj, final Object endColorObj,
-                                   final ResourceLocation texLocation) {
+                                   final Identifier texLocation) {
         drawTexture(mc, matrixStack, RenderPipelines.GUI_TEXTURED,
                 left, right, top, bottom,
                 zLevel, asFullTexture,
@@ -875,7 +877,7 @@ public class RenderUtils {
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel, final boolean usingExternalTexture,
                                    final Object startColorObj, final Object endColorObj,
-                                   final ResourceLocation texLocation) {
+                                   final Identifier texLocation) {
         drawTexture(mc, matrixStack, function,
                 left, right, top, bottom,
                 zLevel, true,
@@ -904,7 +906,7 @@ public class RenderUtils {
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel, final boolean usingExternalTexture,
                                    final Object startColorObj, final Object endColorObj,
-                                   final ResourceLocation texLocation) {
+                                   final Identifier texLocation) {
         drawTexture(mc, matrixStack, RenderPipelines.GUI_TEXTURED,
                 left, right, top, bottom,
                 zLevel, usingExternalTexture,
@@ -977,7 +979,7 @@ public class RenderUtils {
      * @param regionHeight The Height of the Texture Region
      */
     public static void blit(@Nonnull final GuiGraphics mc,
-                            final RenderPipeline function, final ResourceLocation texLocation,
+                            final RenderPipeline function, final Identifier texLocation,
                             final double xPos, final double yPos,
                             final double zLevel,
                             final double u, final double v,
@@ -999,7 +1001,7 @@ public class RenderUtils {
      * @param regionHeight The Height of the Texture Region
      */
     public static void blit(@Nonnull final GuiGraphics mc,
-                            final ResourceLocation texLocation,
+                            final Identifier texLocation,
                             final double xPos, final double yPos,
                             final double zLevel,
                             final double u, final double v,
@@ -1024,7 +1026,7 @@ public class RenderUtils {
      * @param textureHeight The Height of the Texture
      */
     public static void blit(@Nonnull final GuiGraphics mc,
-                            final RenderPipeline function, final ResourceLocation texLocation,
+                            final RenderPipeline function, final Identifier texLocation,
                             final double xPos, final double yPos,
                             final double zLevel,
                             final double u, final double v,
@@ -1055,7 +1057,7 @@ public class RenderUtils {
      * @param textureHeight The Height of the Texture
      */
     public static void blit(@Nonnull final GuiGraphics mc,
-                            final ResourceLocation texLocation,
+                            final Identifier texLocation,
                             final double xPos, final double yPos,
                             final double zLevel,
                             final double u, final double v,
@@ -1083,7 +1085,7 @@ public class RenderUtils {
      * @param textureHeight The Height of the Texture
      */
     public static void blit(@Nonnull final GuiGraphics mc,
-                            final RenderPipeline function, final ResourceLocation texLocation,
+                            final RenderPipeline function, final Identifier texLocation,
                             final double left, final double right, final double top, final double bottom,
                             final double zLevel,
                             final double regionWidth, final double regionHeight,
@@ -1117,7 +1119,7 @@ public class RenderUtils {
      * @param textureHeight The Height of the Texture
      */
     public static void blit(@Nonnull final GuiGraphics mc,
-                            final ResourceLocation texLocation,
+                            final Identifier texLocation,
                             final double left, final double right, final double top, final double bottom,
                             final double zLevel,
                             final double regionWidth, final double regionHeight,
@@ -1149,7 +1151,7 @@ public class RenderUtils {
      * @param maxV        The minimum vertical axis to render this Object by
      */
     public static void innerBlit(@Nonnull final GuiGraphics mc,
-                                 final RenderPipeline function, final ResourceLocation texLocation,
+                                 final RenderPipeline function, final Identifier texLocation,
                                  final double left, final double right, final double top, final double bottom,
                                  final double zLevel,
                                  final double minU, final double maxU, final double minV, final double maxV) {
@@ -1172,7 +1174,7 @@ public class RenderUtils {
      * @param maxV        The minimum vertical axis to render this Object by
      */
     public static void innerBlit(@Nonnull final GuiGraphics mc,
-                                 final ResourceLocation texLocation,
+                                 final Identifier texLocation,
                                  final double left, final double right, final double top, final double bottom,
                                  final double zLevel,
                                  final double minU, final double maxU, final double minV, final double maxV) {
@@ -1234,9 +1236,9 @@ public class RenderUtils {
      * @param texture The data to interpret
      * @return a {@link Tuple} with the mapping "usingExternalData:location:resource"
      */
-    public static Tuple<Boolean, String, ResourceLocation> getTextureData(@Nonnull final Minecraft mc, String texture) {
-        ResourceLocation texLocation = ResourceUtils.getEmptyResource();
-        final Tuple<Boolean, String, ResourceLocation> result = new Tuple<>(false, "", texLocation);
+    public static Tuple<Boolean, String, Identifier> getTextureData(@Nonnull final Minecraft mc, String texture) {
+        Identifier texLocation = ResourceUtils.getEmptyResource();
+        final Tuple<Boolean, String, Identifier> result = new Tuple<>(false, "", texLocation);
         if (!StringUtils.isNullOrEmpty(texture)) {
             texture = texture.trim();
             if (TEXTURE_CACHE.containsKey(texture)) {
@@ -1423,9 +1425,9 @@ public class RenderUtils {
                             backgroundStart, backgroundEnd
                     );
                 } else {
-                    final Tuple<Boolean, String, ResourceLocation> textureData = getTextureData(mc, backgroundColorInfo.texLocation());
+                    final Tuple<Boolean, String, Identifier> textureData = getTextureData(mc, backgroundColorInfo.texLocation());
                     final boolean usingExternalTexture = textureData.getFirst();
-                    final ResourceLocation backGroundTexture = textureData.getThird();
+                    final Identifier backGroundTexture = textureData.getThird();
 
                     final double width = tooltipTextWidth + 4;
                     final double height = tooltipHeight + 4;
@@ -1459,9 +1461,9 @@ public class RenderUtils {
                             null, null
                     );
                 } else {
-                    final Tuple<Boolean, String, ResourceLocation> textureData = getTextureData(mc, borderColorInfo.texLocation());
+                    final Tuple<Boolean, String, Identifier> textureData = getTextureData(mc, borderColorInfo.texLocation());
                     final boolean usingExternalTexture = textureData.getFirst();
-                    final ResourceLocation borderTexture = textureData.getThird();
+                    final Identifier borderTexture = textureData.getThird();
 
                     final double border = 1;
                     final double renderX = tooltipX - 3;
