@@ -1,4 +1,4 @@
-accessWidener   v2  named
+accessWidener   v2  official
 
 accessible class net/minecraft/client/gui/GuiGraphics$ScissorStack
 accessible method net/minecraft/client/gui/render/state/BlitRenderState getBounds (IIIILorg/joml/Matrix3x2f;Lnet/minecraft/client/gui/navigation/ScreenRectangle;)Lnet/minecraft/client/gui/navigation/ScreenRectangle;
