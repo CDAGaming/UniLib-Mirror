@@ -12,7 +12,7 @@ import java.util.*
 plugins {
     java
     id("xyz.wagyourtail.unimined") version "1.3.14+neofix.1" apply false
-    id("xyz.wagyourtail.jvmdowngrader") version "1.2.2"
+    id("xyz.wagyourtail.jvmdowngrader") version "1.3.4"
     id("com.diffplug.gradle.spotless") version "8.1.0" apply false
     id("com.gradleup.shadow") version "9.3.0" apply false
     id("com.hypherionmc.modutils.modpublisher") version "2.1.8+snapshot.3" apply false
