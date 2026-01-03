@@ -92,7 +92,7 @@ tasks.processResources {
 }
 
 tasks.named<ExportMappingsTask>("exportMappings") {
-    val target = if ("mc_mappings_type"() == "retroMCP") "mcp" else "searge"
+    val target = unimined.minecrafts[sourceSets.named("main").get()]!!.mappings.devNamespace.name
     export {
         setTargetNamespaces(listOf(target))
         setSourceNamespace("official")

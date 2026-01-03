@@ -11,8 +11,8 @@ import java.util.*
 
 plugins {
     java
-    id("xyz.wagyourtail.unimined") version "1.3.14+neofix.1" apply false
-    id("xyz.wagyourtail.jvmdowngrader") version "1.3.4"
+    id("dev.firstdark.unimined") version "1.0.0+1.4.2" apply false
+    id("xyz.wagyourtail.jvmdowngrader") version "1.3.5-SNAPSHOT"
     id("com.diffplug.gradle.spotless") version "8.1.0" apply false
     id("com.gradleup.shadow") version "9.3.0" apply false
     id("com.hypherionmc.modutils.modpublisher") version "2.1.8+snapshot.3" apply false
@@ -68,7 +68,7 @@ subprojects {
     val isLoaderSource = path != ":common"
 
     apply(plugin = "java")
-    apply(plugin = "xyz.wagyourtail.unimined")
+    apply(plugin = "dev.firstdark.unimined")
     apply(plugin = "xyz.wagyourtail.jvmdowngrader")
     apply(plugin = "com.diffplug.spotless")
     apply(plugin = "com.gradleup.shadow")
@@ -188,57 +188,19 @@ subprojects {
                         if (!isJarMod) {
                             searge()
                         }
-                        mcp(if (isJarMod) "legacy" else "stable", mcMappings) {
-                            if (!isJarMod) {
-                                clearOutputs()
-                                outputs("mcp", true) { listOf("intermediary") }
-                            }
-                        }
+                        mcp((if (isJarMod) "legacy" else "stable"), mcMappings)
                     }
 
                     "forgeMCP" -> {
-                        forgeBuiltinMCP("forge_version"()!!) {
-                            clearContains()
-                            clearOutputs()
-                            contains({ _, t ->
-                                !t.contains("MCP")
-                            }) {
-                                onlyExistingSrc()
-                                outputs("searge", false) { listOf("official") }
-                            }
-                            contains({ _, t ->
-                                t.contains("MCP")
-                            }) {
-                                outputs("mcp", true) { listOf("intermediary") }
-                                sourceNamespace("searge")
-                            }
-                        }
-                        officialMappingsFromJar {
-                            clearContains()
-                            clearOutputs()
-                            outputs("official", false) { listOf() }
-                        }
+                        forgeBuiltinMCP("forge_version"()!!)
                     }
 
                     "retroMCP" -> {
                         retroMCP(mcMappings)
                     }
 
-                    "yarn" -> {
-                        yarn(mcMappings)
-                    }
-
                     "mojmap" -> {
-                        mojmap {
-                            skipIfNotIn("intermediary")
-                        }
-                    }
-
-                    "parchment" -> {
-                        mojmap {
-                            skipIfNotIn("intermediary")
-                        }
-                        parchment(mcVersion, mcMappings)
+                        mojmap()
                     }
 
                     else -> throw GradleException("Unknown or Unsupported Mappings version")
@@ -255,20 +217,16 @@ subprojects {
                 }
 
                 // ability to add custom mappings
-                val target = if (!isModern) "mcp" else "mojmap"
-                stub.withMappings("searge", target) {
-                    c("ModLoader", "net/minecraft/src/ModLoader", "net/minecraft/src/ModLoader")
-                    c("BaseMod", "net/minecraft/src/BaseMod", "net/minecraft/src/BaseMod")
+                stubs("official", mcMappingsType!!) {
+                    c("ModLoader", "net/minecraft/src/ModLoader")
+                    c("BaseMod", "net/minecraft/src/BaseMod")
                     // Fix: Fixed an inconsistent mapping in 1.16 and 1.16.1 between MCP and Mojmap
                     if (!isLegacy && (protocol == 735 || protocol == 736)) {
                         c(
                             "dng",
-                            listOf(
-                                "net/minecraft/client/gui/widget/Widget",
                                 "net/minecraft/client/gui/components/AbstractWidget"
-                            )
                         ) {
-                            m("e", "()I", "func_238483_d_", "getHeightRealms")
+                            m("e;()I", "func_238483_d_", "getHeightRealms")
                         }
                     }
                 }

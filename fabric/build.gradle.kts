@@ -33,7 +33,7 @@ unimined.minecraft {
             prodNamespace("official")
             devMappings = null
         }
-        customIntermediaries = true
+        customIntermediaries = (minecraftData.mcVersionCompare(version, "1.6.4") < 0)
     }
     if (isModern) {
         fabric(fabricData)
@@ -95,10 +95,10 @@ tasks.processResources {
 }
 
 tasks.named<ExportMappingsTask>("exportMappings") {
-    val target = if (isMCPJar) "searge" else (if (!isModern) "mcp" else "mojmap")
+    val target = unimined.minecrafts[sourceSets.named("main").get()]!!.mappings.devNamespace.name
     export {
         setTargetNamespaces(listOf(target))
-        setSourceNamespace(if (isJarMod) "official" else "intermediary")
+        setSourceNamespace("official")
         location = file("$projectDir/src/main/resources/mappings.srg")
         setType("SRG")
     }
