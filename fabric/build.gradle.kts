@@ -1,3 +1,4 @@
+import xyz.wagyourtail.unimined.api.mapping.task.ExportMappingsTask
 import xyz.wagyourtail.unimined.api.minecraft.patch.fabric.FabricLikePatcher
 import xyz.wagyourtail.unimined.api.minecraft.task.RemapJarTask
 
@@ -32,7 +33,7 @@ unimined.minecraft {
             prodNamespace("official")
             devMappings = null
         }
-        customIntermediaries = true
+        customIntermediaries = (minecraftData.mcVersionCompare(version, "1.6.4") < 0)
     }
     if (isModern) {
         fabric(fabricData)
@@ -82,6 +83,17 @@ tasks.processResources {
         }
     }
 }
+
+tasks.named<ExportMappingsTask>("exportMappings") {
+    val target = unimined.minecrafts[sourceSets.named("main").get()]!!.mappings.devNamespace.name
+    export {
+        setTargetNamespaces(listOf(target))
+        setSourceNamespace("official")
+        location = file("$projectDir/src/main/resources/mappings.srg")
+        setType("SRG")
+    }
+}
+tasks.processResources.get().dependsOn(tasks.named("exportMappings"))
 
 tasks.shadowJar {
     mustRunAfter(project(":common").tasks.shadowJar)

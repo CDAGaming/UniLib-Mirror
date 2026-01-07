@@ -14,7 +14,7 @@ jobs:
   deploy-all:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Fetch all branches
         run: |
@@ -29,7 +29,7 @@ jobs:
         run: cat branches.txt
 
       - name: update cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.gradle/caches
@@ -85,7 +85,7 @@ jobs:
           done < branches.txt
 
       - name: Upload deployment failure log (if any)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: deployment_failures
           path: deployment_failures.txt
