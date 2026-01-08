@@ -17,6 +17,7 @@ val isJarMod: Boolean by extra
 val accessWidenerFile: File by extra
 val isMCPJar: Boolean by extra
 val isModern: Boolean by extra
+val isOfficial : Boolean by extra
 val versionFormat: String by extra
 val versionLabel: String by extra
 val mcVersionLabel: String by extra
@@ -33,7 +34,7 @@ unimined.minecraft {
                 accessTransformer(aw2at(accessWidenerFile))
             }
             loader(forgeVersion)
-            customSearge = (mcMappingsType != "mojmap" && mcMappingsType != "parchment")
+            customSearge = (mcMappingsType != "mojmap" && mcMappingsType != "parchment" && !isOfficial)
         }
     } else {
         jarMod {}

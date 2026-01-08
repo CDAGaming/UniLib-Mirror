@@ -18,6 +18,7 @@ val isJarMod: Boolean by extra
 val accessWidenerFile: File by extra
 val isMCPJar: Boolean by extra
 val isModern: Boolean by extra
+val isOfficial : Boolean by extra
 val versionFormat: String by extra
 val versionLabel: String by extra
 val mcVersionLabel: String by extra
@@ -84,16 +85,18 @@ tasks.processResources {
     }
 }
 
-tasks.named<ExportMappingsTask>("exportMappings") {
-    val target = unimined.minecrafts[sourceSets.named("main").get()]!!.mappings.devNamespace.name
-    export {
-        setTargetNamespaces(listOf(target))
-        setSourceNamespace("official")
-        location = file("$projectDir/src/main/resources/mappings.srg")
-        setType("SRG")
+if (!isOfficial) {
+    tasks.named<ExportMappingsTask>("exportMappings") {
+        val target = unimined.minecrafts[sourceSets.named("main").get()]!!.mappings.devNamespace.name
+        export {
+            setTargetNamespaces(listOf(target))
+            setSourceNamespace("official")
+            location = file("$projectDir/src/main/resources/mappings.srg")
+            setType("SRG")
+        }
     }
+    tasks.processResources.get().dependsOn(tasks.named("exportMappings"))
 }
-tasks.processResources.get().dependsOn(tasks.named("exportMappings"))
 
 tasks.shadowJar {
     mustRunAfter(project(":common").tasks.shadowJar)
