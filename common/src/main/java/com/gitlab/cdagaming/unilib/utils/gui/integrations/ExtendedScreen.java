@@ -38,8 +38,10 @@ import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractSelectionList;
-import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -53,7 +55,7 @@ import java.util.List;
  *
  * @author CDAGaming
  */
-public class ExtendedScreen extends Screen {
+public class ExtendedScreen extends Screen implements NarratableEntry {
     /**
      * The Default Vertical Padding between elements, used in {@link ExtendedScreen#getButtonY(int)}
      */
@@ -146,13 +148,17 @@ public class ExtendedScreen extends Screen {
     private boolean canModifyControls;
 
     /**
-     * Restore Buttons, if any, for screen re-initialization
+     * Restore Renderables, if any, for screen re-initialization
      */
-    private final List<AbstractWidget> restoreButtons = StringUtils.newArrayList();
+    private final List<Widget> restoreRenderables = StringUtils.newArrayList();
     /**
      * Restore Children, if any, for screen re-initialization
      */
     private final List<GuiEventListener> restoreChildren = StringUtils.newArrayList();
+    /**
+     * Restore Narratables, if any, for screen re-initialization
+     */
+    private final List<NarratableEntry> restoreNarratables = StringUtils.newArrayList();
 
     /**
      * Initialization Event for this Control, assigning defined arguments
@@ -316,15 +322,20 @@ public class ExtendedScreen extends Screen {
     @Override
     public void init() {
         // Restore Fixes -- MC 1.19.3 and below
-        if (!restoreButtons.isEmpty()) {
-            buttons.clear();
-            buttons.addAll(restoreButtons);
-            restoreButtons.clear();
+        if (!restoreRenderables.isEmpty()) {
+            renderables.clear();
+            renderables.addAll(restoreRenderables);
+            restoreRenderables.clear();
         }
         if (!restoreChildren.isEmpty()) {
             children.clear();
             children.addAll(restoreChildren);
             restoreChildren.clear();
+        }
+        if (!restoreNarratables.isEmpty()) {
+            narratables.clear();
+            narratables.addAll(restoreNarratables);
+            restoreNarratables.clear();
         }
         // Clear Data before Initialization
         super.init();
@@ -344,8 +355,7 @@ public class ExtendedScreen extends Screen {
             currentPhase = Phase.PREINIT;
             setContentHeight(0);
 
-            buttons.clear();
-            children.clear();
+            clearWidgets();
             extendedControls.clear();
             extendedWidgets.clear();
             extendedLists.clear();
@@ -360,8 +370,9 @@ public class ExtendedScreen extends Screen {
     public void initializeUi() {
         if (isUnloaded()) {
             // Restore Fixes -- MC 1.19.3 and below
-            restoreButtons.addAll(buttons);
+            restoreRenderables.addAll(renderables);
             restoreChildren.addAll(children);
+            restoreNarratables.addAll(narratables);
 
             init(getGameInstance(), getScreenWidth(), getScreenHeight());
             return;
@@ -426,19 +437,6 @@ public class ExtendedScreen extends Screen {
     }
 
     /**
-     * Adds a Compatible Button to this Screen with specified type
-     *
-     * @param buttonIn The Button to add to this Screen
-     * @param <T>      The Button's Class Type
-     * @return The added button with attached class type
-     */
-    @Nonnull
-    @Override
-    protected <T extends AbstractWidget> T addButton(@Nonnull T buttonIn) {
-        return addControl(buttonIn);
-    }
-
-    /**
      * Adds a Compatible Control to this Screen with specified type
      *
      * @param buttonIn The Control to add to this Screen
@@ -446,7 +444,7 @@ public class ExtendedScreen extends Screen {
      * @return The added control with attached class type
      */
     @Nonnull
-    public <T extends GuiEventListener> T addControl(@Nonnull T buttonIn) {
+    public <T extends GuiEventListener & Widget & NarratableEntry> T addControl(@Nonnull T buttonIn) {
         if (!canModifyControls()) {
             throw new IllegalStateException("Can't add control to control list");
         }
@@ -454,11 +452,10 @@ public class ExtendedScreen extends Screen {
         if (buttonIn instanceof DynamicWidget widget && !extendedWidgets.contains(buttonIn)) {
             addWidget(widget);
         }
-        if (buttonIn instanceof AbstractWidget abstractWidget && !buttons.contains(buttonIn)) {
-            buttons.add(abstractWidget);
-        }
-        if (buttonIn instanceof GuiEventListener listener && !children.contains(buttonIn)) {
-            children.add(listener);
+        if (!children().contains(buttonIn) && buttonIn instanceof ExtendedScreen) {
+            super.addWidget(buttonIn);
+        } else if (buttonIn instanceof Widget) {
+            addRenderableWidget(buttonIn);
         }
         if (!extendedControls.contains(buttonIn)) {
             extendedControls.add(buttonIn);
@@ -479,8 +476,8 @@ public class ExtendedScreen extends Screen {
             throw new IllegalStateException("Can't add control to control list");
         }
 
-        if (buttonIn instanceof GuiEventListener listener && !children.contains(buttonIn)) {
-            children.add(listener);
+        if (buttonIn instanceof Widget) {
+            addRenderableWidget(buttonIn);
         }
         if (!extendedLists.contains(buttonIn)) {
             extendedLists.add(buttonIn);
@@ -942,10 +939,6 @@ public class ExtendedScreen extends Screen {
 
             renderBackground(matrixStack);
 
-            for (AbstractSelectionList<?> listControl : getLists()) {
-                listControl.render(matrixStack, mouseX, mouseY, partialTicks);
-            }
-
             super.render(matrixStack, mouseX, mouseY, partialTicks);
 
             renderExtra();
@@ -1102,6 +1095,16 @@ public class ExtendedScreen extends Screen {
             resetIndex();
             enableRepeatEvents(false);
         }
+    }
+
+    @Override
+    public @Nonnull NarrationPriority narrationPriority() {
+        return NarrationPriority.NONE;
+    }
+
+    @Override
+    public void updateNarration(@Nonnull NarrationElementOutput arg) {
+        // N/A
     }
 
     /**
