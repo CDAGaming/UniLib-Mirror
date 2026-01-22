@@ -36,7 +36,7 @@ import io.github.cdagaming.unicore.utils.OSUtils;
  *
  * @author CDAGaming
  */
-@Mod(modid = "@MOD_ID@", name = "@MOD_NAME@", version = "@VERSION_ID@", canBeDeactivated = true, acceptedMinecraftVersions = "*")
+@Mod(modid = "@MOD_ID@", name = "@MOD_NAME@", version = "@VERSION_ID@", acceptedMinecraftVersions = "*")
 public class UniLibForge {
     /**
      * Begins Scheduling Ticks on Class Initialization

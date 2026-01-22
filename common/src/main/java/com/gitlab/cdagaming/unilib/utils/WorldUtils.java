@@ -78,8 +78,7 @@ public class WorldUtils {
         String result = "";
         if (entity != null) {
             result = StringUtils.getOrDefault(
-                    entity.getFormattedCommandSenderName().getFormattedText(),
-                    entity.getCommandSenderName()
+                    entity.getEntityName()
             );
         }
 
