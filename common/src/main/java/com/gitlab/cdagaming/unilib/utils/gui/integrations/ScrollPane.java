@@ -31,7 +31,7 @@ import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
 import com.mojang.blaze3d.platform.cursor.CursorType;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import io.github.cdagaming.unicore.utils.MathUtils;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
@@ -155,8 +155,8 @@ public class ScrollPane extends ExtendedScreen {
     }
 
     @Override
-    public void renderBackground(@Nonnull GuiGraphics arg, int i, int j, float f) {
-        super.renderMenuBackground(arg);
+    public void extractBackground(@Nonnull GuiGraphicsExtractor arg, int i, int j, float f) {
+        super.extractMenuBackground(arg);
     }
 
     /**

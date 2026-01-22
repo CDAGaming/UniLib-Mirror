@@ -29,7 +29,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.LevelData;
 
 /**
  * Game-Related Utilities used to Parse World Data
@@ -108,10 +107,9 @@ public class WorldUtils {
     public static String getWeather(final Level world) {
         String name = "clear";
         if (world != null) {
-            final LevelData info = world.getLevelData();
-            if (info.isThundering()) {
+            if (world.isThundering()) {
                 name = "thunder";
-            } else if (info.isRaining()) {
+            } else if (world.isRaining()) {
                 name = "rain";
             } else {
                 name = "clear";

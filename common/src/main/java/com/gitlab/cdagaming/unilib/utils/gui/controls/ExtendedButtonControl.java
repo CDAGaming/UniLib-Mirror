@@ -31,7 +31,7 @@ import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
 import com.mojang.blaze3d.platform.cursor.CursorType;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -204,7 +204,7 @@ public class ExtendedButtonControl extends Button implements DynamicWidget {
     }
 
     @Override
-    public void renderContents(@Nonnull GuiGraphics matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void extractContents(@Nonnull GuiGraphicsExtractor matrixStack, int mouseX, int mouseY, float partialTicks) {
         final Minecraft mc = ModUtils.getMinecraft();
         if (mc != null && isControlVisible()) {
             setHoveringOver(isOverScreen() && RenderUtils.isMouseOver(mouseX, mouseY, this));
@@ -231,7 +231,7 @@ public class ExtendedButtonControl extends Button implements DynamicWidget {
     }
 
     @Override
-    public void handleCursor(@Nonnull GuiGraphics matrixStack) {
+    public void handleCursor(@Nonnull GuiGraphicsExtractor matrixStack) {
         if (isHovered()) {
             matrixStack.requestCursor(getCursorType());
         }
@@ -270,7 +270,7 @@ public class ExtendedButtonControl extends Button implements DynamicWidget {
      * Fired when the mouse button is dragged.<p>
      * Equivalent of MouseListener.mouseDragged(MouseEvent e).
      */
-    protected void renderBg(@Nonnull GuiGraphics matrixStack, @Nonnull Minecraft mc, int mouseX, int mouseY) {
+    protected void renderBg(@Nonnull GuiGraphicsExtractor matrixStack, @Nonnull Minecraft mc, int mouseX, int mouseY) {
         if (isControlVisible()) {
             RenderUtils.renderSprite(matrixStack, graphics -> graphics.blitSprite(
                     RenderPipelines.GUI_TEXTURED,
