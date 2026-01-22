@@ -11,7 +11,7 @@ import java.util.*
 
 plugins {
     java
-    id("dev.firstdark.unimined") version "1.0.3+1.4.2-SNAPSHOT" apply false
+    id("dev.firstdark.unimined") version "1.0.4+1.4.2-SNAPSHOT" apply false
     id("xyz.wagyourtail.jvmdowngrader") version "1.3.6"
     id("com.diffplug.gradle.spotless") version "8.1.0" apply false
     id("com.gradleup.shadow") version "9.3.1" apply false
