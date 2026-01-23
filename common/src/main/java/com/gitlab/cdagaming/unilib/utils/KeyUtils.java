@@ -34,7 +34,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.options.controls.ControlsScreen;
 import net.minecraft.client.input.KeyEvent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
@@ -302,7 +302,7 @@ public class KeyUtils {
      */
     public KeyMapping registerKey(final String id, final String name,
                                   final Function<String, String> nameFormatter,
-                                  final ResourceLocation category,
+                                  final Identifier category,
                                   final Function<String, String> categoryFormatter,
                                   final int defaultKey, final int currentKey,
                                   final Supplier<String> detailsSupplier,
@@ -387,7 +387,7 @@ public class KeyUtils {
      * @return the created and registered KeyBind instance
      */
     public KeyMapping registerKey(final String id, final String name,
-                                  final ResourceLocation category,
+                                  final Identifier category,
                                   final int defaultKey, final int currentKey,
                                   final Supplier<String> detailsSupplier,
                                   final Supplier<Boolean> canCheckSupplier,
@@ -464,7 +464,7 @@ public class KeyUtils {
      * @return the created and registered KeyBind instance
      */
     public KeyMapping registerKey(final String id, final String name,
-                                  final ResourceLocation category,
+                                  final Identifier category,
                                   final int defaultKey, final int currentKey,
                                   final Supplier<Boolean> canCheckSupplier,
                                   final Supplier<Boolean> canSyncSupplier,
