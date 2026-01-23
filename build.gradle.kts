@@ -180,7 +180,6 @@ subprojects {
         mappings {
             if (isOfficial) {
                 devNamespace("official")
-                devFallbackNamespace("official")
             } else {
                 val mcMappings = "mc_mappings"()!!
                 when (mcMappingsType) {
@@ -234,11 +233,7 @@ subprojects {
                 if (isMCPJar) {
                     if (protocol <= 2) { // MC a1.1.2_01 and below
                         devNamespace("searge")
-                    } else {
-                        devFallbackNamespace("searge")
                     }
-                } else if (usingIntermediary) {
-                    devFallbackNamespace("intermediary")
                 }
             }
 

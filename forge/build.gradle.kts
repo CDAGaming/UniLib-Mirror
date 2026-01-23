@@ -34,7 +34,7 @@ unimined.minecraft {
                 accessTransformer(aw2at(accessWidenerFile))
             }
             loader(forgeVersion)
-            customSearge = (mcMappingsType != "mojmap" && mcMappingsType != "parchment" && !isOfficial)
+            customSearge = ((mcMappingsType == "mcp" && !isJarMod) || mcMappingsType == "forgeMCP")
         }
     } else {
         jarMod {}
