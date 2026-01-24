@@ -97,7 +97,7 @@ if (!isOfficial) {
         val target = unimined.minecrafts[sourceSets.named("main").get()]!!.mappings.devNamespace.name
         export {
             setTargetNamespaces(listOf(target))
-            setSourceNamespace("official")
+            setSourceNamespace(unimined.minecrafts[sourceSets.named("main").get()]!!.mcPatcher.prodNamespace.name)
             location = file("$projectDir/src/main/resources/mappings.srg")
             setType("SRG")
         }
