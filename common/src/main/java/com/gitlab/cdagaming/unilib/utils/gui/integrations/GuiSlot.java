@@ -26,9 +26,9 @@ package com.gitlab.cdagaming.unilib.utils.gui.integrations;
 
 import java.util.List;
 
-import com.mojang.minecraft.Minecraft;
-import com.mojang.minecraft.gui.GuiButton;
-import com.mojang.minecraft.render.Tessellator;
+import com.mojang.minecraft.client.Minecraft;
+import com.mojang.minecraft.client.gui.GuiButton;
+import com.mojang.minecraft.client.render.Tessellator;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 

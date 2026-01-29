@@ -25,7 +25,7 @@
 package com.gitlab.cdagaming.unilib;
 
 import com.gitlab.cdagaming.unilib.core.CoreUtils;
-import com.mojang.minecraft.Minecraft;
+import com.mojang.minecraft.client.Minecraft;
 import io.github.cdagaming.unicore.utils.TranslationUtils;
 
 import java.util.function.BiConsumer;

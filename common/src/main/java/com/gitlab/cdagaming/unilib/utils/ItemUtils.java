@@ -24,9 +24,9 @@
 
 package com.gitlab.cdagaming.unilib.utils;
 
-import com.mojang.minecraft.entity.item.Item;
-import com.mojang.minecraft.entity.item.ItemStack;
-import com.mojang.minecraft.level.tile.Block;
+import com.mojang.minecraft.core.entity.item.Item;
+import com.mojang.minecraft.core.entity.item.ItemStack;
+import com.mojang.minecraft.core.level.tile.Block;
 import io.github.cdagaming.unicore.utils.MappingUtils;
 import io.github.cdagaming.unicore.utils.MathUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;

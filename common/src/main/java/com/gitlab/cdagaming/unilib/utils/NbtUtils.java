@@ -25,10 +25,10 @@
 package com.gitlab.cdagaming.unilib.utils;
 
 import com.gitlab.cdagaming.unilib.core.CoreUtils;
-import com.mojang.minecraft.entity.Entity;
-import com.mojang.minecraft.entity.EntityList;
-import com.mojang.minecraft.entity.item.ItemStack;
-import com.mojang.minecraft.nbt.*;
+import com.mojang.minecraft.core.entity.Entity;
+import com.mojang.minecraft.core.entity.EntityList;
+import com.mojang.minecraft.core.entity.item.ItemStack;
+import com.mojang.minecraft.core.nbt.*;
 import io.github.cdagaming.unicore.utils.FileUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
 

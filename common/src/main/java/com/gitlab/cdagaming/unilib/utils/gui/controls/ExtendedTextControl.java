@@ -27,7 +27,7 @@ package com.gitlab.cdagaming.unilib.utils.gui.controls;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.GuiTextField;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
-import com.mojang.minecraft.render.FontRenderer;
+import com.mojang.minecraft.client.render.FontRenderer;
 import io.github.cdagaming.unicore.impl.Pair;
 import io.github.cdagaming.unicore.utils.StringUtils;
 

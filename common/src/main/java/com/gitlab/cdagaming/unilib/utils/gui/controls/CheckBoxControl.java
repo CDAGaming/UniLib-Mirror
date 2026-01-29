@@ -26,7 +26,7 @@ package com.gitlab.cdagaming.unilib.utils.gui.controls;
 
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
-import com.mojang.minecraft.Minecraft;
+import com.mojang.minecraft.client.Minecraft;
 
 import javax.annotation.Nonnull;
 
@@ -157,11 +157,11 @@ public class CheckBoxControl extends ExtendedButtonControl {
      * Draws this button to the screen.
      */
     @Override
-    public void func_561_a(@Nonnull Minecraft mc, int mouseX, int mouseY) {
+    public void drawButton(@Nonnull Minecraft mc, int mouseX, int mouseY) {
         if (isControlVisible()) {
             setHoveringOver(isOverScreen() && RenderUtils.isMouseOver(mouseX, mouseY, this));
 
-            func_560_b(mc, mouseX, mouseY);
+            mouseDragged(mc, mouseX, mouseY);
             final int color = !isControlEnabled() ? 10526880 : 14737632;
 
             if (isChecked())
@@ -188,9 +188,9 @@ public class CheckBoxControl extends ExtendedButtonControl {
      * Equivalent of MouseListener.mouseDragged(MouseEvent e).
      */
     @Override
-    protected void func_560_b(@Nonnull Minecraft mc, int mouseX, int mouseY) {
+    protected void mouseDragged(@Nonnull Minecraft mc, int mouseX, int mouseY) {
         if (isControlVisible()) {
-            final int hoverState = func_558_a(isHoveringOrFocusingOver());
+            final int hoverState = getHoverState(isHoveringOrFocusingOver());
 
             final String borderColor = hoverState == 2 ? "#FFFFFF" : "#000000";
             final String contentColor = "#2b2b2b";

@@ -24,7 +24,7 @@
 
 package com.gitlab.cdagaming.unilib.impl;
 
-import com.mojang.minecraft.Minecraft;
+import com.mojang.minecraft.client.Minecraft;
 import io.github.cdagaming.unicore.utils.TranslationUtils;
 
 /**

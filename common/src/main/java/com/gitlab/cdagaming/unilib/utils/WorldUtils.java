@@ -24,11 +24,11 @@
 
 package com.gitlab.cdagaming.unilib.utils;
 
-import com.mojang.minecraft.Minecraft;
-import com.mojang.minecraft.entity.Entity;
-import com.mojang.minecraft.entity.EntityList;
-import com.mojang.minecraft.entity.EntityPlayer;
-import com.mojang.minecraft.level.World;
+import com.mojang.minecraft.client.Minecraft;
+import com.mojang.minecraft.core.entity.Entity;
+import com.mojang.minecraft.core.entity.EntityList;
+import com.mojang.minecraft.core.entity.EntityPlayer;
+import com.mojang.minecraft.core.level.World;
 import io.github.cdagaming.unicore.utils.StringUtils;
 
 /**

@@ -29,7 +29,7 @@ import com.gitlab.cdagaming.unilib.core.utils.ModUpdaterUtils;
 import com.gitlab.cdagaming.unilib.impl.TranslationListener;
 import com.gitlab.cdagaming.unilib.impl.TranslationManager;
 import com.gitlab.cdagaming.unilib.utils.KeyUtils;
-import com.mojang.minecraft.Minecraft;
+import com.mojang.minecraft.client.Minecraft;
 import io.github.cdagaming.unicore.utils.MappingUtils;
 
 /**

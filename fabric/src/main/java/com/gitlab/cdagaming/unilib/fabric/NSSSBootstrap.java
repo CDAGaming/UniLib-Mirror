@@ -36,7 +36,7 @@ public class NSSSBootstrap implements PreLaunchEntrypoint {
             StringUtils.updateField(
                     MinecraftGameProvider.class,
                     FabricLoaderImpl.INSTANCE.getGameProvider(),
-                    "com.mojang.minecraft.Minecraft",
+                    "com.mojang.minecraft.client.Minecraft",
                     "entrypoint"
             );
         } catch (Exception ex) {
