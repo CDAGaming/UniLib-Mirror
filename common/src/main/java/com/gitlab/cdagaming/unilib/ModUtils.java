@@ -137,7 +137,7 @@ public class ModUtils {
     public static void ThrowException(String message, Throwable e) {
         Minecraft game = getMinecraftInstance();
         if (game != null) {
-            game.func_4007_a(new UnexpectedThrowable(message, e));
+            game.displayUnexpectedThrowable(new UnexpectedThrowable(message, e));
         } else {
             throw new RuntimeException(e);
         }
