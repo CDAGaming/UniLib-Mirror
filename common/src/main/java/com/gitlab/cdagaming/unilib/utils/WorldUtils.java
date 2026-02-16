@@ -26,11 +26,11 @@ package com.gitlab.cdagaming.unilib.utils;
 
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.game.entity.Entity;
-import net.minecraft.src.game.entity.EntityList;
-import net.minecraft.src.game.entity.player.EntityPlayer;
-import net.minecraft.src.game.level.World;
-import net.minecraft.src.game.level.WorldInfo;
+import net.minecraft.common.entity.Entity;
+import net.minecraft.common.entity.EntityList;
+import net.minecraft.common.entity.player.EntityPlayer;
+import net.minecraft.common.world.World;
+import net.minecraft.common.world.WorldInfo;
 
 /**
  * Game-Related Utilities used to Parse World Data

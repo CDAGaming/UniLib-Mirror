@@ -157,7 +157,7 @@ public class CheckBoxControl extends ExtendedButtonControl {
      * Draws this button to the screen.
      */
     @Override
-    public void drawButton(@Nonnull Minecraft mc, int mouseX, int mouseY) {
+    public void drawElement(@Nonnull Minecraft mc, float mouseX, float mouseY, float partialTicks) {
         if (isControlVisible()) {
             setHoveringOver(isOverScreen() && RenderUtils.isMouseOver(mouseX, mouseY, this));
 
@@ -188,7 +188,7 @@ public class CheckBoxControl extends ExtendedButtonControl {
      * Equivalent of MouseListener.mouseDragged(MouseEvent e).
      */
     @Override
-    protected void mouseDragged(@Nonnull Minecraft mc, int mouseX, int mouseY) {
+    protected void mouseDragged(@Nonnull Minecraft mc, float mouseX, float mouseY) {
         if (isControlVisible()) {
             final int hoverState = getHoverState(isHoveringOrFocusingOver());
 

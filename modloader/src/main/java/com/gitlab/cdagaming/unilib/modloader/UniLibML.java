@@ -25,7 +25,7 @@
 package com.gitlab.cdagaming.unilib.modloader;
 
 import com.fox2code.foxloader.launcher.FoxLauncher;
-import com.fox2code.foxloader.loader.ModLoader;
+import com.fox2code.foxloader.loader.ModLoaderInit;
 import com.gitlab.cdagaming.unilib.UniLib;
 import com.gitlab.cdagaming.unilib.core.CoreUtils;
 import io.github.cdagaming.unicore.utils.FileUtils;
@@ -46,7 +46,7 @@ public class UniLibML {
         }
 
         if (isClient()) {
-            CoreUtils.MOD_COUNT_SUPPLIER = () -> ModLoader.getModContainers().size();
+            CoreUtils.MOD_COUNT_SUPPLIER = () -> ModLoaderInit.getModContainers().size();
 
             UniLib.assertLoaded();
         } else {
