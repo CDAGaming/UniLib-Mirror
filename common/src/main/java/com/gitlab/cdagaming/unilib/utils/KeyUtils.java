@@ -30,8 +30,10 @@ import com.gitlab.cdagaming.unilib.core.impl.KeyConverter;
 import io.github.cdagaming.unicore.impl.Pair;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.GuiControls;
-import net.minecraft.src.KeyBinding;
+import net.minecraft.src.client.KeyBinding;
+import net.minecraft.src.client.gui.GuiControls;
+import net.minecraft.src.client.gui.GuiControls2;
+import net.minecraft.src.client.gui.GuiScreen;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
@@ -367,7 +369,9 @@ public class KeyUtils {
 
                         if (!getKeyName(currentBind).equals(unknownKeyName) && !isValidClearCode(currentBind)) {
                             // Only process the key if it is not an unknown or invalid key
-                            if (Keyboard.isKeyDown(currentBind) && !(GameUtils.getCurrentScreen(getInstance()) instanceof GuiControls)) {
+                            final GuiScreen currentScreen = GameUtils.getCurrentScreen(getInstance());
+
+                            if (Keyboard.isKeyDown(currentBind) && !(currentScreen instanceof GuiControls || currentScreen instanceof GuiControls2)) {
                                 try {
                                     keyData.runEvent().run();
                                 } catch (Throwable ex) {
