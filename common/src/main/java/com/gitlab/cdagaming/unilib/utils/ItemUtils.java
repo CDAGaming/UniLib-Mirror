@@ -24,12 +24,12 @@
 
 package com.gitlab.cdagaming.unilib.utils;
 
+import com.mojang.minecraft.entity.item.Item;
+import com.mojang.minecraft.entity.item.ItemStack;
+import com.mojang.minecraft.level.tile.Block;
 import io.github.cdagaming.unicore.utils.MappingUtils;
 import io.github.cdagaming.unicore.utils.MathUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
-import net.minecraft.src.Block;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
 
 import java.util.List;
 
@@ -103,7 +103,7 @@ public class ItemUtils {
      * @return the current item damage from the stack, or 0 if the stack is null
      */
     public static int getStackDamage(final ItemStack stack) {
-        return stack != null ? stack.itemDmg : 0;
+        return stack != null ? stack.itemDamage : 0;
     }
 
     /**

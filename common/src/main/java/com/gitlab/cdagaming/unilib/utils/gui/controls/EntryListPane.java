@@ -26,8 +26,8 @@ package com.gitlab.cdagaming.unilib.utils.gui.controls;
 
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ScrollPane;
+import com.mojang.minecraft.Minecraft;
 import io.github.cdagaming.unicore.utils.StringUtils;
-import net.minecraft.client.Minecraft;
 
 import javax.annotation.Nullable;
 import java.util.AbstractList;

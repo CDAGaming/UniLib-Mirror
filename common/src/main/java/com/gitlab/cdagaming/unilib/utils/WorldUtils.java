@@ -24,9 +24,12 @@
 
 package com.gitlab.cdagaming.unilib.utils;
 
+import com.mojang.minecraft.Minecraft;
+import com.mojang.minecraft.entity.Entity;
+import com.mojang.minecraft.entity.EntityList;
+import com.mojang.minecraft.entity.EntityPlayer;
+import com.mojang.minecraft.level.World;
 import io.github.cdagaming.unicore.utils.StringUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.src.*;
 
 /**
  * Game-Related Utilities used to Parse World Data
@@ -41,7 +44,7 @@ public class WorldUtils {
      * @return the Game World Instance
      */
     public static World getWorld(final Minecraft client) {
-        return client != null ? client.theWorld : null;
+        return client != null ? client.mcWorld : null;
     }
 
     /**
@@ -51,10 +54,7 @@ public class WorldUtils {
      * @return the Entity World Instance
      */
     public static World getWorld(final Entity entity) {
-        return entity != null ? (World) StringUtils.getField(
-                Entity.class, entity,
-                "worldObj", "field_615_ag", "ag"
-        ) : null;
+        return entity != null ? entity.worldObj : null;
     }
 
     /**

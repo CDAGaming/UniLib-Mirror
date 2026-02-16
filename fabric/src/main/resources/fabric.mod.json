@@ -16,8 +16,8 @@
   "icon": "logo.png",
   "environment": "client",
   "entrypoints": {
-    "client": [
-      "com.gitlab.cdagaming.unilib.fabric.UniLibFabric"
+    "preLaunch": [
+      "com.gitlab.cdagaming.unilib.fabric.NSSSBootstrap"
     ]
   },
   "custom": {

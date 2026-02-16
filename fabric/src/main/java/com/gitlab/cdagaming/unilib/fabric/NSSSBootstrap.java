@@ -24,23 +24,24 @@
 
 package com.gitlab.cdagaming.unilib.fabric;
 
-import com.gitlab.cdagaming.unilib.UniLib;
-import com.gitlab.cdagaming.unilib.core.CoreUtils;
-import io.github.cdagaming.unicore.utils.OSUtils;
+import io.github.cdagaming.unicore.utils.StringUtils;
+import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
 import net.fabricmc.loader.impl.FabricLoaderImpl;
+import net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider;
 
-/**
- * The Primary Application Class and Utilities
- *
- * @author CDAGaming
- */
-public class UniLibFabric {
-    public void onInitialize() {
-        if (OSUtils.JAVA_SPEC < 1.8f) {
-            throw new UnsupportedOperationException("Incompatible JVM!!! @MOD_NAME@ requires Java 8 or above to work properly!");
+public class NSSSBootstrap implements PreLaunchEntrypoint {
+    @Override
+    public void onPreLaunch() {
+        try {
+            StringUtils.updateField(
+                    MinecraftGameProvider.class,
+                    FabricLoaderImpl.INSTANCE.getGameProvider(),
+                    "com.mojang.minecraft.Minecraft",
+                    "entrypoint"
+            );
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
         }
-        CoreUtils.MOD_COUNT_SUPPLIER = () -> FabricLoaderImpl.INSTANCE.getAllMods().size();
-
-        UniLib.assertLoaded();
+        new UniLibFabric().onInitialize();
     }
 }
