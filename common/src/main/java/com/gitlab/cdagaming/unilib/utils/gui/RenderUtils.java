@@ -84,22 +84,37 @@ public class RenderUtils {
     /**
      * Retrieve the default Screen Textures as Texture Data
      *
-     * @param mc       The Minecraft Instance
-     * @param protocol The Protocol to Target for this operation
      * @return the default Screen Textures
      */
-    public static ResourceLocation getScreenTexture(@Nonnull final Minecraft mc, final int protocol) {
-        return getTextureData(mc, ScreenConstants.getDefaultGUIBackground(protocol)).getThird();
+    public static ResourceLocation getScreenTexture(@Nonnull final Minecraft mc) {
+        return getTextureData(mc, ScreenConstants.getDefaultGUIBackground()).getThird();
+    }
+
+    /**
+     * Retrieve the alternative Screen Textures as Texture Data
+     *
+     * @return the alternative Screen Textures
+     */
+    public static ResourceLocation getAltScreenTexture(@Nonnull final Minecraft mc) {
+        return getTextureData(mc, ScreenConstants.getDefaultGUIBackgroundAlt()).getThird();
     }
 
     /**
      * Retrieve the default Screen Textures as Texture Data
      *
-     * @param mc The Minecraft Instance
-     * @return the default Screen Textures
+     * @return the default Screen Textures, while in a world
      */
-    public static ResourceLocation getScreenTexture(@Nonnull final Minecraft mc) {
-        return getScreenTexture(mc, ModUtils.MCProtocolID);
+    public static ResourceLocation getWorldScreenTexture(@Nonnull final Minecraft mc) {
+        return getTextureData(mc, ScreenConstants.getDefaultWorldGUIBackground()).getThird();
+    }
+
+    /**
+     * Retrieve the alternative Screen Textures as Texture Data
+     *
+     * @return the alternative Screen Textures, while in a world
+     */
+    public static ResourceLocation getAltWorldScreenTexture(@Nonnull final Minecraft mc) {
+        return getTextureData(mc, ScreenConstants.getDefaultWorldGUIBackgroundAlt()).getThird();
     }
 
     /**

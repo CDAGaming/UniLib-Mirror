@@ -757,9 +757,9 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
      * @return the default background
      */
     public ScreenConstants.ColorData getScreenBackground() {
-        return hasWorld() ?
-                ScreenConstants.DEFAULT_ALT_SCREEN_BACKGROUND :
-                ScreenConstants.DEFAULT_SCREEN_BACKGROUND;
+        return this instanceof ScrollPane ?
+                (hasWorld() ? ScreenConstants.DEFAULT_ALT_WORLD_SCREEN_BACKGROUND : ScreenConstants.DEFAULT_ALT_SCREEN_BACKGROUND) :
+                (hasWorld() ? ScreenConstants.DEFAULT_WORLD_SCREEN_BACKGROUND : ScreenConstants.DEFAULT_SCREEN_BACKGROUND);
     }
 
     /**
@@ -868,7 +868,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
     }
 
     @Override
-    public void renderBackground(@Nonnull GuiGraphics matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderMenuBackground(@Nonnull GuiGraphics matrixStack, int posX, int posY, int mouseX, int mouseY) {
         currentMatrix = matrixStack;
         renderCriticalData();
     }
