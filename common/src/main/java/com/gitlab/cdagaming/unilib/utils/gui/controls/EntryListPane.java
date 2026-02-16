@@ -416,13 +416,13 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
     }
 
     @Override
-    protected void keyTyped(char typedChar, int keyCode) {
+    public void keyTyped(char typedChar, int keyCode, int mouseX, int mouseY) {
         if (keyCode == getKeyByVersion(208, 264)) {
             moveSelection(1); // Down Arrow
         } else if (keyCode == getKeyByVersion(200, 265)) {
             moveSelection(-1); // Up Arrow
         } else {
-            super.keyTyped(typedChar, keyCode);
+            super.keyTyped(typedChar, keyCode, mouseX, mouseY);
         }
     }
 

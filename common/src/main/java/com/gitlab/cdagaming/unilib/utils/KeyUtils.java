@@ -30,8 +30,8 @@ import com.gitlab.cdagaming.unilib.core.impl.KeyConverter;
 import io.github.cdagaming.unicore.impl.Pair;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.GuiControls;
-import net.minecraft.src.KeyBinding;
+import net.minecraft.client.gui.options.GuiOptionsPageControls;
+import net.minecraft.client.option.KeyBinding;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
@@ -285,7 +285,7 @@ public class KeyUtils {
      * @param newKey   the new key for the specified KeyBinding
      */
     private void setKey(final KeyBinding instance, final int newKey) {
-        instance.keyCode = newKey;
+        instance.key = newKey;
     }
 
     /**
@@ -343,7 +343,7 @@ public class KeyUtils {
                 for (Map.Entry<String, KeyBindData> data : getRegistrationEntries()) {
                     final KeyBindData entry = data.getValue();
 
-                    getInstance().gameSettings.keyBindings = StringUtils.addToArray(getInstance().gameSettings.keyBindings, entry.binding());
+                    getInstance().gameSettings.keys = StringUtils.addToArray(getInstance().gameSettings.keys, entry.binding());
 
                     registrationQueue.remove(data.getKey());
                 }
@@ -367,7 +367,7 @@ public class KeyUtils {
 
                         if (!getKeyName(currentBind).equals(unknownKeyName) && !isValidClearCode(currentBind)) {
                             // Only process the key if it is not an unknown or invalid key
-                            if (Keyboard.isKeyDown(currentBind) && !(GameUtils.getCurrentScreen(getInstance()) instanceof GuiControls)) {
+                            if (Keyboard.isKeyDown(currentBind) && !(GameUtils.getCurrentScreen(getInstance()) instanceof GuiOptionsPageControls)) {
                                 try {
                                     keyData.runEvent().run();
                                 } catch (Throwable ex) {
@@ -569,7 +569,7 @@ public class KeyUtils {
          * @return the KeyBind description
          */
         public String description() {
-            return binding().keyDescription;
+            return binding().name;
         }
 
         /**
@@ -587,7 +587,7 @@ public class KeyUtils {
          * @return the currently assigned key code
          */
         public int keyCode() {
-            return binding().keyCode;
+            return binding().key;
         }
 
         /**
