@@ -357,7 +357,7 @@ public class KeyUtils {
                     final KeyBindData entry = data.getValue();
                     final String category = entry.category();
 
-                    final Map<String, Integer> categoryMap = KeyBinding.CATEGORY_ORDER;
+                    final Map<String, Integer> categoryMap = (Map<String, Integer>) StringUtils.getField(KeyBinding.class, null, "CATEGORY_ORDER", "field_193627_d", "d");
                     if (!categoryMap.containsKey(category)) {
                         final Optional<Integer> largest = categoryMap.values().stream().max(Integer::compareTo);
                         final int largestInt = largest.orElse(0);
@@ -607,7 +607,10 @@ public class KeyUtils {
          * @return the currently assigned key code
          */
         public int keyCode() {
-            return binding().keyCode.getKeyCode();
+            return ((InputMappings.Input) StringUtils.getField(
+                    KeyBinding.class, binding(),
+                    "keyCode", "field_74512_d", "h"
+            )).getKeyCode();
         }
 
         /**
