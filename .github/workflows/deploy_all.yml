@@ -48,6 +48,7 @@ jobs:
         run: |
           while IFS= read -r branch; do
             echo "Processing branch: $branch"
+            git reset --hard
             git checkout $branch
             chmod +x gradlew
 

@@ -55,6 +55,7 @@ jobs:
             
             if [ "$skip" = false ]; then
               echo "Checking out branch: $branch"
+              git reset --hard
               git checkout $branch
               echo "Ensuring gradlew has permissions before continuing"
               chmod +x gradlew
