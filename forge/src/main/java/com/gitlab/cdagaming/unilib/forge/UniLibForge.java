@@ -49,7 +49,7 @@ public class UniLibForge {
         if (FMLEnvironment.dist.isClient()) {
             ClientExtensions.Setup();
 
-            CoreUtils.MOD_COUNT_SUPPLIER = () -> ModList.get().getMods().size();
+            CoreUtils.MOD_COUNT_SUPPLIER = () -> ModList.getMods().size();
 
             UniLib.assertLoaded();
         } else {

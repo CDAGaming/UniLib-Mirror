@@ -28,7 +28,7 @@ import com.gitlab.cdagaming.unilib.ModUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 import javax.annotation.Nonnull;
 
@@ -159,7 +159,7 @@ public class CheckBoxControl extends ExtendedButtonControl {
      * Draws this button to the screen.
      */
     @Override
-    public void renderContents(@Nonnull GuiGraphics matrixStack, int mouseX, int mouseY, float partial) {
+    public void extractContents(@Nonnull GuiGraphicsExtractor matrixStack, int mouseX, int mouseY, float partial) {
         final Minecraft mc = ModUtils.getMinecraft();
         if (mc != null && isControlVisible()) {
             setHoveringOver(isOverScreen() && RenderUtils.isMouseOver(mouseX, mouseY, this));
@@ -193,7 +193,7 @@ public class CheckBoxControl extends ExtendedButtonControl {
      * Equivalent of MouseListener.mouseDragged(MouseEvent e).
      */
     @Override
-    protected void renderBg(@Nonnull GuiGraphics matrixStack, @Nonnull Minecraft mc, int mouseX, int mouseY) {
+    protected void renderBg(@Nonnull GuiGraphicsExtractor matrixStack, @Nonnull Minecraft mc, int mouseX, int mouseY) {
         if (isControlVisible()) {
             final int hoverState = getYImage(isHoveringOrFocusingOver());
 

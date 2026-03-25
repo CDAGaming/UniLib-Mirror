@@ -29,7 +29,7 @@ import com.gitlab.cdagaming.unilib.utils.gui.integrations.ScrollPane;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ComponentPath;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratedElementType;
@@ -352,7 +352,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
      * @param posX   The Event X Coordinate
      * @param posY   The Event Y Coordinate
      */
-    protected void renderHeader(final GuiGraphics arg, final Minecraft client, final int posX, final int posY) {
+    protected void renderHeader(final GuiGraphicsExtractor arg, final Minecraft client, final int posX, final int posY) {
         // N/A
     }
 
@@ -364,7 +364,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
      * @param posX   The Event X Coordinate
      * @param posY   The Event Y Coordinate
      */
-    protected void renderDecorations(final GuiGraphics arg, final Minecraft client, final int posX, final int posY) {
+    protected void renderDecorations(final GuiGraphicsExtractor arg, final Minecraft client, final int posX, final int posY) {
         // N/A
     }
 
@@ -640,7 +640,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
      * @param mouseY       The Event Mouse Y Coordinate
      * @param partialTicks The Rendering Tick Rate
      */
-    protected void renderListItems(final GuiGraphics arg, final Minecraft client, final int mouseX, final int mouseY, final float partialTicks) {
+    protected void renderListItems(final GuiGraphicsExtractor arg, final Minecraft client, final int mouseX, final int mouseY, final float partialTicks) {
         final int rowLeft = getRowLeft();
         final int rowWidth = getRowWidth();
         final int rowHeight = itemHeight - getPadding();
@@ -668,7 +668,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
      * @param entryWidth   The width of the entry
      * @param entryHeight  The height of the entry
      */
-    protected void renderItem(final GuiGraphics arg, final Minecraft client, final int mouseX, final int mouseY, final float partialTicks, final int index, final int xPos, final int yPos, final int entryWidth, final int entryHeight) {
+    protected void renderItem(final GuiGraphicsExtractor arg, final Minecraft client, final int mouseX, final int mouseY, final float partialTicks, final int index, final int xPos, final int yPos, final int entryWidth, final int entryHeight) {
         final E entry = getEntry(index);
         entry.renderBack(arg, client, index, yPos, xPos, entryWidth, entryHeight, mouseX, mouseY, Objects.equals(getHovered(), entry), partialTicks);
         if (isSelectedItem(index)) {
@@ -871,7 +871,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
          * @param hovered      Whether the entry is being hovered over
          * @param partialTicks The Rendering Tick Rate
          */
-        public abstract void render(final GuiGraphics arg, final Minecraft client,
+        public abstract void render(final GuiGraphicsExtractor arg, final Minecraft client,
                                     final int index,
                                     final int yPos, final int xPos,
                                     final int entryWidth, final int entryHeight,
@@ -894,7 +894,7 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
          * @param hovered      Whether the entry is being hovered over
          * @param partialTicks The Rendering Tick Rate
          */
-        public void renderBack(final GuiGraphics arg, final Minecraft client,
+        public void renderBack(final GuiGraphicsExtractor arg, final Minecraft client,
                                final int index,
                                final int yPos, final int xPos,
                                final int entryWidth, final int entryHeight,

@@ -33,7 +33,7 @@ import io.github.cdagaming.unicore.impl.Pair;
 import io.github.cdagaming.unicore.impl.Tuple;
 import io.github.cdagaming.unicore.utils.MathUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -246,7 +246,7 @@ public class SliderControl extends ExtendedButtonControl {
      * Equivalent of MouseListener.mouseDragged(MouseEvent e).
      */
     @Override
-    protected void renderBg(@Nonnull GuiGraphics matrixStack, @Nonnull Minecraft mc, int mouseX, int mouseY) {
+    protected void renderBg(@Nonnull GuiGraphicsExtractor matrixStack, @Nonnull Minecraft mc, int mouseX, int mouseY) {
         if (isControlVisible()) {
             RenderUtils.renderSprite(matrixStack, graphics -> {
                 graphics.blitSprite(RenderPipelines.GUI_TEXTURED, getSprite(), getControlPosX(), getControlPosY(), getControlWidth(), getControlHeight(), ARGB.white(alpha));

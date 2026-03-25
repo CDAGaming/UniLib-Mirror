@@ -45,7 +45,7 @@ import io.github.cdagaming.unicore.utils.StringUtils;
 import io.github.cdagaming.unicore.utils.TimeUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.screens.Screen;
@@ -79,7 +79,7 @@ public class RenderUtils {
             ResourceUtils.getResource("widget/button"), ResourceUtils.getResource("widget/button_disabled"), ResourceUtils.getResource("widget/button_highlighted")
     );
     /**
-     * The Block List for any ItemStacks that have failed to render in {@link RenderUtils#drawItemStack(GuiGraphics, Font, int, int, ItemStack, float)}
+     * The Block List for any ItemStacks that have failed to render in {@link RenderUtils#drawItemStack(GuiGraphicsExtractor, Font, int, int, ItemStack, float)}
      */
     private static final List<ItemStack> BLOCKED_RENDER_ITEMS = StringUtils.newArrayList();
     /**
@@ -283,7 +283,7 @@ public class RenderUtils {
      * @param stack        The {@link ItemStack} instance to interpret
      * @param scale        The Scale to render the Object at
      */
-    public static void drawItemStack(@Nonnull final GuiGraphics client, final Font fontRenderer, final int x, final int y, final ItemStack stack, final float scale) {
+    public static void drawItemStack(@Nonnull final GuiGraphicsExtractor client, final Font fontRenderer, final int x, final int y, final ItemStack stack, final float scale) {
         if (BLOCKED_RENDER_ITEMS.contains(stack)) return;
         try {
             final Matrix3x2fStack lv = client.pose();
@@ -292,8 +292,8 @@ public class RenderUtils {
 
             final int xPos = Math.round(x / scale);
             final int yPos = Math.round(y / scale);
-            client.renderItem(stack, xPos, yPos);
-            client.renderItemDecorations(fontRenderer, stack, xPos, yPos);
+            client.item(stack, xPos, yPos);
+            client.itemDecorations(fontRenderer, stack, xPos, yPos);
 
             lv.popMatrix();
         } catch (Throwable ex) {
@@ -321,7 +321,7 @@ public class RenderUtils {
      * @param contentColor    The starting content color for the object
      * @param contentColorEnd The ending content color for the object
      */
-    public static void drawGradientBox(@Nonnull final GuiGraphics mc, final RenderPipeline renderType,
+    public static void drawGradientBox(@Nonnull final GuiGraphicsExtractor mc, final RenderPipeline renderType,
                                        final double posX, final double posY,
                                        final double width, final double height,
                                        final double zLevel,
@@ -368,7 +368,7 @@ public class RenderUtils {
      * @param contentColor    The starting content color for the object
      * @param contentColorEnd The ending content color for the object
      */
-    public static void drawGradientBox(@Nonnull final GuiGraphics mc,
+    public static void drawGradientBox(@Nonnull final GuiGraphicsExtractor mc,
                                        final double posX, final double posY,
                                        final double width, final double height,
                                        final double zLevel,
@@ -394,7 +394,7 @@ public class RenderUtils {
      * @param contentColor    The starting content color for the object
      * @param contentColorEnd The ending content color for the object
      */
-    public static void drawGradientBox(@Nonnull final GuiGraphics mc, final RenderPipeline renderType,
+    public static void drawGradientBox(@Nonnull final GuiGraphicsExtractor mc, final RenderPipeline renderType,
                                        final double posX, final double posY,
                                        final double width, final double height,
                                        final double zLevel,
@@ -426,7 +426,7 @@ public class RenderUtils {
      * @param contentColor    The starting content color for the object
      * @param contentColorEnd The ending content color for the object
      */
-    public static void drawGradientBox(@Nonnull final GuiGraphics mc,
+    public static void drawGradientBox(@Nonnull final GuiGraphicsExtractor mc,
                                        final double posX, final double posY,
                                        final double width, final double height,
                                        final double zLevel,
@@ -442,8 +442,8 @@ public class RenderUtils {
      * @param graphics The current game instance
      * @param callback The rendering callback event
      */
-    public static void renderSprite(@Nonnull final GuiGraphics graphics,
-                                    final Consumer<GuiGraphics> callback) {
+    public static void renderSprite(@Nonnull final GuiGraphicsExtractor graphics,
+                                    final Consumer<GuiGraphicsExtractor> callback) {
         callback.accept(graphics);
     }
 
@@ -467,7 +467,7 @@ public class RenderUtils {
      * @param endColorObj   The ending texture RGB data to interpret
      * @param texLocation   The game texture to render the object as
      */
-    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
+    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphicsExtractor matrixStack,
                                    final RenderPipeline function,
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel, final boolean asFullTexture,
@@ -500,12 +500,12 @@ public class RenderUtils {
                 colorToArgb(startColor), colorToArgb(endColor));
     }
 
-    public static void submitTexture(@Nonnull GuiGraphics matrixStack,
+    public static void submitTexture(@Nonnull GuiGraphicsExtractor matrixStack,
                                      final RenderPipeline renderPipeline, final GpuTextureView gpuTextureView, final GpuSampler gpuSampler,
                                      final int left, final int top, final int right, final int bottom,
                                      final float minU, final float maxU, final float minV, final float maxV,
                                      final int startColor, final int endColor) {
-        matrixStack.guiRenderState.submitGuiElement(new GradientBlitRenderState(renderPipeline, TextureSetup.singleTexture(gpuTextureView, gpuSampler), new Matrix3x2f(matrixStack.pose()),
+        matrixStack.guiRenderState.addGuiElement(new GradientBlitRenderState(renderPipeline, TextureSetup.singleTexture(gpuTextureView, gpuSampler), new Matrix3x2f(matrixStack.pose()),
                 left, top, right, bottom,
                 minU, maxU, minV, maxV,
                 startColor, endColor,
@@ -532,7 +532,7 @@ public class RenderUtils {
      * @param endColorObj   The ending texture RGB data to interpret
      * @param texLocation   The game texture to render the object as
      */
-    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
+    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphicsExtractor matrixStack,
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel, final boolean asFullTexture,
                                    final double minU, final double maxU, final double minV, final double maxV,
@@ -567,7 +567,7 @@ public class RenderUtils {
      * @param endColorObj   The ending texture RGB data to interpret
      * @param texLocation   The game texture to render the object as
      */
-    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
+    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphicsExtractor matrixStack,
                                    final RenderPipeline function,
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel,
@@ -602,7 +602,7 @@ public class RenderUtils {
      * @param endColorObj   The ending texture RGB data to interpret
      * @param texLocation   The game texture to render the object as
      */
-    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
+    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphicsExtractor matrixStack,
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel,
                                    final double minU, final double maxU, final double minV, final double maxV,
@@ -641,7 +641,7 @@ public class RenderUtils {
      * @param endColorObj          The ending texture RGB data to interpret
      * @param texLocation          The game texture to render the object as
      */
-    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
+    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphicsExtractor matrixStack,
                                    final RenderPipeline function,
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel, final boolean asFullTexture,
@@ -685,7 +685,7 @@ public class RenderUtils {
      * @param endColorObj          The ending texture RGB data to interpret
      * @param texLocation          The game texture to render the object as
      */
-    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
+    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphicsExtractor matrixStack,
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel, final boolean asFullTexture,
                                    final boolean usingExternalTexture,
@@ -728,7 +728,7 @@ public class RenderUtils {
      * @param endColorObj          The ending texture RGB data to interpret
      * @param texLocation          The game texture to render the object as
      */
-    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
+    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphicsExtractor matrixStack,
                                    final RenderPipeline function,
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel, final boolean usingExternalTexture,
@@ -770,7 +770,7 @@ public class RenderUtils {
      * @param endColorObj          The ending texture RGB data to interpret
      * @param texLocation          The game texture to render the object as
      */
-    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
+    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphicsExtractor matrixStack,
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel, final boolean usingExternalTexture,
                                    final double regionWidth, final double regionHeight,
@@ -806,7 +806,7 @@ public class RenderUtils {
      * @param endColorObj          The ending texture RGB data to interpret
      * @param texLocation          The game texture to render the object as
      */
-    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
+    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphicsExtractor matrixStack,
                                    final RenderPipeline function,
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel, final boolean asFullTexture,
@@ -841,7 +841,7 @@ public class RenderUtils {
      * @param endColorObj          The ending texture RGB data to interpret
      * @param texLocation          The game texture to render the object as
      */
-    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
+    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphicsExtractor matrixStack,
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel, final boolean asFullTexture,
                                    final boolean usingExternalTexture,
@@ -872,7 +872,7 @@ public class RenderUtils {
      * @param endColorObj          The ending texture RGB data to interpret
      * @param texLocation          The game texture to render the object as
      */
-    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
+    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphicsExtractor matrixStack,
                                    final RenderPipeline function,
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel, final boolean usingExternalTexture,
@@ -902,7 +902,7 @@ public class RenderUtils {
      * @param endColorObj          The ending texture RGB data to interpret
      * @param texLocation          The game texture to render the object as
      */
-    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
+    public static void drawTexture(@Nonnull final Minecraft mc, @Nonnull GuiGraphicsExtractor matrixStack,
                                    final double left, final double right, final double top, final double bottom,
                                    final double zLevel, final boolean usingExternalTexture,
                                    final Object startColorObj, final Object endColorObj,
@@ -928,7 +928,7 @@ public class RenderUtils {
      * @param startColorObj The Starting Color Data
      * @param endColorObj   The Ending Color Data
      */
-    public static void drawGradient(@Nonnull final GuiGraphics mc, final RenderPipeline renderType,
+    public static void drawGradient(@Nonnull final GuiGraphicsExtractor mc, final RenderPipeline renderType,
                                     final double left, final double right, final double top, final double bottom,
                                     final double zLevel,
                                     final Object startColorObj, final Object endColorObj) {
@@ -957,7 +957,7 @@ public class RenderUtils {
      * @param startColorObj The Starting Color Data
      * @param endColorObj   The Ending Color Data
      */
-    public static void drawGradient(@Nonnull final GuiGraphics mc,
+    public static void drawGradient(@Nonnull final GuiGraphicsExtractor mc,
                                     final double left, final double right, final double top, final double bottom,
                                     final double zLevel,
                                     final Object startColorObj, final Object endColorObj) {
@@ -978,7 +978,7 @@ public class RenderUtils {
      * @param regionWidth  The Width of the Texture Region
      * @param regionHeight The Height of the Texture Region
      */
-    public static void blit(@Nonnull final GuiGraphics mc,
+    public static void blit(@Nonnull final GuiGraphicsExtractor mc,
                             final RenderPipeline function, final Identifier texLocation,
                             final double xPos, final double yPos,
                             final double zLevel,
@@ -1000,7 +1000,7 @@ public class RenderUtils {
      * @param regionWidth  The Width of the Texture Region
      * @param regionHeight The Height of the Texture Region
      */
-    public static void blit(@Nonnull final GuiGraphics mc,
+    public static void blit(@Nonnull final GuiGraphicsExtractor mc,
                             final Identifier texLocation,
                             final double xPos, final double yPos,
                             final double zLevel,
@@ -1025,7 +1025,7 @@ public class RenderUtils {
      * @param textureWidth  The Width of the Texture
      * @param textureHeight The Height of the Texture
      */
-    public static void blit(@Nonnull final GuiGraphics mc,
+    public static void blit(@Nonnull final GuiGraphicsExtractor mc,
                             final RenderPipeline function, final Identifier texLocation,
                             final double xPos, final double yPos,
                             final double zLevel,
@@ -1056,7 +1056,7 @@ public class RenderUtils {
      * @param textureWidth  The Width of the Texture
      * @param textureHeight The Height of the Texture
      */
-    public static void blit(@Nonnull final GuiGraphics mc,
+    public static void blit(@Nonnull final GuiGraphicsExtractor mc,
                             final Identifier texLocation,
                             final double xPos, final double yPos,
                             final double zLevel,
@@ -1084,7 +1084,7 @@ public class RenderUtils {
      * @param textureWidth  The Width of the Texture
      * @param textureHeight The Height of the Texture
      */
-    public static void blit(@Nonnull final GuiGraphics mc,
+    public static void blit(@Nonnull final GuiGraphicsExtractor mc,
                             final RenderPipeline function, final Identifier texLocation,
                             final double left, final double right, final double top, final double bottom,
                             final double zLevel,
@@ -1118,7 +1118,7 @@ public class RenderUtils {
      * @param textureWidth  The Width of the Texture
      * @param textureHeight The Height of the Texture
      */
-    public static void blit(@Nonnull final GuiGraphics mc,
+    public static void blit(@Nonnull final GuiGraphicsExtractor mc,
                             final Identifier texLocation,
                             final double left, final double right, final double top, final double bottom,
                             final double zLevel,
@@ -1150,7 +1150,7 @@ public class RenderUtils {
      * @param minV        The minimum vertical axis to render this Object by
      * @param maxV        The minimum vertical axis to render this Object by
      */
-    public static void innerBlit(@Nonnull final GuiGraphics mc,
+    public static void innerBlit(@Nonnull final GuiGraphicsExtractor mc,
                                  final RenderPipeline function, final Identifier texLocation,
                                  final double left, final double right, final double top, final double bottom,
                                  final double zLevel,
@@ -1173,7 +1173,7 @@ public class RenderUtils {
      * @param minV        The minimum vertical axis to render this Object by
      * @param maxV        The minimum vertical axis to render this Object by
      */
-    public static void innerBlit(@Nonnull final GuiGraphics mc,
+    public static void innerBlit(@Nonnull final GuiGraphicsExtractor mc,
                                  final Identifier texLocation,
                                  final double left, final double right, final double top, final double bottom,
                                  final double zLevel,
@@ -1194,7 +1194,7 @@ public class RenderUtils {
      * @param right  The Right side length of the Object
      * @param bottom The bottom length of the Object
      */
-    public static void enableScissor(@Nonnull final GuiGraphics mc, final int left, final int top, final int right, final int bottom) {
+    public static void enableScissor(@Nonnull final GuiGraphicsExtractor mc, final int left, final int top, final int right, final int bottom) {
         mc.enableScissor(left, top, right, bottom);
     }
 
@@ -1203,7 +1203,7 @@ public class RenderUtils {
      *
      * @param mc The Minecraft Instance
      */
-    public static void disableScissor(@Nonnull final GuiGraphics mc) {
+    public static void disableScissor(@Nonnull final GuiGraphicsExtractor mc) {
         mc.disableScissor();
     }
 
@@ -1303,7 +1303,7 @@ public class RenderUtils {
      * @param isTooltip    Whether to render this layout in a tooltip-style (Issues may occur if combined with isCentered)
      * @param colorInfo    Color Data in the format of [renderTooltips,backgroundColorInfo,borderColorInfo]
      */
-    public static void drawMultiLineString(@Nonnull final Minecraft mc, @Nonnull GuiGraphics matrixStack,
+    public static void drawMultiLineString(@Nonnull final Minecraft mc, @Nonnull GuiGraphicsExtractor matrixStack,
                                            final List<String> textToInput,
                                            final int posX, final int posY,
                                            final int maxWidth, final int maxHeight,
@@ -1533,7 +1533,7 @@ public class RenderUtils {
      * @param yPos         The Y position to render the text at
      * @param color        The color to render the text in
      */
-    public static void renderCenteredString(@Nonnull final GuiGraphics matrixStack, final Font fontRenderer, final String text, final float xPos, final float yPos, final int color) {
+    public static void renderCenteredString(@Nonnull final GuiGraphicsExtractor matrixStack, final Font fontRenderer, final String text, final float xPos, final float yPos, final int color) {
         renderString(matrixStack, fontRenderer, text, xPos - (getStringWidth(fontRenderer, text) / 2f), yPos, color);
     }
 
@@ -1547,7 +1547,7 @@ public class RenderUtils {
      * @param yPos         The Y position to render the text at
      * @param color        The color to render the text in
      */
-    public static void renderCenteredString(@Nonnull final GuiGraphics matrixStack, final Font fontRenderer, final String text, final int xPos, final int yPos, final int color) {
+    public static void renderCenteredString(@Nonnull final GuiGraphicsExtractor matrixStack, final Font fontRenderer, final String text, final int xPos, final int yPos, final int color) {
         renderString(matrixStack, fontRenderer, text, xPos - (getStringWidth(fontRenderer, text) / 2), yPos, color);
     }
 
@@ -1561,9 +1561,9 @@ public class RenderUtils {
      * @param yPos         The Y position to render the text at
      * @param color        The color to render the text in
      */
-    public static void renderString(@Nonnull final GuiGraphics matrixStack, final Font fontRenderer, final String text, final float xPos, final float yPos, final int color) {
+    public static void renderString(@Nonnull final GuiGraphicsExtractor matrixStack, final Font fontRenderer, final String text, final float xPos, final float yPos, final int color) {
         if (!StringUtils.isNullOrEmpty(text)) {
-            matrixStack.drawString(fontRenderer, text, (int) xPos, (int) yPos, ARGB.color(-1, color));
+            matrixStack.text(fontRenderer, text, (int) xPos, (int) yPos, ARGB.color(-1, color));
         }
     }
 
@@ -1577,7 +1577,7 @@ public class RenderUtils {
      * @param yPos         The Y position to render the text at
      * @param color        The color to render the text in
      */
-    public static void renderString(@Nonnull final GuiGraphics matrixStack, final Font fontRenderer, final String text, final int xPos, final int yPos, final int color) {
+    public static void renderString(@Nonnull final GuiGraphicsExtractor matrixStack, final Font fontRenderer, final String text, final int xPos, final int yPos, final int color) {
         renderString(matrixStack, fontRenderer, text, (float) xPos, (float) yPos, color);
     }
 
@@ -1616,7 +1616,7 @@ public class RenderUtils {
      * @param maxY         The maximum Y position to render the text at
      * @param color        The color to render the text in
      */
-    public static void renderScrollingString(@Nonnull final GuiGraphics matrixStack,
+    public static void renderScrollingString(@Nonnull final GuiGraphicsExtractor matrixStack,
                                              @Nonnull final Minecraft mc,
                                              final Font fontRenderer,
                                              final String message,
@@ -1656,7 +1656,7 @@ public class RenderUtils {
      * @param maxY         The maximum Y position to render the text at
      * @param color        The color to render the text in
      */
-    public static void renderScrollingString(@Nonnull final GuiGraphics matrixStack,
+    public static void renderScrollingString(@Nonnull final GuiGraphicsExtractor matrixStack,
                                              @Nonnull final Minecraft mc,
                                              final Font fontRenderer,
                                              final String message,
@@ -1695,7 +1695,7 @@ public class RenderUtils {
      * @param maxY         The maximum Y position to render the text at
      * @param color        The color to render the text in
      */
-    public static void renderScrollingString(@Nonnull final GuiGraphics matrixStack,
+    public static void renderScrollingString(@Nonnull final GuiGraphicsExtractor matrixStack,
                                              @Nonnull final Minecraft mc,
                                              final Font fontRenderer,
                                              final String message,
@@ -1718,7 +1718,7 @@ public class RenderUtils {
      * @param maxY         The maximum Y position to render the text at
      * @param color        The color to render the text in
      */
-    public static void renderScrollingString(@Nonnull final GuiGraphics matrixStack,
+    public static void renderScrollingString(@Nonnull final GuiGraphicsExtractor matrixStack,
                                              @Nonnull final Minecraft mc,
                                              final Font fontRenderer,
                                              final String message,

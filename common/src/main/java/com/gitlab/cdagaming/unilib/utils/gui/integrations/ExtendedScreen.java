@@ -35,7 +35,7 @@ import io.github.cdagaming.unicore.utils.MathUtils;
 import io.github.cdagaming.unicore.utils.StringUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -88,7 +88,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
     /**
      * Current Stored MatrixStack for this Instance
      */
-    private GuiGraphics currentMatrix;
+    private GuiGraphicsExtractor currentMatrix;
     /**
      * The Screen Title, if any
      */
@@ -871,7 +871,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
     }
 
     @Override
-    public void renderMenuBackground(@Nonnull GuiGraphics matrixStack, int posX, int posY, int mouseX, int mouseY) {
+    public void extractMenuBackground(@Nonnull GuiGraphicsExtractor matrixStack, int posX, int posY, int mouseX, int mouseY) {
         currentMatrix = matrixStack;
         renderCriticalData();
     }
@@ -885,7 +885,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
      * @param partialTicks The Rendering Tick Rate
      */
     @Override
-    public void render(@Nonnull GuiGraphics matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void extractRenderState(@Nonnull GuiGraphicsExtractor matrixStack, int mouseX, int mouseY, float partialTicks) {
         currentMatrix = matrixStack;
 
         // Ensures initialization events have run first, preventing an NPE
@@ -905,7 +905,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
                     getBottom()
             );
 
-            super.render(matrixStack, mouseX, mouseY, partialTicks);
+            super.extractRenderState(matrixStack, mouseX, mouseY, partialTicks);
 
             renderExtra();
 
@@ -913,7 +913,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
 
             for (GuiEventListener extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
-                    extendedScreen.renderWithTooltipAndSubtitles(matrixStack, mouseX, mouseY, partialTicks);
+                    extendedScreen.extractRenderStateWithTooltipAndSubtitles(matrixStack, mouseX, mouseY, partialTicks);
                 }
             }
 
@@ -1732,7 +1732,7 @@ public class ExtendedScreen extends Screen implements NarratableEntry {
      *
      * @return The Current Stored MatrixStack for this Instance
      */
-    public GuiGraphics getCurrentMatrix() {
+    public GuiGraphicsExtractor getCurrentMatrix() {
         return currentMatrix;
     }
 
