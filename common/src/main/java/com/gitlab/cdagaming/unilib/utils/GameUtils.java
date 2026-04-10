@@ -129,7 +129,7 @@ public class GameUtils {
      * @return the game's current screen instance
      */
     public static Screen getCurrentScreen(final Minecraft client) {
-        return client != null ? client.screen : null;
+        return client != null ? client.gui.screen() : null;
     }
 
     /**
@@ -170,7 +170,7 @@ public class GameUtils {
      * @return {@link Boolean#TRUE} if condition is satisfied
      */
     public static boolean isLoaded(final Minecraft client) {
-        return (getCurrentScreen(client) != null && !(client.getOverlay() instanceof LoadingOverlay)) || WorldUtils.getPlayer(client) != null;
+        return (getCurrentScreen(client) != null && !(client.gui.overlay() instanceof LoadingOverlay)) || WorldUtils.getPlayer(client) != null;
     }
 
     /**

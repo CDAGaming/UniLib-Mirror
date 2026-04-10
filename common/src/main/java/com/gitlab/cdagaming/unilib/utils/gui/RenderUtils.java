@@ -244,7 +244,7 @@ public class RenderUtils {
      * @param targetScreen The target Gui Screen to display
      */
     public static void openScreen(@Nonnull final Minecraft client, final Screen targetScreen) {
-        ModUtils.executeOnMainThread(client, () -> client.setScreen(targetScreen));
+        ModUtils.executeOnMainThread(client, () -> client.gui.setScreen(targetScreen));
     }
 
     /**
