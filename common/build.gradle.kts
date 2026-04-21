@@ -44,7 +44,6 @@ val shade: Configuration by configurations.creating
 val runtime: Configuration by configurations.creating
 
 configurations.implementation.get().extendsFrom(shade)
-configurations.runtimeOnly.get().extendsFrom()
 
 dependencies {
     // Legacy Dependencies, based on Protocol Version

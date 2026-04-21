@@ -11,11 +11,11 @@ import java.util.*
 
 plugins {
     java
-    id("dev.firstdark.unimined") version "1.0.5+1.4.2-SNAPSHOT" apply false
+    id("dev.firstdark.unimined") version "1.0.9+1.4.2-SNAPSHOT" apply false
     id("xyz.wagyourtail.jvmdowngrader") version "1.3.6"
-    id("com.diffplug.gradle.spotless") version "8.2.1" apply false
-    id("com.gradleup.shadow") version "9.3.1" apply false
-    id("com.hypherionmc.modutils.modpublisher") version "2.1.8" apply false
+    id("com.diffplug.spotless") version "8.4.0" apply false
+    id("com.gradleup.shadow") version "9.4.1" apply false
+    id("com.hypherionmc.modutils.modpublisher") version "2.2.1" apply false
     `maven-publish`
 }
 

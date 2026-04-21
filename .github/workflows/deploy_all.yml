@@ -87,7 +87,7 @@ jobs:
           done < branches.txt
 
       - name: Upload deployment failure log (if any)
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: deployment_failures
           path: deployment_failures.txt
