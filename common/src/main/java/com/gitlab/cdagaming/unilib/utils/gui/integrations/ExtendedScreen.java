@@ -367,7 +367,7 @@ public class ExtendedScreen extends Screen {
             // Restore Fixes -- MC 1.19.3 and below
             restoreButtons.addAll(buttons);
 
-            opened(getGameInstance(), getScreenWidth(), getScreenHeight());
+            opened(getScreenWidth(), getScreenHeight());
             return;
         }
         if (isInitializing()) {
@@ -407,26 +407,25 @@ public class ExtendedScreen extends Screen {
      * Event to trigger upon Window Reload
      */
     public void reloadUi() {
-        opened(getGameInstance(), getScreenWidth(), getScreenHeight());
+        opened(getScreenWidth(), getScreenHeight());
     }
 
     /**
      * Event to trigger upon Window Resize
      *
-     * @param mcIn The Minecraft Instance
      * @param w    The New Screen Width
      * @param h    The New Screen Height
      */
     @Override
-    public void opened(@Nonnull Minecraft mcIn, int w, int h) {
+    public void opened(int w, int h) {
         if (isLoaded()) {
             for (Gui extendedControl : getControls()) {
                 if (extendedControl instanceof ExtendedScreen extendedScreen) {
-                    extendedScreen.opened(mcIn, w, h);
+                    extendedScreen.opened(w, h);
                 }
             }
         }
-        super.opened(mcIn, w, h);
+        super.opened(w, h);
     }
 
     /**
@@ -1166,7 +1165,7 @@ public class ExtendedScreen extends Screen {
      * @param instance the new game instance
      */
     public void setGameInstance(final Minecraft instance) {
-        this.mc = instance;
+        StringUtils.updateField(Screen.class, this, instance, "mc");
     }
 
     /**
@@ -1759,7 +1758,7 @@ public class ExtendedScreen extends Screen {
      *
      * @return The Current Font Renderer for this Screen
      */
-    public net.minecraft.client.render.Font getFontRenderer() {
+    public net.minecraft.client.render.font.FontRenderer getFontRenderer() {
         return StringUtils.getOrDefault(getGameInstance().font, RenderUtils.getDefaultFontRenderer());
     }
 

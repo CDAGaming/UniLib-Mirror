@@ -43,13 +43,16 @@ import io.github.cdagaming.unicore.utils.StringUtils;
 import io.github.cdagaming.unicore.utils.TimeUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Screen;
-import net.minecraft.client.render.EntityRenderDispatcher;
-import net.minecraft.client.render.Font;
+import net.minecraft.client.option.GameSettings;
 import net.minecraft.client.render.Lighting;
 import net.minecraft.client.render.block.model.BlockModel;
+import net.minecraft.client.render.font.FontRenderer;
 import net.minecraft.client.render.item.model.ItemModel;
 import net.minecraft.client.render.item.model.ItemModelDispatcher;
-import net.minecraft.client.render.tessellator.Tessellator;
+import net.minecraft.client.render.renderer.BlendFactor;
+import net.minecraft.client.render.renderer.GLRenderer;
+import net.minecraft.client.render.renderer.State;
+import net.minecraft.client.render.tessellator.TessellatorGeneral;
 import net.minecraft.core.item.ItemStack;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -72,7 +75,7 @@ public class RenderUtils {
      */
     private static final ScissorStack scissorStack = new ScissorStack();
     /**
-     * The Block List for any ItemStacks that have failed to render in {@link RenderUtils#drawItemStack(Minecraft, Font, int, int, ItemStack, float)}
+     * The Block List for any ItemStacks that have failed to render in {@link RenderUtils#drawItemStack(Minecraft, FontRenderer, int, int, ItemStack, float)}
      */
     private static final List<ItemStack> BLOCKED_RENDER_ITEMS = StringUtils.newArrayList();
     /**
@@ -217,7 +220,7 @@ public class RenderUtils {
      *
      * @return The Default/Global Font Renderer
      */
-    public static Font getDefaultFontRenderer() {
+    public static FontRenderer getDefaultFontRenderer() {
         return ModUtils.getMinecraft().font;
     }
 
@@ -277,25 +280,25 @@ public class RenderUtils {
      * @param stack        The {@link ItemStack} instance to interpret
      * @param scale        The Scale to render the Object at
      */
-    public static void drawItemStack(@Nonnull final Minecraft client, final Font fontRenderer, final int x, final int y, final ItemStack stack, final float scale) {
+    public static void drawItemStack(@Nonnull final Minecraft client, final FontRenderer fontRenderer, final int x, final int y, final ItemStack stack, final float scale) {
         if (BLOCKED_RENDER_ITEMS.contains(stack)) return;
         try {
             GL11.glPushMatrix();
             GL11.glScalef(scale, scale, 1.0f);
             GL11.glEnable(GL12.GL_RESCALE_NORMAL);
             GL11.glEnable(GL11.GL_COLOR_MATERIAL);
-            GL11.glEnable(GL11.GL_DEPTH_TEST);
+            GLRenderer.enableState(State.DEPTH_TEST);
             Lighting.enableInventoryLight();
 
             final int xPos = Math.round(x / scale);
             final int yPos = Math.round(y / scale);
-            BlockModel.setRenderBlocks(EntityRenderDispatcher.instance.itemRenderer.renderBlocksInstance);
+            //BlockModel.setRenderBlocks(EntityRenderDispatcher.instance.itemRenderer.renderBlocksInstance);
             final ItemModel itemModel = ItemModelDispatcher.getInstance().getDispatch(stack.getItem());
-            itemModel.renderItemIntoGui(Tessellator.instance, fontRenderer, client.textureManager, stack, xPos, yPos, 1.0f);
-            itemModel.renderItemOverlayIntoGUI(Tessellator.instance, fontRenderer, client.textureManager, stack, xPos, yPos, 1.0f);
+            //itemModel.renderItemIntoGui(GLRenderer.getTessellator(), fontRenderer, client.textureManager, stack, xPos, yPos, 1.0f);
+            itemModel.renderItemOverlayIntoGUI(GLRenderer.getTessellator(), fontRenderer, client.textureManager, stack, xPos, yPos, null, 1.0f);
 
             Lighting.disable();
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            GLRenderer.disableState(State.DEPTH_TEST);
             GL11.glDisable(GL11.GL_COLOR_MATERIAL);
             GL11.glDisable(GL12.GL_RESCALE_NORMAL);
             GL11.glPopMatrix();
@@ -418,16 +421,16 @@ public class RenderUtils {
         } catch (Exception ignored) {
             return;
         }
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GLRenderer.setColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GLRenderer.enableState(State.BLEND);
+        GLRenderer.setBlendFunc(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_SRC_ALPHA);
+        GLRenderer.enableState(State.DEPTH_TEST);
 
         blit(x, y, zLevel, startU, startV, width, height);
         blit(x + width, y, zLevel, endU, endV, width, height);
 
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glDisable(GL11.GL_BLEND);
+        GLRenderer.disableState(State.DEPTH_TEST);
+        GLRenderer.disableState(State.BLEND);
     }
 
     /**
@@ -485,27 +488,27 @@ public class RenderUtils {
             return;
         }
 
-        GL11.glEnable(GL11.GL_BLEND);
+        GLRenderer.enableState(State.BLEND);
         GL11.glDisable(GL11.GL_ALPHA_TEST);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GLRenderer.setBlendFunc(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_SRC_ALPHA);
         GL11.glShadeModel(GL11.GL_SMOOTH);
 
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_FOG);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-        final Tessellator tessellator = Tessellator.instance;
+        final TessellatorGeneral tessellator = GLRenderer.getTessellator();
         tessellator.startDrawingQuads();
-        tessellator.setColorRGBA(endColor.getRed(), endColor.getGreen(), endColor.getBlue(), endColor.getAlpha());
+        tessellator.setColor4i(endColor.getRed(), endColor.getGreen(), endColor.getBlue(), endColor.getAlpha());
         tessellator.addVertexWithUV(left, bottom, zLevel, minU, maxV);
         tessellator.addVertexWithUV(right, bottom, zLevel, maxU, maxV);
-        tessellator.setColorRGBA(startColor.getRed(), startColor.getGreen(), startColor.getBlue(), startColor.getAlpha());
+        tessellator.setColor4i(startColor.getRed(), startColor.getGreen(), startColor.getBlue(), startColor.getAlpha());
         tessellator.addVertexWithUV(right, top, zLevel, maxU, minV);
         tessellator.addVertexWithUV(left, top, zLevel, minU, minV);
         tessellator.draw();
 
         GL11.glShadeModel(GL11.GL_FLAT);
-        GL11.glDisable(GL11.GL_BLEND);
+        GLRenderer.disableState(State.BLEND);
         GL11.glEnable(GL11.GL_ALPHA_TEST);
     }
 
@@ -706,28 +709,28 @@ public class RenderUtils {
             return;
         }
 
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GLRenderer.disableState(State.DEPTH_TEST);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
+        GLRenderer.enableState(State.BLEND);
         GL11.glDisable(GL11.GL_ALPHA_TEST);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GLRenderer.setBlendFunc(BlendFactor.SRC_ALPHA, BlendFactor.ONE_MINUS_SRC_ALPHA);
         GL11.glShadeModel(GL11.GL_SMOOTH);
 
-        final Tessellator tessellator = Tessellator.instance;
+        final TessellatorGeneral tessellator = GLRenderer.getTessellator();
         tessellator.startDrawingQuads();
-        tessellator.setColorRGBA(endColor.getRed(), endColor.getGreen(), endColor.getBlue(), endColor.getAlpha());
+        tessellator.setColor4i(endColor.getRed(), endColor.getGreen(), endColor.getBlue(), endColor.getAlpha());
         tessellator.addVertex(left, bottom, zLevel);
         tessellator.addVertex(right, bottom, zLevel);
-        tessellator.setColorRGBA(startColor.getRed(), startColor.getGreen(), startColor.getBlue(), startColor.getAlpha());
+        tessellator.setColor4i(startColor.getRed(), startColor.getGreen(), startColor.getBlue(), startColor.getAlpha());
         tessellator.addVertex(right, top, zLevel);
         tessellator.addVertex(left, top, zLevel);
         tessellator.draw();
 
         GL11.glShadeModel(GL11.GL_FLAT);
-        GL11.glDisable(GL11.GL_BLEND);
+        GLRenderer.disableState(State.BLEND);
         GL11.glEnable(GL11.GL_ALPHA_TEST);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GLRenderer.enableState(State.DEPTH_TEST);
     }
 
     /**
@@ -819,7 +822,7 @@ public class RenderUtils {
     public static void innerBlit(final double left, final double right, final double top, final double bottom,
                                  final double zLevel,
                                  final double minU, final double maxU, final double minV, final double maxV) {
-        final Tessellator tessellator = Tessellator.instance;
+        final TessellatorGeneral tessellator = GLRenderer.getTessellator();
         tessellator.startDrawingQuads();
         tessellator.addVertexWithUV(left, bottom, zLevel, minU, maxV);
         tessellator.addVertexWithUV(right, bottom, zLevel, maxU, maxV);
@@ -884,7 +887,7 @@ public class RenderUtils {
     public static int computeGuiScale(@Nonnull final Minecraft mc) {
         int scaleFactor = 1;
 
-        int k = mc.gameSettings.guiScale.value;
+        int k = GameSettings.GUI_SCALE.value;
         if (k == 0) {
             k = 1000;
         }
@@ -973,7 +976,7 @@ public class RenderUtils {
                                            final int posX, final int posY,
                                            final int maxWidth, final int maxHeight,
                                            final int maxTextWidth,
-                                           final Font fontRenderer,
+                                           final FontRenderer fontRenderer,
                                            final boolean isCentered,
                                            final boolean isTooltip,
                                            final ScreenConstants.TooltipData colorInfo) {
@@ -1192,7 +1195,7 @@ public class RenderUtils {
      * @param yPos         The Y position to render the text at
      * @param color        The color to render the text in
      */
-    public static void renderCenteredString(final Font fontRenderer, final String text, final float xPos, final float yPos, final int color) {
+    public static void renderCenteredString(final FontRenderer fontRenderer, final String text, final float xPos, final float yPos, final int color) {
         renderString(fontRenderer, text, xPos - (getStringWidth(fontRenderer, text) / 2f), yPos, color);
     }
 
@@ -1205,7 +1208,7 @@ public class RenderUtils {
      * @param yPos         The Y position to render the text at
      * @param color        The color to render the text in
      */
-    public static void renderCenteredString(final Font fontRenderer, final String text, final int xPos, final int yPos, final int color) {
+    public static void renderCenteredString(final FontRenderer fontRenderer, final String text, final int xPos, final int yPos, final int color) {
         renderString(fontRenderer, text, xPos - (getStringWidth(fontRenderer, text) / 2), yPos, color);
     }
 
@@ -1218,7 +1221,7 @@ public class RenderUtils {
      * @param yPos         The Y position to render the text at
      * @param color        The color to render the text in
      */
-    public static void renderString(final Font fontRenderer, final String text, final float xPos, final float yPos, final int color) {
+    public static void renderString(final FontRenderer fontRenderer, final String text, final float xPos, final float yPos, final int color) {
         renderString(fontRenderer, text, Math.round(xPos), Math.round(yPos), color);
     }
 
@@ -1231,8 +1234,8 @@ public class RenderUtils {
      * @param yPos         The Y position to render the text at
      * @param color        The color to render the text in
      */
-    public static void renderString(final Font fontRenderer, final String text, final int xPos, final int yPos, final int color) {
-        fontRenderer.drawStringWithShadow(text, xPos, yPos, color);
+    public static void renderString(final FontRenderer fontRenderer, final String text, final int xPos, final int yPos, final int color) {
+        fontRenderer.render(text, xPos, yPos).setColor(color).setShadow().call();
     }
 
     /**
@@ -1242,8 +1245,8 @@ public class RenderUtils {
      * @param string       The string to interpret
      * @return the string's width from the font renderer
      */
-    public static int getStringWidth(final Font fontRenderer, final String string) {
-        return fontRenderer.getStringWidth(string);
+    public static int getStringWidth(final FontRenderer fontRenderer, final String string) {
+        return fontRenderer.stringWidth(string);
     }
 
     /**
@@ -1253,7 +1256,7 @@ public class RenderUtils {
      * @param string       The character to interpret
      * @return the character's width from the font renderer
      */
-    private static int getCharWidth(final Font fontRenderer, final char string) {
+    private static int getCharWidth(final FontRenderer fontRenderer, final char string) {
         return getStringWidth(fontRenderer, String.valueOf(string));
     }
 
@@ -1263,7 +1266,7 @@ public class RenderUtils {
      * @param fontRenderer The Font Renderer Instance
      * @return The Current Font Height for this Screen
      */
-    public static int getFontHeight(final Font fontRenderer) {
+    public static int getFontHeight(final FontRenderer fontRenderer) {
         return 8;
     }
 
@@ -1281,7 +1284,7 @@ public class RenderUtils {
      * @param color        The color to render the text in
      */
     public static void renderScrollingString(@Nonnull final Minecraft mc,
-                                             final Font fontRenderer,
+                                             final FontRenderer fontRenderer,
                                              final String message,
                                              final float centerX,
                                              final float minX, final float minY,
@@ -1319,7 +1322,7 @@ public class RenderUtils {
      * @param color        The color to render the text in
      */
     public static void renderScrollingString(@Nonnull final Minecraft mc,
-                                             final Font fontRenderer,
+                                             final FontRenderer fontRenderer,
                                              final String message,
                                              final int centerX,
                                              final int minX, final int minY,
@@ -1356,7 +1359,7 @@ public class RenderUtils {
      * @param color        The color to render the text in
      */
     public static void renderScrollingString(@Nonnull final Minecraft mc,
-                                             final Font fontRenderer,
+                                             final FontRenderer fontRenderer,
                                              final String message,
                                              final float minX, final float minY,
                                              final float maxX, final float maxY,
@@ -1377,7 +1380,7 @@ public class RenderUtils {
      * @param color        The color to render the text in
      */
     public static void renderScrollingString(@Nonnull final Minecraft mc,
-                                             final Font fontRenderer,
+                                             final FontRenderer fontRenderer,
                                              final String message,
                                              final int minX, final int minY,
                                              final int maxX, final int maxY,
@@ -1417,7 +1420,7 @@ public class RenderUtils {
      * @param wrapWidth    The target width per line, to wrap the input around
      * @return The converted and wrapped version of the original input
      */
-    public static List<String> listFormattedStringToWidth(final Font fontRenderer, final String stringInput, final int wrapWidth) {
+    public static List<String> listFormattedStringToWidth(final FontRenderer fontRenderer, final String stringInput, final int wrapWidth) {
         return StringUtils.splitTextByNewLine(wrapFormattedStringToWidth(fontRenderer, stringInput, wrapWidth), true);
     }
 
@@ -1430,7 +1433,7 @@ public class RenderUtils {
      * @param wrapWidth    The target width per line, to wrap the input around
      * @return The converted and wrapped version of the original input
      */
-    private static String wrapFormattedStringToWidth(final Font fontRenderer, final String stringInput, final int wrapWidth) {
+    private static String wrapFormattedStringToWidth(final FontRenderer fontRenderer, final String stringInput, final int wrapWidth) {
         final int stringSizeToWidth = sizeStringToWidth(fontRenderer, stringInput, wrapWidth);
 
         if (stringInput.length() <= stringSizeToWidth) {
@@ -1452,7 +1455,7 @@ public class RenderUtils {
      * @param wrapWidth    The target width to wrap within
      * @return The expected wrapped width the String should be
      */
-    private static int sizeStringToWidth(final Font fontRenderer, final String stringEntry, final int wrapWidth) {
+    private static int sizeStringToWidth(final FontRenderer fontRenderer, final String stringEntry, final int wrapWidth) {
         final int stringLength = stringEntry.length();
         int charWidth = 0;
         int currentLine = 0;
@@ -1496,11 +1499,11 @@ public class RenderUtils {
         return currentLine != stringLength && currentIndex != -1 && currentIndex < currentLine ? currentIndex : currentLine;
     }
 
-    public static String trimStringToWidth(final Font fontRenderer, final String text, final int width) {
+    public static String trimStringToWidth(final FontRenderer fontRenderer, final String text, final int width) {
         return trimStringToWidth(fontRenderer, text, width, false);
     }
 
-    public static String trimStringToWidth(final Font fontRenderer, final String text, final int width, final boolean reverse) {
+    public static String trimStringToWidth(final FontRenderer fontRenderer, final String text, final int width, final boolean reverse) {
         StringBuilder stringbuilder = new StringBuilder();
         int i = 0;
         int j = reverse ? text.length() - 1 : 0;
@@ -1510,7 +1513,7 @@ public class RenderUtils {
 
         for(int l = j; l >= 0 && l < text.length() && i < width; l += k) {
             char c0 = text.charAt(l);
-            int i1 = fontRenderer.getStringWidth(String.valueOf(c0));
+            int i1 = fontRenderer.stringWidth(String.valueOf(c0));
             if (flag) {
                 flag = false;
                 if (c0 == 'l' || c0 == 'L') {

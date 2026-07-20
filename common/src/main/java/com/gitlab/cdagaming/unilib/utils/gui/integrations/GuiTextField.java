@@ -26,7 +26,7 @@ package com.gitlab.cdagaming.unilib.utils.gui.integrations;
 
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.render.Font;
+import net.minecraft.client.render.font.FontRenderer;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -34,7 +34,7 @@ import java.awt.*;
 
 public class GuiTextField extends Gui {
     private static final String allowedChars = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}~⌂ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜø£Ø×ƒáíóúñÑªº¿®¬½¼¡«»";
-    private final Font fontRenderer;
+    private final FontRenderer fontRenderer;
     private final int xPos;
     private final int yPos;
     private final int width;
@@ -50,7 +50,7 @@ public class GuiTextField extends Gui {
     public int selectionEnd = 0;
     private boolean isTextSelected;
 
-    public GuiTextField(Font fontRenderer, int x, int y, int w, int h, String s) {
+    public GuiTextField(FontRenderer fontRenderer, int x, int y, int w, int h, String s) {
         this.fontRenderer = fontRenderer;
         this.xPos = x;
         this.yPos = y;
@@ -286,9 +286,9 @@ public class GuiTextField extends Gui {
         GL11.glEnable(GL11.GL_COLOR_LOGIC_OP);
         GL11.glLogicOp(GL11.GL_OR_REVERSE);
         drawRect(
-                2 + this.fontRenderer.getStringWidth(this.arrow) + this.xPos,
+                2 + this.fontRenderer.stringWidth(this.arrow) + this.xPos,
                 mny,
-                this.fontRenderer.getStringWidth(this.arrow + strOffset) + 6 + this.xPos,
+                this.fontRenderer.stringWidth(this.arrow + strOffset) + 6 + this.xPos,
                 mxy,
                 Color.BLUE.getRGB()
         );
@@ -298,13 +298,13 @@ public class GuiTextField extends Gui {
     public void renderText(int x, int y, int bgmny, int bgmxy) {
         if (this.isFocused && this.isEnabled) {
             String strOffset = RenderUtils.trimStringToWidth(this.fontRenderer, this.text.substring(this.lineScrollOffset), this.width - 8);
-            int strWidth = this.fontRenderer.getStringWidth(this.arrow + strOffset);
+            int strWidth = this.fontRenderer.stringWidth(this.arrow + strOffset);
             int selOffs = this.selectionEnd - this.lineScrollOffset;
             if (selOffs > strOffset.length()) {
                 selOffs = strOffset.length();
             }
 
-            this.drawString(
+            this.drawStringNoShadow(
                     this.fontRenderer,
                     this.arrow + strOffset,
                     x,
@@ -313,7 +313,7 @@ public class GuiTextField extends Gui {
             );
             if (this.cursorCounter / 6 % 2 == 0) {
                 if (this.cursorPosition == this.text.length()) {
-                    this.drawString(
+                    this.drawStringNoShadow(
                             this.fontRenderer,
                             "_",
                             x + (strWidth > 0 ? strWidth + 2 : 0),
@@ -321,7 +321,7 @@ public class GuiTextField extends Gui {
                             14737632
                     );
                 } else {
-                    int selX = x + this.fontRenderer.getStringWidth(this.arrow + strOffset.substring(0, selOffs));
+                    int selX = x + this.fontRenderer.stringWidth(this.arrow + strOffset.substring(0, selOffs));
                     drawRect(
                             selX, y - 1, selX + 1, y + 1 + 8, -3092272
                     );
@@ -332,7 +332,7 @@ public class GuiTextField extends Gui {
                 this.renderSelectedTextBG(strOffset, bgmny, bgmxy);
             }
         } else {
-            this.drawString(this.fontRenderer, RenderUtils.trimStringToWidth(this.fontRenderer, this.text, this.width - 8), x, y, this.isEnabled ? 14737632 : 7368816);
+            this.drawStringNoShadow(this.fontRenderer, RenderUtils.trimStringToWidth(this.fontRenderer, this.text, this.width - 8), x, y, this.isEnabled ? 14737632 : 7368816);
         }
     }
 

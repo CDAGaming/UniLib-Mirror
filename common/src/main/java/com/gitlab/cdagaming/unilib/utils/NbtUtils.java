@@ -193,12 +193,12 @@ public class NbtUtils {
     }
 
     public static CompoundTag serializeNBT(Entity entity) {
-        NamespaceID name = EntityDispatcher.idForClass(entity.getClass());
+        EntityDispatcher.EntityDispatcherEntry<?> entry = EntityDispatcher.getInstance().entryForClass(entity.getClass());
         CompoundTag ret = new CompoundTag();
-        if (name != null) {
-            ret.putString("id", name.toString());
+        if (entry != null) {
+            ret.putString("id", entry.namespaceID.toString());
+            entity.saveWithoutId(ret);
         }
-        entity.saveWithoutId(ret);
         return ret;
     }
 }

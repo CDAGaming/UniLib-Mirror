@@ -351,7 +351,7 @@ public class KeyUtils {
         }
 
         if (!areKeysRegistered()) {
-            if (getInstance().gameSettings != null && getInstance().font != null && OptionsPages.CONTROLS != null) {
+            if (getInstance().font != null && OptionsPages.CONTROLS != null) {
                 for (Map.Entry<String, KeyBindData> data : getRegistrationEntries()) {
                     final KeyBindData entry = data.getValue();
 

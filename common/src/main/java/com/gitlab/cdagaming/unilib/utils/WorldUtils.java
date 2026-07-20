@@ -81,9 +81,10 @@ public class WorldUtils {
     public static String getEntityName(final Entity entity, final boolean stripFormatting) {
         String result = "";
         if (entity != null) {
-            result = StringUtils.getOrDefault(
-                    EntityDispatcher.nameKeyForClass(entity.getClass())
-            );
+            EntityDispatcher.EntityDispatcherEntry<?> entry = EntityDispatcher.getInstance().entryForClass(entity.getClass());
+            if (entry != null) {
+                result = StringUtils.getOrDefault(entry.nameKey);
+            }
         }
 
         if (stripFormatting) {
