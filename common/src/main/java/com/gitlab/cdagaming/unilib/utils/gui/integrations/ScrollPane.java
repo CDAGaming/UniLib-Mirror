@@ -28,6 +28,7 @@ import com.gitlab.cdagaming.unilib.core.impl.screen.ScreenConstants;
 import com.gitlab.cdagaming.unilib.utils.ResourceUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.widgets.DynamicWidget;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.cursor.CursorType;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import io.github.cdagaming.unicore.utils.MathUtils;
@@ -310,7 +311,7 @@ public class ScrollPane extends ExtendedScreen {
      * @return {@link Boolean#TRUE} if condition was satisfied
      */
     protected boolean isValidMouseClick(final int button) {
-        return button == 0;
+        return button == InputConstants.MOUSE_BUTTON_LEFT;
     }
 
     @Override

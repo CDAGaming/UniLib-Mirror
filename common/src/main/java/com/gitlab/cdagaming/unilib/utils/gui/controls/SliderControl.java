@@ -27,6 +27,7 @@ package com.gitlab.cdagaming.unilib.utils.gui.controls;
 import com.gitlab.cdagaming.unilib.utils.ResourceUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.RenderUtils;
 import com.gitlab.cdagaming.unilib.utils.gui.integrations.ExtendedScreen;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.cursor.CursorType;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import io.github.cdagaming.unicore.impl.Pair;
@@ -39,7 +40,6 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
-import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nonnull;
 
@@ -275,8 +275,8 @@ public class SliderControl extends ExtendedButtonControl {
     @Override
     public boolean keyPressed(KeyEvent keyEvent) {
         int keyCode = keyEvent.input();
-        boolean bl = keyCode == GLFW.GLFW_KEY_LEFT;
-        if (bl || keyCode == GLFW.GLFW_KEY_RIGHT) {
+        boolean bl = keyCode == InputConstants.KEY_LEFT;
+        if (bl || keyCode == InputConstants.KEY_RIGHT) {
             float f = bl ? -valueStep : valueStep;
             setSliderValue(getSliderValue() + f);
             onPress(keyEvent);

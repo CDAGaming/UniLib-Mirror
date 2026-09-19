@@ -35,7 +35,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.options.controls.ControlsScreen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.resources.Identifier;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.sdl.SDLKeyboard;
 
 import java.util.List;
 import java.util.Map;
@@ -135,7 +135,7 @@ public class KeyUtils {
     public String getKeyName(final int original) {
         return KeyConverter.getKeyName(
                 original, protocol,
-                (originalKeyCode, inputProtocol) -> GLFW.glfwGetKeyName(originalKeyCode, GLFW.glfwGetKeyScancode(originalKeyCode))
+                (originalKeyCode, inputProtocol) -> SDLKeyboard.SDL_GetScancodeName(originalKeyCode)
         );
     }
 
@@ -526,15 +526,15 @@ public class KeyUtils {
      * @param newKey   the new key for the specified KeyBinding
      */
     private void setKey(final KeyMapping instance, final int newKey) {
-        final boolean isLwjgl2 = protocol <= 340;
-        final int unknownKeyCode = isLwjgl2 ? -1 : 0;
-        final String unknownKeyName = (isLwjgl2 ? KeyConverter.fromGlfw : KeyConverter.toGlfw).get(unknownKeyCode).name();
+        final KeyConverter.Platform platform = KeyConverter.getPlatform(protocol);
+        final int unknownKeyCode = platform == KeyConverter.Platform.LWJGL2 ? -1 : 0;
+        final String unknownKeyName = (platform == KeyConverter.Platform.LWJGL2 ? KeyConverter.fromGlfw : KeyConverter.toGlfw).get(unknownKeyCode).name();
 
         final InputConstants.Key inputKey;
         if (getKeyName(newKey).equals(unknownKeyName)) {
             inputKey = InputConstants.UNKNOWN;
         } else {
-            inputKey = InputConstants.getKey(new KeyEvent(newKey, GLFW.glfwGetKeyScancode(newKey), 0));
+            inputKey = InputConstants.getKey(new KeyEvent(newKey, SDLKeyboard.SDL_GetKeyFromScancode(newKey, (short) 0, false), 0));
         }
         instance.setKey(inputKey);
         KeyMapping.resetMapping();
@@ -602,9 +602,9 @@ public class KeyUtils {
         }
 
         if (getInstance().getWindow() != null) {
-            final boolean isLwjgl2 = protocol <= 340;
-            final int unknownKeyCode = isLwjgl2 ? -1 : 0;
-            final String unknownKeyName = (isLwjgl2 ? KeyConverter.fromGlfw : KeyConverter.toGlfw).get(unknownKeyCode).name();
+            final KeyConverter.Platform platform = KeyConverter.getPlatform(protocol);
+            final int unknownKeyCode = platform == KeyConverter.Platform.LWJGL2 ? -1 : 0;
+            final String unknownKeyName = (platform == KeyConverter.Platform.LWJGL2 ? KeyConverter.fromGlfw : KeyConverter.toGlfw).get(unknownKeyCode).name();
             try {
                 for (Map.Entry<String, KeyBindData> entry : getKeyEntries()) {
                     final String keyName = entry.getKey();
@@ -616,7 +616,7 @@ public class KeyUtils {
 
                         if (!getKeyName(currentBind).equals(unknownKeyName) && !isValidClearCode(currentBind)) {
                             // Only process the key if it is not an unknown or invalid key
-                            if (GLFW.glfwGetKey(getInstance().getWindow().handle(), currentBind) == GLFW.GLFW_PRESS && !(GameUtils.getCurrentScreen(getInstance()) instanceof ControlsScreen)) {
+                            if (InputConstants.isKeyDown(currentBind) && !(GameUtils.getCurrentScreen(getInstance()) instanceof ControlsScreen)) {
                                 try {
                                     keyData.runEvent().run();
                                 } catch (Throwable ex) {
