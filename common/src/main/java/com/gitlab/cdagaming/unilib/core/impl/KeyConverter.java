@@ -413,20 +413,14 @@ public class KeyConverter {
      * Converts a KeyCode using the Specified Conversion Mode, if possible
      * <p>
      * Note: If None is Used on a Valid Value, this function can be used as verification, if any
-     * <p>
-     * Note: {@code originalProtocol} determines which Native Keyboard Platform {@code originalKey} is
-     * already encoded in (e.g. an LWJGL2 KeyCode, a LWJGL3/GLFW Keycode, or an SDL Scancode), so any
-     * pairing of source and target Platform, such as LWJGL2 to SDL, or LWJGL3/GLFW to SDL, converts
-     * directly in a single call
      *
      * @param originalKey      The original Key to Convert
-     * @param originalProtocol The Protocol the original key derives from
+     * @param sourcePlatform   The Platform the original key derives from
      * @param targetProtocol   The Protocol to Target for this conversion
      * @param mode             The Conversion Mode to convert the keycode to
      * @return The resulting converted KeyCode, or the mode's unknown key
      */
-    public static int convertKey(final int originalKey, final int originalProtocol, final int targetProtocol, final ConversionMode mode) {
-        final Platform sourcePlatform = getPlatform(originalProtocol);
+    public static int convertKey(final int originalKey, final Platform sourcePlatform, final int targetProtocol, final ConversionMode mode) {
         final Map<Integer, KeyBindMapping> sourceMap = switch (sourcePlatform) {
             case LWJGL2 -> toGlfw;
             case LWJGL3 -> fromGlfw;
@@ -442,9 +436,9 @@ public class KeyConverter {
         } else if (mode == ConversionMode.Sdl) {
             resultKey = sourceMap.getOrDefault(originalKey, unknownKeyData).sdlKey();
         } else if (mode == ConversionMode.None) {
-            // If Input is a valid Integer and Valid KeyCode within its own (origin) Protocol,
+            // If Input is a valid Integer and Valid KeyCode within its own (origin) Platform,
             // Retain the Original Value
-            resultKey = sourceMap.containsKey(originalKey) ? originalKey : (originalProtocol <= LEGACY_PROTOCOL_ID ? -1 : 0);
+            resultKey = sourceMap.containsKey(originalKey) ? originalKey : (sourcePlatform == Platform.LWJGL2 ? -1 : 0);
         } else {
             resultKey = (targetProtocol <= LEGACY_PROTOCOL_ID ? -1 : 0);
         }
@@ -457,6 +451,59 @@ public class KeyConverter {
         }
 
         return resultKey;
+    }
+
+    /**
+     * Converts a KeyCode using the Specified Conversion Mode, if possible
+     * <p>
+     * Note: If None is Used on a Valid Value, this function can be used as verification, if any
+     * <p>
+     * Note: {@code originalProtocol} determines which Native Keyboard Platform {@code originalKey} is
+     * already encoded in (e.g. an LWJGL2 KeyCode, a LWJGL3/GLFW Keycode, or an SDL Scancode), so any
+     * pairing of source and target Platform, such as LWJGL2 to SDL, or LWJGL3/GLFW to SDL, converts
+     * directly in a single call
+     *
+     * @param originalKey      The original Key to Convert
+     * @param originalProtocol The Protocol the original key derives from
+     * @param targetProtocol   The Protocol to Target for this conversion
+     * @param mode             The Conversion Mode to convert the keycode to
+     * @return The resulting converted KeyCode, or the mode's unknown key
+     */
+    public static int convertKey(final int originalKey, final int originalProtocol, final int targetProtocol, final ConversionMode mode) {
+        return convertKey(originalKey, getPlatform(originalProtocol), targetProtocol, mode);
+    }
+
+    /**
+     * Converts a KeyCode using the Specified Conversion Mode, if possible
+     * <p>
+     * Note: If None is Used on a Valid Value, this function can be used as verification, if any
+     * <p>
+     * Note: As no {@code originalProtocol} is supplied, the source Platform is inferred from
+     * {@code mode} itself (mirroring how {@link ConversionMode#Lwjgl2} and {@link ConversionMode#Lwjgl3}
+     * have always implied the other as their source), and from {@code protocol} for {@link ConversionMode#None}.
+     * Prefer {@link #convertKey(int, int, int, ConversionMode)} when the source Platform, such as SDL, cannot
+     * be reliably inferred this way
+     *
+     * @param originalKey The original Key to Convert
+     * @param protocol    The Protocol to Target for this conversion
+     * @param mode        The Conversion Mode to convert the keycode to
+     * @return The resulting converted KeyCode, or the mode's unknown key
+     */
+    public static int convertKey(final int originalKey, final int protocol, final ConversionMode mode) {
+        final Platform sourcePlatform;
+        if (mode == ConversionMode.Lwjgl2) {
+            sourcePlatform = Platform.LWJGL3;
+        } else if (mode == ConversionMode.Lwjgl3) {
+            sourcePlatform = Platform.LWJGL2;
+        } else if (mode == ConversionMode.Sdl) {
+            sourcePlatform = Platform.LWJGL3;
+        } else if (mode == ConversionMode.None) {
+            sourcePlatform = protocol <= LEGACY_PROTOCOL_ID ? Platform.LWJGL2 : Platform.LWJGL3;
+        } else {
+            sourcePlatform = getPlatform(protocol);
+        }
+
+        return convertKey(originalKey, sourcePlatform, protocol, mode);
     }
 
     /**

@@ -245,6 +245,20 @@ public class ExtendedScreen extends GuiScreen {
 
     /**
      * Return a KeyCode, dependent on the Native Keyboard Platform in use
+     * <p>
+     * Note: If on SDL, the SDL Scancode is derived from {@code lwjgl3Key}, via {@link KeyConverter#fromGlfw}
+     *
+     * @param lwjgl2Key The KeyCode to return if on LWJGL2
+     * @param lwjgl3Key The KeyCode to return if on LWJGL3 (GLFW)
+     * @return the processed KeyCode
+     */
+    public static int getKeyByVersion(final int lwjgl2Key, final int lwjgl3Key) {
+        final int sdlKey = KeyConverter.fromGlfw.getOrDefault(lwjgl3Key, KeyConverter.toGlfw.get(0)).sdlKey();
+        return getKeyByVersion(lwjgl2Key, lwjgl3Key, sdlKey);
+    }
+
+    /**
+     * Return a KeyCode, dependent on the Native Keyboard Platform in use
      *
      * @param lwjgl2Key The KeyCode to return if on LWJGL2
      * @param lwjgl3Key The KeyCode to return if on LWJGL3 (GLFW)
