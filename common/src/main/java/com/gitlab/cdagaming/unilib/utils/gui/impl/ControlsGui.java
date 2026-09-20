@@ -242,7 +242,7 @@ public class ControlsGui extends ExtendedScreen {
 
         // Ensure a Valid KeyCode is entered
         if (!instance.isValidKeyCode(keyToSubmit) || instance.isValidClearCode(keyToSubmit)) {
-            keyToSubmit = getKeyByVersion(0, -1); // KEY_NONE
+            keyToSubmit = getKeyByVersion(0, -1, 0); // KEY_NONE
         }
 
         final String formattedKey = instance.getKeyName(keyToSubmit);

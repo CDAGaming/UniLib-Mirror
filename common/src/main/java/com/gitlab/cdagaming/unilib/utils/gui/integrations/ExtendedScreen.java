@@ -25,6 +25,7 @@
 package com.gitlab.cdagaming.unilib.utils.gui.integrations;
 
 import com.gitlab.cdagaming.unilib.ModUtils;
+import com.gitlab.cdagaming.unilib.core.impl.KeyConverter;
 import com.gitlab.cdagaming.unilib.core.impl.screen.ScreenConstants;
 import com.gitlab.cdagaming.unilib.utils.GameUtils;
 import com.gitlab.cdagaming.unilib.utils.WorldUtils;
@@ -243,14 +244,19 @@ public class ExtendedScreen extends GuiScreen {
     }
 
     /**
-     * Return a KeyCode, dependent on the LWJGL version
+     * Return a KeyCode, dependent on the Native Keyboard Platform in use
      *
      * @param lwjgl2Key The KeyCode to return if on LWJGL2
-     * @param lwjgl3Key The KeyCode to return if on LWJGL3
+     * @param lwjgl3Key The KeyCode to return if on LWJGL3 (GLFW)
+     * @param sdlKey    The KeyCode to return if on SDL
      * @return the processed KeyCode
      */
-    public static int getKeyByVersion(final int lwjgl2Key, final int lwjgl3Key) {
-        return getProtocol() > 340 ? lwjgl3Key : lwjgl2Key;
+    public static int getKeyByVersion(final int lwjgl2Key, final int lwjgl3Key, final int sdlKey) {
+        return switch (KeyConverter.getPlatform(getProtocol())) {
+            case SDL -> sdlKey;
+            case LWJGL3 -> lwjgl3Key;
+            case LWJGL2 -> lwjgl2Key;
+        };
     }
 
     /**
@@ -260,7 +266,7 @@ public class ExtendedScreen extends GuiScreen {
      * @return {@link Boolean#TRUE} if condition is satisfied
      */
     public static boolean isEscapeKey(final int keyCode) {
-        return keyCode == getKeyByVersion(1, 256);
+        return keyCode == getKeyByVersion(1, 256, 41);
     }
 
     /**

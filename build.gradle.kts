@@ -13,9 +13,9 @@ plugins {
     java
     id("dev.firstdark.unimined") version "1.0.9+1.4.2-SNAPSHOT" apply false
     id("xyz.wagyourtail.jvmdowngrader") version "1.3.6"
-    id("com.diffplug.spotless") version "8.7.0" apply false
-    id("com.gradleup.shadow") version "9.4.2" apply false
-    id("com.hypherionmc.modutils.modpublisher") version "2.2.1" apply false
+    id("com.diffplug.spotless") version "8.10.2" apply false
+    id("com.gradleup.shadow") version "9.6.1" apply false
+    id("com.hypherionmc.modutils.modpublisher") version "2.2.3" apply false
     `maven-publish`
 }
 
@@ -262,7 +262,7 @@ subprojects {
     dependencies {
         // Annotations
         "compileOnly"("com.google.code.findbugs:jsr305:3.0.2")
-        "compileOnly"("com.github.spotbugs:spotbugs-annotations:4.10.2")
+        "compileOnly"("com.github.spotbugs:spotbugs-annotations:4.10.4")
     }
 
     tasks.withType<JavaCompile>().configureEach {

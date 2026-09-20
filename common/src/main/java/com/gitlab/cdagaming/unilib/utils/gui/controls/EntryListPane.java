@@ -417,9 +417,9 @@ public abstract class EntryListPane<E extends EntryListPane.Entry<E>> extends Sc
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) {
-        if (keyCode == getKeyByVersion(208, 264)) {
+        if (keyCode == getKeyByVersion(208, 264, 81)) {
             moveSelection(1); // Down Arrow
-        } else if (keyCode == getKeyByVersion(200, 265)) {
+        } else if (keyCode == getKeyByVersion(200, 265, 82)) {
             moveSelection(-1); // Up Arrow
         } else {
             super.keyTyped(typedChar, keyCode);

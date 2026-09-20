@@ -362,9 +362,9 @@ public class KeyUtils {
         }
 
         if (Keyboard.isCreated()) {
-            final boolean isLwjgl2 = protocol <= 340;
-            final int unknownKeyCode = isLwjgl2 ? -1 : 0;
-            final String unknownKeyName = (isLwjgl2 ? KeyConverter.fromGlfw : KeyConverter.toGlfw).get(unknownKeyCode).name();
+            final KeyConverter.Platform platform = KeyConverter.getPlatform(protocol);
+            final int unknownKeyCode = platform == KeyConverter.Platform.LWJGL2 ? -1 : 0;
+            final String unknownKeyName = (platform == KeyConverter.Platform.LWJGL2 ? KeyConverter.fromGlfw : KeyConverter.toGlfw).get(unknownKeyCode).name();
             try {
                 for (Map.Entry<String, KeyBindData> entry : getKeyEntries()) {
                     final String keyName = entry.getKey();
